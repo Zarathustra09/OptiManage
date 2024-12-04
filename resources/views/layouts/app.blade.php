@@ -15,6 +15,93 @@
     <title>{{env('APP_NAME')}}</title>
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <style>
+        /* Container Styles */
+        .my-custom-container-class {
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Popup Styles */
+        .my-custom-popup-class {
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-color: #f8f9fa;
+        }
+
+        /* Header Styles */
+        .my-custom-header-class {
+            background-color: #f1f3f5;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        /* Title Styles */
+        .my-custom-title-class {
+            color: #333;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        /* Close Button Styles */
+        .my-custom-close-button-class {
+            color: #6c757d;
+            transition: color 0.2s ease;
+        }
+        .my-custom-close-button-class:hover {
+            color: #dc3545;
+        }
+
+        /* Input Styles */
+        .my-custom-input-class {
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            padding: 10px;
+            transition: border-color 0.2s ease;
+        }
+        .my-custom-input-class:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        }
+
+        /* Button Styles */
+        .my-custom-confirm-button-class {
+            background-color: #28a745;
+            border-color: #28a745;
+            border-radius: 6px;
+            padding: 10px 20px;
+            transition: all 0.2s ease;
+        }
+        .my-custom-confirm-button-class:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .my-custom-cancel-button-class {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            border-radius: 6px;
+            padding: 10px 20px;
+            transition: all 0.2s ease;
+        }
+        .my-custom-cancel-button-class:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+        /* Icon Styles */
+        .my-custom-icon-class {
+            margin: 20px 0;
+            transform: scale(1.5);
+        }
+
+        /* Actions Container */
+        .my-custom-actions-class {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
@@ -39,7 +126,7 @@
                             <img src="{{ auth()->user()->profile_image ? asset('storage/' . auth()->user()->profile_image) : 'https://via.placeholder.com/128' }}" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark">{{auth()->user()->name}}</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
+                            <a class="dropdown-item" href="{{route('profile')}}"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="align-middle me-1" data-feather="log-out"></i> Log out
@@ -67,228 +154,15 @@
 </div>
 
 <script src="{{asset('js/app.js')}}"></script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var ctx = document.getElementById("chartjs-dashboard-line").getContext("2d");
-        var gradient = ctx.createLinearGradient(0, 0, 0, 225);
-        gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
-        gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
-        // Line chart
-        new Chart(document.getElementById("chartjs-dashboard-line"), {
-            type: "line",
-            data: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                datasets: [{
-                    label: "Sales ($)",
-                    fill: true,
-                    backgroundColor: gradient,
-                    borderColor: window.theme.primary,
-                    data: [
-                        2115,
-                        1562,
-                        1584,
-                        1892,
-                        1587,
-                        1923,
-                        2566,
-                        2448,
-                        2805,
-                        3438,
-                        2917,
-                        3327
-                    ]
-                }]
-            },
-            options: {
-                maintainAspectRatio: false,
-                legend: {
-                    display: false
-                },
-                tooltips: {
-                    intersect: false
-                },
-                hover: {
-                    intersect: true
-                },
-                plugins: {
-                    filler: {
-                        propagate: false
-                    }
-                },
-                scales: {
-                    xAxes: [{
-                        reverse: true,
-                        gridLines: {
-                            color: "rgba(0,0,0,0.0)"
-                        }
-                    }],
-                    yAxes: [{
-                        ticks: {
-                            stepSize: 1000
-                        },
-                        display: true,
-                        borderDash: [3, 3],
-                        gridLines: {
-                            color: "rgba(0,0,0,0.0)"
-                        }
-                    }]
-                }
-            }
-        });
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Pie chart
-        new Chart(document.getElementById("chartjs-dashboard-pie"), {
-            type: "pie",
-            data: {
-                labels: ["Chrome", "Firefox", "IE"],
-                datasets: [{
-                    data: [4306, 3801, 1689],
-                    backgroundColor: [
-                        window.theme.primary,
-                        window.theme.warning,
-                        window.theme.danger
-                    ],
-                    borderWidth: 5
-                }]
-            },
-            options: {
-                responsive: !window.MSInputMethodContext,
-                maintainAspectRatio: false,
-                legend: {
-                    display: false
-                },
-                cutoutPercentage: 75
-            }
-        });
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Bar chart
-        new Chart(document.getElementById("chartjs-dashboard-bar"), {
-            type: "bar",
-            data: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                datasets: [{
-                    label: "This year",
-                    backgroundColor: window.theme.primary,
-                    borderColor: window.theme.primary,
-                    hoverBackgroundColor: window.theme.primary,
-                    hoverBorderColor: window.theme.primary,
-                    data: [54, 67, 41, 55, 62, 45, 55, 73, 60, 76, 48, 79],
-                    barPercentage: .75,
-                    categoryPercentage: .5
-                }]
-            },
-            options: {
-                maintainAspectRatio: false,
-                legend: {
-                    display: false
-                },
-                scales: {
-                    yAxes: [{
-                        gridLines: {
-                            display: false
-                        },
-                        stacked: false,
-                        ticks: {
-                            stepSize: 20
-                        }
-                    }],
-                    xAxes: [{
-                        stacked: false,
-                        gridLines: {
-                            color: "transparent"
-                        }
-                    }]
-                }
-            }
-        });
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var markers = [{
-            coords: [31.230391, 121.473701],
-            name: "Shanghai"
-        },
-            {
-                coords: [28.704060, 77.102493],
-                name: "Delhi"
-            },
-            {
-                coords: [6.524379, 3.379206],
-                name: "Lagos"
-            },
-            {
-                coords: [35.689487, 139.691711],
-                name: "Tokyo"
-            },
-            {
-                coords: [23.129110, 113.264381],
-                name: "Guangzhou"
-            },
-            {
-                coords: [40.7127837, -74.0059413],
-                name: "New York"
-            },
-            {
-                coords: [34.052235, -118.243683],
-                name: "Los Angeles"
-            },
-            {
-                coords: [41.878113, -87.629799],
-                name: "Chicago"
-            },
-            {
-                coords: [51.507351, -0.127758],
-                name: "London"
-            },
-            {
-                coords: [40.416775, -3.703790],
-                name: "Madrid "
-            }
-        ];
-        var map = new jsVectorMap({
-            map: "world",
-            selector: "#world_map",
-            zoomButtons: true,
-            markers: markers,
-            markerStyle: {
-                initial: {
-                    r: 9,
-                    strokeWidth: 7,
-                    stokeOpacity: .4,
-                    fill: window.theme.primary
-                },
-                hover: {
-                    fill: window.theme.primary,
-                    stroke: window.theme.primary
-                }
-            },
-            zoomOnScroll: false
-        });
-        window.addEventListener("resize", () => {
-            map.updateSize();
-        });
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var date = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
-        var defaultDate = date.getUTCFullYear() + "-" + (date.getUTCMonth() + 1) + "-" + date.getUTCDate();
-        document.getElementById("datetimepicker-dashboard").flatpickr({
-            inline: true,
-            prevArrow: "<span title=\"Previous month\">&laquo;</span>",
-            nextArrow: "<span title=\"Next month\">&raquo;</span>",
-            defaultDate: defaultDate
-        });
-    });
-</script>
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<!-- Include DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<!-- Include SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@stack('scripts')
 
 </body>
 

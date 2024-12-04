@@ -5,8 +5,8 @@
         </a>
         <ul class="sidebar-nav">
             <li class="sidebar-header"> Interface </li>
-            <li class="sidebar-item active">
-                <a class="sidebar-link" href="#">
+            <li class="sidebar-item {{ request()->routeIs('home') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('home') }}">
                     <i class="align-middle" data-feather="monitor"></i>
                     <span class="align-middle">Dashboard</span>
                 </a>
@@ -18,14 +18,14 @@
                 </a>
             </li>
             <li class="sidebar-header"> Resource Management </li>
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="#">
+            <li class="sidebar-item {{ request()->routeIs('admin.category.index') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('admin.category.index') }}">
                     <i class="align-middle" data-feather="layers"></i>
                     <span class="align-middle">Categories</span>
                 </a>
             </li>
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="#">
+            <li class="sidebar-item {{ request()->routeIs('admin.inventory.index') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('admin.inventory.index') }}">
                     <i class="align-middle" data-feather="archive"></i>
                     <span class="align-middle">Inventory</span>
                 </a>
@@ -37,8 +37,8 @@
                 </a>
             </li>
             <li class="sidebar-header"> Employee Management </li>
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="#">
+            <li class="sidebar-item {{ request()->routeIs('admin.employee.index') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('admin.employee.index') }}">
                     <i class="align-middle" data-feather="users"></i>
                     <span class="align-middle">Employees</span>
                 </a>

@@ -27,6 +27,7 @@
     <div class="mb-3">
         <h1 class="h3 d-inline align-middle">Profile</h1>
     </div>
+
     <div class="row">
         <div class="col-md-4 col-xl-3">
             <div class="card mb-3">
@@ -106,6 +107,14 @@
                             <input type="text" class="form-control" name="phone_number" value="{{ auth()->user()->phone_number }}" required>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" placeholder="New Password">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm New Password">
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">Role</label>
                             <input type="text" class="form-control" value="{{ auth()->user()->role_id == 0 ? 'Employee' : 'Admin' }}" readonly>
                         </div>
@@ -119,11 +128,36 @@
         </div>
     </div>
 
+
+
+
+@endsection
+
+
+@push('scripts')
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('profile-image-upload').addEventListener('change', function() {
                 document.getElementById('upload-form').submit();
             });
+
+            @if(session('success'))
+            Swal.fire({
+                title: 'Success!',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+            @endif
+
+            @if(session('error'))
+            Swal.fire({
+                title: 'Error!',
+                text: '{{ session('error') }}',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            @endif
         });
     </script>
-@endsection
+@endpush
