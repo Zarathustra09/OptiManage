@@ -90,6 +90,18 @@
                                         <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email" required />
                                     </div>
                                     <div class="mb-3">
+                                        <label class="form-label">Phone Number</label>
+                                        <input class="form-control form-control-lg" type="text" name="phone_number" placeholder="Enter your phone number" required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Profile Image</label>
+                                        <input class="form-control form-control-lg" type="text" name="profile_image" placeholder="Enter profile image URL" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Role ID</label>
+                                        <input class="form-control form-control-lg" type="number" name="role_id" placeholder="Enter role ID" required />
+                                    </div>
+                                    <div class="mb-3">
                                         <label class="form-label">Password</label>
                                         <input class="form-control form-control-lg" type="password" name="password" placeholder="Enter password" required />
                                     </div>

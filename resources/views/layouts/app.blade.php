@@ -5,19 +5,17 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
-    <meta name="author" content="AdminKit">
-    <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+    <meta name="description" content="Optimanage">
+    <meta name="author" content="Optimanage">
+    <meta name="keywords" content="OptiManage">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+    <link rel="shortcut icon" href="{{ asset('img/icons/icon-48x48.png') }}" />
 
-    <link rel="canonical" href="https://demo-basic.adminkit.io/" />
+    <title>{{env('APP_NAME')}}</title>
 
-    <title>AdminKit Demo - Bootstrap 5 Admin Template</title>
-
-    <link href="css/app.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -38,7 +36,7 @@
                         </a>
 
                         <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                            <img src="img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark">{{auth()->user()->name}}</span>
+                            <img src="{{ auth()->user()->profile_image ? asset('storage/' . auth()->user()->profile_image) : 'https://via.placeholder.com/128' }}" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark">{{auth()->user()->name}}</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
                             <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
@@ -58,7 +56,6 @@
         <main class="content">
             <div class="container-fluid p-0">
 
-                <h1 class="h3 mb-3"><strong>Analytics</strong> Dashboard</h1>
 
                @yield('content')
 
@@ -69,7 +66,7 @@
     </div>
 </div>
 
-<script src="js/app.js"></script>
+<script src="{{asset('js/app.js')}}"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
