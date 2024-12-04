@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,6 +17,47 @@
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Inter', sans-serif;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: none;
+            overflow: hidden;
+        }
+        .card-body {
+            padding: 2.5rem;
+        }
+        .btn-primary {
+            background-color: #3b7ddd;
+            border-color: #3b7ddd;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #2c66c3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(59,125,221,0.3);
+        }
+        .form-control {
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #3b7ddd;
+            box-shadow: 0 0 0 0.2rem rgba(59,125,221,0.25);
+        }
+        .text-center h1 {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .text-center .lead {
+            color: #6c757d;
+        }
+    </style>
 </head>
 
 <body>
