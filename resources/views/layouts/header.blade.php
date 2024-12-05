@@ -11,8 +11,8 @@
                     <span class="align-middle">Dashboard</span>
                 </a>
             </li>
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="#">
+            <li class="sidebar-item {{ request()->routeIs('admin.task.index') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('admin.task.index') }}">
                     <i class="align-middle" data-feather="clipboard"></i>
                     <span class="align-middle">Tasks</span>
                 </a>

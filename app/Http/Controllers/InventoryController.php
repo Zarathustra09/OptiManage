@@ -13,6 +13,12 @@ class InventoryController extends Controller
         return view('admin.inventory.index', compact('inventories'));
     }
 
+    public function allInventory()
+    {
+        $inventories = Inventory::all();
+        return response()->json($inventories);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,3 +53,12 @@ Route::get('/admin/inventory/{id}', [InventoryController::class, 'show'])->name(
 Route::post('/admin/inventory', [InventoryController::class, 'store'])->name('admin.inventory.store');
 Route::put('/admin/inventory/{id}', [InventoryController::class, 'update'])->name('admin.inventory.update');
 Route::delete('/admin/inventory/{id}', [InventoryController::class, 'destroy'])->name('admin.inventory.destroy');
+Route::get('/admin/item/list', [InventoryController::class, 'allInventory'])->name('admin.inventory.list');
+
+//admin tasks
+Route::get('/admin/task', [TaskController::class, 'index'])->name('admin.task.index');
+Route::get('/admin/task/create', [TaskController::class, 'create'])->name('admin.task.create');
+Route::post('/admin/task', [TaskController::class, 'store'])->name('admin.task.store');
+Route::get('/admin/task/{id}', [TaskController::class, 'show'])->name('admin.task.show');
+Route::put('/admin/task/{id}', [TaskController::class, 'update'])->name('admin.task.update');
+Route::delete('/admin/task/{id}', [TaskController::class, 'destroy'])->name('admin.task.destroy');

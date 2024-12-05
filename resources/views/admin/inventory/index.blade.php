@@ -88,6 +88,34 @@
             });
         }
 
+        function storeInventory(data) {
+            $.ajax({
+                url: '/admin/inventory',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    ...data
+                },
+                success: function(response) {
+                    Swal.fire('Created!', 'Inventory has been created successfully.', 'success').then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(response) {
+                    if (response.status === 422) {
+                        let errors = response.responseJSON.errors;
+                        let errorMessages = '';
+                        for (let field in errors) {
+                            errorMessages += `${errors[field].join(', ')}<br>`;
+                        }
+                        Swal.fire('Error!', errorMessages, 'error');
+                    } else {
+                        Swal.fire('Error!', 'There was an error creating the inventory.', 'error');
+                    }
+                }
+            });
+        }
+
         async function editInventory(inventoryId) {
             let categories = await fetchCategories();
             let categoryOptions = categories.map(category => `<option value="${category.id}">${category.name}</option>`).join('');

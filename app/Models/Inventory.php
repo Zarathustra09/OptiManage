@@ -15,4 +15,9 @@ class Inventory extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_inventory');
+    }
 }
