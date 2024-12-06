@@ -32,7 +32,12 @@ class TaskController extends Controller
             'inventory_items' => 'required|json',
         ]);
 
-        $task = Task::create($request->only(['title', 'description', 'status', 'user_id']));
+        $ticket_id = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5)) . '-' . substr(str_shuffle('0123456789'), 0, 5);
+
+        $task = Task::create(array_merge(
+            $request->only(['title', 'description', 'status', 'user_id']),
+            ['ticket_id' => $ticket_id]
+        ));
 
         $inventoryItems = json_decode($request->inventory_items, true);
 

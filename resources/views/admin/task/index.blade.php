@@ -10,8 +10,9 @@
     <table id="taskTable" class="table table-striped">
         <thead>
         <tr>
+            <th>Ticket ID</th>
             <th>Title</th>
-            <th>Description</th>
+            <th>Assignee</th>
             <th>Status</th>
             <th>Time Created</th>
             <th>Action</th>
@@ -20,9 +21,19 @@
         <tbody>
         @foreach($tasks as $task)
             <tr>
+                <td>{{ $task->ticket_id }}</td>
                 <td>{{ $task->title }}</td>
-                <td>{{ $task->description }}</td>
-                <td>{{ $task->status }}</td>
+                <td>{{ $task->user->name }}</td>
+                <td>
+                                <span class="badge
+                                    @if($task->status == 'Finished') bg-success
+                                    @elseif($task->status == 'On Progress') bg-warning
+                                    @elseif($task->status == 'To be Approved') bg-primary
+                                    @elseif($task->status == 'Cancel') bg-danger
+                                    @endif">
+                                    {{ $task->status }}
+                                </span>
+                </td>
                 <td>{{ $task->created_at }}</td>
                 <td>
                     <button class="btn btn-info btn-sm" onclick="viewTask({{ $task->id }})">View</button>

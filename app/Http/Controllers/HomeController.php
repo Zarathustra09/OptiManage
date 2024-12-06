@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Task;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +25,51 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $employeeCount = $this->getEmployeeCount();
+        $finishedTaskCount = $this->getFinishedTaskCount();
+        $onProgressTaskCount = $this->getOnProgressTaskCount();
+        $toBeApprovedTaskCount = $this->getToBeApprovedTaskCount();
+        $latestTasks = Task::latest()->take(8)->get();
+        return view('home', compact('employeeCount', 'finishedTaskCount', 'onProgressTaskCount', 'toBeApprovedTaskCount', 'latestTasks'));
+    }
+
+    /**
+     * Get the count of users with role_id 1.
+     *
+     * @return int
+     */
+    private function getEmployeeCount()
+    {
+        return User::where('role_id', 1)->count();
+    }
+
+    /**
+     * Get the count of tasks with status "Finished".
+     *
+     * @return int
+     */
+    private function getFinishedTaskCount()
+    {
+        return Task::where('status', 'Finished')->count();
+    }
+
+    /**
+     * Get the count of tasks with status "On Progress".
+     *
+     * @return int
+     */
+    private function getOnProgressTaskCount()
+    {
+        return Task::where('status', 'On Progress')->count();
+    }
+
+    /**
+     * Get the count of tasks with status "To be Approved".
+     *
+     * @return int
+     */
+    private function getToBeApprovedTaskCount()
+    {
+        return Task::where('status', 'To be Approved')->count();
     }
 }
