@@ -17,6 +17,13 @@
                     <span class="align-middle">Tasks</span>
                 </a>
             </li>
+
+            <li class="sidebar-item {{ request()->routeIs('admin.task.index') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('admin.task.index') }}">
+                    <i class="align-middle" data-feather="users"></i>
+                    <span class="align-middle">Team Task</span>
+                </a>
+            </li>
             <li class="sidebar-header"> Resource Management </li>
             <li class="sidebar-item {{ request()->routeIs('admin.category.index') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.category.index') }}">
@@ -39,7 +46,7 @@
             <li class="sidebar-header"> Employee Management </li>
             <li class="sidebar-item {{ request()->routeIs('admin.employee.index') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.employee.index') }}">
-                    <i class="align-middle" data-feather="users"></i>
+                    <i class="align-middle" data-feather="user-plus"></i>
                     <span class="align-middle">Employees</span>
                 </a>
             </li>

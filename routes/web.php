@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InventoryController;
@@ -62,3 +63,12 @@ Route::post('/admin/task', [TaskController::class, 'store'])->name('admin.task.s
 Route::get('/admin/task/{id}', [TaskController::class, 'show'])->name('admin.task.show');
 Route::put('/admin/task/{id}', [TaskController::class, 'update'])->name('admin.task.update');
 Route::delete('/admin/task/{id}', [TaskController::class, 'destroy'])->name('admin.task.destroy');
+
+
+//admin availability
+Route::get('availabilities/create/{userId}', [AvailabilityController::class, 'create'])->name('availabilities.create');
+Route::get('availabilities/single/{id}', [AvailabilityController::class, 'showSingle'])->name('availabilities.showSingle');
+Route::post('availabilities', [AvailabilityController::class, 'store'])->name('availabilities.store');
+Route::put('availabilities/{id}', [AvailabilityController::class, 'update'])->name('availabilities.update');
+Route::delete('availabilities/{id}', [AvailabilityController::class, 'destroy'])->name('availabilities.destroy');
+Route::get('availabilities/{id}', [AvailabilityController::class, 'show'])->name('availabilities.show');

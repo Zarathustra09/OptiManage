@@ -23,9 +23,10 @@
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->phone_number }}</td>
                 <td>
-                    <button class="btn btn-info btn-sm" onclick="viewUser({{ $user->id }})">View</button>
+                    <a href="{{ route('availabilities.show', $user->id) }}" class="btn btn-primary btn-sm">View Availability</a>
                     <button class="btn btn-warning btn-sm" onclick="editUser({{ $user->id }})">Edit</button>
                     <button class="btn btn-danger btn-sm" onclick="deleteUser({{ $user->id }})">Delete</button>
+
                 </td>
             </tr>
         @endforeach
@@ -95,16 +96,6 @@
                         Swal.fire('Error!', 'There was an error creating the employee.', 'error');
                     }
                 }
-            });
-        }
-
-        function viewUser(userId) {
-            $.get('/admin/employee/' + userId, function(user) {
-                Swal.fire({
-                    title: 'User Details',
-                    html: `<p>Name: ${user.name}</p><p>Email: ${user.email}</p><p>Phone Number: ${user.phone_number}</p>`,
-                    icon: 'info'
-                });
             });
         }
 
