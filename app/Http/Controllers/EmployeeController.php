@@ -19,9 +19,14 @@ class EmployeeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'phone_number' => 'required|string|max:15',
+            'phone_number' => 'required|string|max:15|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
+
+        // Generate employee ID
+        $prefix = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5));
+        $suffix = substr(str_shuffle('0123456789'), 0, 5);
+        $employee_id = $prefix . '-' . $suffix;
 
         $user = User::create([
             'name' => $request->name,
@@ -29,6 +34,7 @@ class EmployeeController extends Controller
             'phone_number' => $request->phone_number,
             'password' => Hash::make($request->password),
             'role_id' => 0,
+            'employee_id' => $employee_id,
         ]);
 
         return response()->json(['success' => 'Employee created successfully']);

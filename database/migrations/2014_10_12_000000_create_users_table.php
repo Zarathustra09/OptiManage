@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('phone_number')->unique();
             $table->string('profile_image')->nullable();
             $table->unsignedSmallInteger('role_id')->default(0);
+            $table->string('employee_id')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

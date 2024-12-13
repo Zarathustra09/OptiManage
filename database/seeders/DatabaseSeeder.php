@@ -20,6 +20,13 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@example.com',
             'password' => Hash::make('Test@123'),
             'role_id' => 1,
+            'employee_id' => 'Im Overpowered'
+        ]);
+
+        $this->call([
+            CategorySeeder::class,
+            InventorySeeder::class,
+            EmployeeSeeder::class,
         ]);
     }
 }

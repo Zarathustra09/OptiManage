@@ -10,6 +10,7 @@
     <table id="employeeTable" class="table table-striped">
         <thead>
         <tr>
+            <th>Employee ID</th>
             <th>Name</th>
             <th>Email</th>
             <th>Phone Number</th>
@@ -19,6 +20,7 @@
         <tbody>
         @foreach($users as $user)
             <tr>
+                <td>{{ $user->employee_id }}</td>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->phone_number }}</td>

@@ -11,27 +11,27 @@
                     <span class="align-middle">Dashboard</span>
                 </a>
             </li>
-            <li class="sidebar-item {{ request()->routeIs('admin.task.index') ? 'active' : '' }}">
+            <li class="sidebar-item {{ request()->routeIs('admin.task.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.task.index') }}">
                     <i class="align-middle" data-feather="clipboard"></i>
                     <span class="align-middle">Tasks</span>
                 </a>
             </li>
 
-            <li class="sidebar-item {{ request()->routeIs('admin.task.index') ? 'active' : '' }}">
-                <a class="sidebar-link" href="{{ route('admin.task.index') }}">
+            <li class="sidebar-item ">
+                <a class="sidebar-link" href="#">
                     <i class="align-middle" data-feather="users"></i>
                     <span class="align-middle">Team Task</span>
                 </a>
             </li>
             <li class="sidebar-header"> Resource Management </li>
-            <li class="sidebar-item {{ request()->routeIs('admin.category.index') ? 'active' : '' }}">
+            <li class="sidebar-item {{ request()->routeIs('admin.category.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.category.index') }}">
                     <i class="align-middle" data-feather="layers"></i>
                     <span class="align-middle">Categories</span>
                 </a>
             </li>
-            <li class="sidebar-item {{ request()->routeIs('admin.inventory.index') ? 'active' : '' }}">
+            <li class="sidebar-item {{ request()->routeIs('admin.inventory.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.inventory.index') }}">
                     <i class="align-middle" data-feather="archive"></i>
                     <span class="align-middle">Inventory</span>
@@ -44,7 +44,7 @@
                 </a>
             </li>
             <li class="sidebar-header"> Employee Management </li>
-            <li class="sidebar-item {{ request()->routeIs('admin.employee.index') ? 'active' : '' }}">
+            <li class="sidebar-item {{ request()->routeIs('admin.employee.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.employee.index') }}">
                     <i class="align-middle" data-feather="user-plus"></i>
                     <span class="align-middle">Employees</span>

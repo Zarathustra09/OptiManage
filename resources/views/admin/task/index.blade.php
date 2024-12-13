@@ -2,7 +2,7 @@
 
 @section('content')
     <h1>Tasks</h1>
-
+    @include('layouts.session')
     <div class="mb-3">
         <button class="btn btn-success" onclick="createTask()">Create Task</button>
     </div>
@@ -14,7 +14,7 @@
             <th>Title</th>
             <th>Assignee</th>
             <th>Status</th>
-            <th>Time Created</th>
+            <th>End Date</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -34,7 +34,7 @@
                                     {{ $task->status }}
                                 </span>
                 </td>
-                <td>{{ $task->created_at }}</td>
+                <td>{{ \Carbon\Carbon::parse($task->end_date)->format('F d Y h:i A') }}</td>
                 <td>
                     <button class="btn btn-info btn-sm" onclick="viewTask({{ $task->id }})">View</button>
                     <button class="btn btn-warning btn-sm" onclick="editTask({{ $task->id }})">Edit</button>
@@ -120,9 +120,13 @@
 
         function viewTask(taskId) {
             $.get('/admin/task/' + taskId, function(task) {
+                let content = task.proof_of_work
+                    ? `<img src="/storage/${task.proof_of_work}" alt="Proof of Work" style="max-width: 100%;">`
+                    : 'No Proof of Work';
+
                 Swal.fire({
-                    title: 'Task Details',
-                    html: `<p>Title: ${task.title}</p><p>Description: ${task.description}</p><p>Status: ${task.status}</p>`,
+                    title: 'Proof of Work',
+                    html: content,
                     icon: 'info'
                 });
             });
@@ -133,33 +137,46 @@
                 Swal.fire({
                     title: 'Edit Task',
                     html: `
-                        <input id="swal-input1" class="swal2-input" value="${task.title}" placeholder="Title">
-                        <input id="swal-input2" class="swal2-input" value="${task.description}" placeholder="Description">
-                        <select id="swal-input3" class="swal2-input">
-                            <option value="To be Approved" ${task.status === 'To be Approved' ? 'selected' : ''}>To be Approved</option>
-                            <option value="On Progress" ${task.status === 'On Progress' ? 'selected' : ''}>On Progress</option>
-                            <option value="Finished" ${task.status === 'Finished' ? 'selected' : ''}>Finished</option>
-                            <option value="Cancel" ${task.status === 'Cancel' ? 'selected' : ''}>Cancel</option>
-                        </select>
-                    `,
+                <input id="swal-input1" class="swal2-input" value="${task.title}" placeholder="Title">
+                <input id="swal-input2" class="swal2-input" value="${task.description}" placeholder="Description">
+                <select id="swal-input3" class="swal2-input">
+                    <option value="To be Approved" ${task.status === 'To be Approved' ? 'selected' : ''}>To be Approved</option>
+                    <option value="On Progress" ${task.status === 'On Progress' ? 'selected' : ''}>On Progress</option>
+                    <option value="Finished" ${task.status === 'Finished' ? 'selected' : ''}>Finished</option>
+                    <option value="Cancel" ${task.status === 'Cancel' ? 'selected' : ''}>Cancel</option>
+                </select>
+                <input id="swal-input4" class="swal2-input" type="datetime-local" value="${task.start_date ? task.start_date.replace(' ', 'T') : ''}" placeholder="Start Date">
+                <input id="swal-input5" class="swal2-input" type="datetime-local" value="${task.end_date ? task.end_date.replace(' ', 'T') : ''}" placeholder="End Date">
+                <input id="swal-input6" class="swal2-input" type="file" accept="image/*">
+                ${task.proof_of_work ? `<img src="/storage/${task.proof_of_work}" alt="Proof of Work" style="max-width: 100px; max-height: 100px;">` : 'No Proof of Work'}
+            `,
                     showCancelButton: true,
                     confirmButtonText: 'Update',
                     cancelButtonText: 'Cancel',
                     preConfirm: () => {
-                        return {
-                            title: document.getElementById('swal-input1').value,
-                            description: document.getElementById('swal-input2').value,
-                            status: document.getElementById('swal-input3').value
+                        let formData = new FormData();
+                        formData.append('title', document.getElementById('swal-input1').value);
+                        formData.append('description', document.getElementById('swal-input2').value);
+                        formData.append('status', document.getElementById('swal-input3').value);
+                        formData.append('start_date', document.getElementById('swal-input4').value);
+                        formData.append('end_date', document.getElementById('swal-input5').value);
+                        let proofOfWorkFile = document.getElementById('swal-input6').files[0];
+                        if (proofOfWorkFile) {
+                            formData.append('proof_of_work', proofOfWorkFile);
                         }
+                        return formData;
                     }
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
                             url: '/admin/task/' + taskId,
-                            type: 'PUT',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                ...result.value
+                            type: 'POST',
+                            data: result.value,
+                            processData: false,
+                            contentType: false,
+                            headers: {
+                                'X-HTTP-Method-Override': 'PUT',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
                             success: function(response) {
                                 Swal.fire({

@@ -2,8 +2,8 @@
 
 @section('content')
     <h1>Create Task</h1>
-
-    <form action="{{ route('admin.task.store') }}" method="POST" id="createTaskForm">
+    @include('layouts.session')
+    <form action="{{ route('admin.task.store') }}" method="POST" id="createTaskForm" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
             <label for="title">Title</label>
@@ -31,6 +31,14 @@
             </select>
         </div>
         <div class="form-group">
+            <label for="start_date">Start Date and Time</label>
+            <input type="datetime-local" class="form-control" id="start_date" name="start_date">
+        </div>
+        <div class="form-group">
+            <label for="end_date">End Date and Time</label>
+            <input type="datetime-local" class="form-control" id="end_date" name="end_date">
+        </div>
+        <div class="form-group">
             <label for="inventory_items_display">Inventory Items</label>
             <div class="input-group">
                 <input type="text" class="form-control" id="inventory_items_display" readonly>
@@ -39,6 +47,10 @@
                     <button type="button" class="btn btn-primary" onclick="selectInventoryQuantity()">Add Inventory Items</button>
                 </div>
             </div>
+        </div>
+        <div class="form-group">
+            <label for="proof_of_work">Proof of Work</label>
+            <input type="file" class="form-control" id="proof_of_work" name="proof_of_work" accept="image/*">
         </div>
         <button type="submit" class="btn btn-primary">Create Task</button>
     </form>
