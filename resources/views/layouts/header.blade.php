@@ -18,8 +18,8 @@
                 </a>
             </li>
 
-            <li class="sidebar-item ">
-                <a class="sidebar-link" href="#">
+            <li class="sidebar-item {{ request()->routeIs('admin.teamTask.*') ? 'active' : '' }} ">
+                <a class="sidebar-link" href="{{route('admin.teamTask.index')}}">
                     <i class="align-middle" data-feather="users"></i>
                     <span class="align-middle">Team Task</span>
                 </a>
@@ -44,7 +44,7 @@
                 </a>
             </li>
             <li class="sidebar-header"> Employee Management </li>
-            <li class="sidebar-item {{ request()->routeIs('admin.employee.*') ? 'active' : '' }}">
+            <li class="sidebar-item {{ request()->routeIs('admin.employee.*') || request()->routeIs('availabilities.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.employee.index') }}">
                     <i class="align-middle" data-feather="user-plus"></i>
                     <span class="align-middle">Employees</span>

@@ -6,6 +6,8 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TeamAssigneeController;
+use App\Http\Controllers\TeamTaskController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -72,3 +74,21 @@ Route::post('availabilities', [AvailabilityController::class, 'store'])->name('a
 Route::put('availabilities/{id}', [AvailabilityController::class, 'update'])->name('availabilities.update');
 Route::delete('availabilities/{id}', [AvailabilityController::class, 'destroy'])->name('availabilities.destroy');
 Route::get('availabilities/{id}', [AvailabilityController::class, 'show'])->name('availabilities.show');
+
+
+//admin team task
+Route::get('/admin/team-task', [TeamTaskController::class, 'index'])->name('admin.teamTask.index');
+Route::get('/admin/team-task/create', [TeamTaskController::class, 'create'])->name('admin.teamTask.create');
+Route::get('/admin/team-task/single/{id}', [TeamTaskController::class, 'showSingle'])->name('admin.teamTask.single');
+Route::get('/admin/team-task/{id}', [TeamTaskController::class, 'show'])->name('admin.teamTask.show');
+Route::post('/admin/team-task', [TeamTaskController::class, 'store'])->name('admin.teamTask.store');
+Route::get('/admin/team-task/{id}/edit', [TeamTaskController::class, 'edit'])->name('admin.teamTask.edit');
+Route::put('/admin/team-task/{id}', [TeamTaskController::class, 'update'])->name('admin.teamTask.update');
+Route::delete('/admin/team-task/{id}', [TeamTaskController::class, 'destroy'])->name('admin.teamTask.destroy');
+
+
+Route::get('/admin/team-assignee', [TeamAssigneeController::class, 'index'])->name('admin.teamAssignee.index');
+Route::post('/admin/team-assignee', [TeamAssigneeController::class, 'store'])->name('admin.teamAssignee.store');
+Route::get('/admin/team-assignee/{id}', [TeamAssigneeController::class, 'show'])->name('admin.teamAssignee.show');
+Route::put('/admin/team-assignee/{id}', [TeamAssigneeController::class, 'update'])->name('admin.teamAssignee.update');
+Route::delete('/admin/team-assignee/{id}', [TeamAssigneeController::class, 'destroy'])->name('admin.teamAssignee.destroy');

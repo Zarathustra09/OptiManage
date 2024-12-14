@@ -13,15 +13,14 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('status');
+            $table->string('ticket_id')->nullable();
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
+            $table->text('proof_of_work')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('team_tasks');
