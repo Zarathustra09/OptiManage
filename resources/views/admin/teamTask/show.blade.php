@@ -17,27 +17,65 @@
 
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <strong class="d-block text-muted mb-2">Start Date</strong>
-                                        <div class="alert alert-info p-2">
-                                            {{ \Carbon\Carbon::parse($task->start_date)->format('F d, Y h:i A') }}
+                                        <div class="card border-info mb-3">
+                                            <div class="card-header bg-info text-white">Start Date</div>
+                                            <div class="card-body p-2">
+                                                <p class="card-text text-center">
+                                                    {{ \Carbon\Carbon::parse($task->start_date)->format('F d, Y h:i A') }}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <strong class="d-block text-muted mb-2">End Date</strong>
-                                        <div class="alert alert-warning p-2">
-                                            {{ \Carbon\Carbon::parse($task->end_date)->format('F d, Y h:i A') }}
+                                        <div class="card border-warning mb-3">
+                                            <div class="card-header bg-warning text-white">End Date</div>
+                                            <div class="card-body p-2">
+                                                <p class="card-text text-center">
+                                                    {{ \Carbon\Carbon::parse($task->end_date)->format('F d, Y h:i A') }}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 @if($task->proof_of_work)
                                     <div class="mb-3">
-                                        <strong class="d-block text-muted mb-2">Proof of Work</strong>
-                                        <div class="border rounded p-2">
-                                            <img src="/storage/{{ $task->proof_of_work }}" alt="Proof of Work" class="img-fluid rounded">
+                                        <div class="card">
+                                            <div class="card-header bg-secondary text-white">Proof of Work</div>
+                                            <div class="card-body p-2">
+                                                <img src="/storage/{{ $task->proof_of_work }}" alt="Proof of Work" class="img-fluid rounded">
+                                            </div>
                                         </div>
                                     </div>
                                 @endif
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                                        Inventory Items
+                                        <span class="badge bg-light text-success">{{ $task->inventories->count() }} Items</span>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="list-group list-group-flush">
+                                            @forelse($task->inventories as $inventory)
+                                                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1">{{ $inventory->name }}</h6>
+                                                        <small class="text-muted">Inventory Code: {{ $inventory->code ?? 'N/A' }}</small>
+                                                    </div>
+                                                    <span class="badge bg-primary rounded-pill">
+                                                        Qty: {{ $inventory->pivot->quantity }}
+                                                    </span>
+                                                </div>
+                                            @empty
+                                                <div class="list-group-item text-center text-muted">
+                                                    No inventory items assigned
+                                                </div>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -22,4 +22,9 @@ class TeamTask extends Model
     {
         return $this->hasMany(TeamAssignee::class);
     }
+
+    public function inventories()
+    {
+        return $this->belongsToMany(Inventory::class, 'team_task_inventory')->withPivot('quantity');
+    }
 }

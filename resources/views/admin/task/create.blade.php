@@ -87,19 +87,24 @@
             await Swal.fire({
                 title: 'Select Inventory and Quantity',
                 html: `
-                    <select id="swal-input1" class="swal2-input" required>
-                        ${inventoryOptions}
-                    </select>
-                    <input id="swal-input2" class="swal2-input" type="number" placeholder="Quantity" min="1" required>
-                `,
+                <select id="swal-input1" class="swal2-input" required>
+                    ${inventoryOptions}
+                </select>
+                <input id="swal-input2" class="swal2-input" type="number" placeholder="Quantity" min="1" required>
+            `,
                 showConfirmButton: true,
                 confirmButtonText: 'Confirm',
                 showCloseButton: true,
                 preConfirm: () => {
+                    let quantity = document.getElementById('swal-input2').value;
+                    if (quantity <= 0) {
+                        Swal.showValidationMessage('Quantity must be greater than 0');
+                        return false;
+                    }
                     return {
                         inventory_id: document.getElementById('swal-input1').value,
                         inventory_name: document.getElementById('swal-input1').selectedOptions[0].text.split(' (')[0],
-                        quantity: document.getElementById('swal-input2').value
+                        quantity: quantity
                     }
                 }
             }).then((result) => {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inventory;
 use App\Models\TeamTask;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -26,8 +27,9 @@ class TeamTaskController extends Controller
             'description' => 'nullable|string',
             'status' => 'required|string|max:50',
             'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
             'proof_of_work' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'inventory_items' => 'required|json',
         ]);
 
         $prefix = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5));
@@ -41,14 +43,30 @@ class TeamTaskController extends Controller
             $data['proof_of_work'] = $path;
         }
 
-        TeamTask::create(array_merge($data, ['ticket_id' => $ticket_id]));
+        $teamTask = TeamTask::create(array_merge($data, ['ticket_id' => $ticket_id]));
+
+        $inventoryItems = json_decode($request->inventory_items, true);
+
+        foreach ($inventoryItems as $item) {
+            $inventory = Inventory::findOrFail($item['inventory_id']);
+            if ($inventory->quantity < $item['quantity']) {
+                return redirect()->back()->with('error', 'Selected inventory is out of stock.');
+            }
+
+            // Deduct inventory quantity
+            $inventory->quantity -= $item['quantity'];
+            $inventory->save();
+
+            // Attach inventory to team task
+            $teamTask->inventories()->attach($inventory->id, ['quantity' => $item['quantity']]);
+        }
 
         return redirect()->route('admin.teamTask.index')->with('success', 'Team Task created successfully.');
     }
 
     public function show($id)
     {
-        $task = TeamTask::with('assignees.user')->findOrFail($id);
+        $task = TeamTask::with(['assignees.user', 'inventories'])->findOrFail($id);
         $employees = User::where('role_id', 0)->get(['id', 'name']);
         return view('admin.teamTask.show', compact('task', 'employees'));
     }
