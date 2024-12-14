@@ -49,7 +49,7 @@ class TeamTaskController extends Controller
     public function show($id)
     {
         $task = TeamTask::with('assignees.user')->findOrFail($id);
-        $employees = User::where('employee_id', 0)->get(['id', 'name']);
+        $employees = User::where('role_id', 0)->get(['id', 'name']);
         return view('admin.teamTask.show', compact('task', 'employees'));
     }
 
