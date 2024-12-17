@@ -87,6 +87,10 @@
 
         function editTeamTask(taskId) {
             $.get('{{ route("admin.teamTask.single", ":id") }}'.replace(':id', taskId), function(task) {
+                let categoryOptions = @json($categories).map(category =>
+                    `<option value="${category.id}" ${task.task_category_id === category.id ? 'selected' : ''}>${category.name}</option>`
+                ).join('');
+
                 Swal.fire({
                     title: 'Edit Team Task',
                     html: `
@@ -98,9 +102,12 @@
                     <option value="Finished" ${task.status === 'Finished' ? 'selected' : ''}>Finished</option>
                     <option value="Cancel" ${task.status === 'Cancel' ? 'selected' : ''}>Cancel</option>
                 </select>
-                <input id="swal-input4" class="swal2-input" type="datetime-local" value="${task.start_date ? task.start_date.replace(' ', 'T') : ''}" placeholder="Start Date">
-                <input id="swal-input5" class="swal2-input" type="datetime-local" value="${task.end_date ? task.end_date.replace(' ', 'T') : ''}" placeholder="End Date">
-                <input id="swal-input6" class="swal2-input" type="file" accept="image/*">
+                <select id="swal-input4" class="swal2-input">
+                    ${categoryOptions}
+                </select>
+                <input id="swal-input5" class="swal2-input" type="datetime-local" value="${task.start_date ? task.start_date.replace(' ', 'T') : ''}" placeholder="Start Date">
+                <input id="swal-input6" class="swal2-input" type="datetime-local" value="${task.end_date ? task.end_date.replace(' ', 'T') : ''}" placeholder="End Date">
+                <input id="swal-input7" class="swal2-input" type="file" accept="image/*">
                 ${task.proof_of_work ? `<img src="/storage/${task.proof_of_work}" alt="Proof of Work" style="max-width: 100px; max-height: 100px;">` : 'No Proof of Work'}
             `,
                     showCancelButton: true,
@@ -111,9 +118,10 @@
                         formData.append('title', document.getElementById('swal-input1').value);
                         formData.append('description', document.getElementById('swal-input2').value);
                         formData.append('status', document.getElementById('swal-input3').value);
-                        formData.append('start_date', document.getElementById('swal-input4').value);
-                        formData.append('end_date', document.getElementById('swal-input5').value);
-                        let proofOfWorkFile = document.getElementById('swal-input6').files[0];
+                        formData.append('task_category_id', document.getElementById('swal-input4').value);
+                        formData.append('start_date', document.getElementById('swal-input5').value);
+                        formData.append('end_date', document.getElementById('swal-input6').value);
+                        let proofOfWorkFile = document.getElementById('swal-input7').files[0];
                         if (proofOfWorkFile) {
                             formData.append('proof_of_work', proofOfWorkFile);
                         }

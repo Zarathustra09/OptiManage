@@ -14,7 +14,8 @@ class TeamTaskController extends Controller
     public function index()
     {
         $tasks = TeamTask::with('assignees')->get();
-        return view('admin.teamTask.index', compact('tasks'));
+        $categories = TaskCategory::all();
+        return view('admin.teamTask.index', compact('tasks', 'categories'));
     }
 
     public function create()

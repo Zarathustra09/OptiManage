@@ -14,7 +14,8 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::all();
-        return view('admin.task.index', compact('tasks'));
+        $categories = TaskCategory::all();
+        return view('admin.task.index', compact('tasks', 'categories')); // Pass categories to the view
     }
 
     public function create()
@@ -102,7 +103,7 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|in:To be Approved,On Progress,Finished,Cancel',
-            'task_category_id' => 'required|exists:task_categories,id', // Add this line
+            'task_category_id' => 'required|exists:task_categories,id',
             'start_date' => 'nullable|date_format:Y-m-d\TH:i',
             'end_date' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
         ]);
