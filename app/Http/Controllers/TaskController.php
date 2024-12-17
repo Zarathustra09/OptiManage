@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Inventory;
 use App\Models\Task;
+use App\Models\TaskCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,8 @@ class TaskController extends Controller
     {
         $users = User::where('role_id', 0)->get();
         $inventories = Inventory::all();
-        return view('admin.task.create', compact('users', 'inventories'));
+        $categories = TaskCategory::all(); // Add this line
+        return view('admin.task.create', compact('users', 'inventories', 'categories'));
     }
 
     public function store(Request $request)
@@ -32,6 +34,7 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'status' => 'required|in:To be Approved,On Progress,Finished,Cancel',
             'user_id' => 'required|exists:users,id',
+            'task_category_id' => 'required|exists:task_categories,id',
             'inventory_items' => 'required|json',
             'start_date' => 'nullable|date_format:Y-m-d\TH:i',
             'end_date' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
@@ -64,7 +67,7 @@ class TaskController extends Controller
         }
 
         $task = Task::create(array_merge(
-            $request->only(['title', 'description', 'status', 'user_id', 'start_date', 'end_date']),
+            $request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date']), // Add task_category_id here
             ['ticket_id' => $ticket_id, 'proof_of_work' => $proofOfWorkPath ?? null]
         ));
 
@@ -93,18 +96,13 @@ class TaskController extends Controller
         return redirect()->route('admin.task.index')->with('success', 'Task has been created successfully.');
     }
 
-    public function show($id)
-    {
-        $task = Task::findOrFail($id);
-        return response()->json($task);
-    }
-
     public function update(Request $request, $id)
     {
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|in:To be Approved,On Progress,Finished,Cancel',
+            'task_category_id' => 'required|exists:task_categories,id', // Add this line
             'start_date' => 'nullable|date_format:Y-m-d\TH:i',
             'end_date' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
         ]);
@@ -134,10 +132,17 @@ class TaskController extends Controller
             $task->proof_of_work = $proofOfWorkPath;
         }
 
-        $task->update($request->only(['title', 'description', 'status', 'start_date', 'end_date']));
+        $task->update($request->only(['title', 'description', 'status', 'task_category_id', 'start_date', 'end_date'])); // Add task_category_id here
 
         return response()->json(['success' => 'Task has been updated successfully.']);
     }
+
+    public function show($id)
+    {
+        $task = Task::findOrFail($id);
+        return response()->json($task);
+    }
+
 
     public function destroy($id)
     {

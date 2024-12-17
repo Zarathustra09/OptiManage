@@ -43,6 +43,17 @@
             @enderror
         </div>
         <div class="form-group">
+            <label for="task_category_id">Task Category</label>
+            <select class="form-control" id="task_category_id" name="task_category_id" required>
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+            </select>
+            @error('task_category_id')
+            <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="form-group">
             <label for="start_date">Start Date and Time</label>
             <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
             @error('start_date')

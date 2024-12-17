@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TaskCategoryController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamAssigneeController;
 use App\Http\Controllers\TeamTaskController;
@@ -92,3 +93,9 @@ Route::post('/admin/team-assignee', [TeamAssigneeController::class, 'store'])->n
 Route::get('/admin/team-assignee/{id}', [TeamAssigneeController::class, 'show'])->name('admin.teamAssignee.show');
 Route::put('/admin/team-assignee/{id}', [TeamAssigneeController::class, 'update'])->name('admin.teamAssignee.update');
 Route::delete('/admin/team-assignee/{id}', [TeamAssigneeController::class, 'destroy'])->name('admin.teamAssignee.destroy');
+
+Route::get('/admin/taskCategory', [TaskCategoryController::class, 'index'])->name('admin.taskCategory.index');
+Route::post('/admin/taskCategory', [TaskCategoryController::class, 'store'])->name('admin.taskCategory.store');
+Route::get('/admin/taskCategory/{id}', [TaskCategoryController::class, 'show'])->name('admin.taskCategory.show');
+Route::put('/admin/taskCategory/{id}', [TaskCategoryController::class, 'update'])->name('admin.taskCategory.update');
+Route::delete('/admin/taskCategory/{id}', [TaskCategoryController::class, 'destroy'])->name('admin.taskCategory.destroy');

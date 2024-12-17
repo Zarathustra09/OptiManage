@@ -24,6 +24,13 @@
                     <span class="align-middle">Team Task</span>
                 </a>
             </li>
+
+            <li class="sidebar-item {{ request()->routeIs('admin.taskCategory.*') ? 'active' : '' }} ">
+                <a class="sidebar-link" href="{{route('admin.taskCategory.index')}}">
+                    <i class="align-middle" data-feather="align-justify"></i>
+                    <span class="align-middle">Task Category</span>
+                </a>
+            </li>
             <li class="sidebar-header"> Resource Management </li>
             <li class="sidebar-item {{ request()->routeIs('admin.category.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.category.index') }}">
