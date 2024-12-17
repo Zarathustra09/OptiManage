@@ -15,6 +15,7 @@
             <th>Assignee</th>
             <th>Status</th>
             <th>Category</th>
+            <th>Start Date</th>
             <th>End Date</th>
             <th>Action</th>
         </tr>
@@ -36,6 +37,7 @@
                                 </span>
                 </td>
                 <td>{{ $task->category->name }}</td>
+                <td>{{ \Carbon\Carbon::parse($task->start_date)->format('F d Y h:i A') }}</td>
                 <td>{{ \Carbon\Carbon::parse($task->end_date)->format('F d Y h:i A') }}</td>
                 <td>
                     <button class="btn btn-info btn-sm" onclick="viewTask({{ $task->id }})">View</button>

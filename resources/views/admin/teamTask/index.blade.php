@@ -13,6 +13,7 @@
             <th>Ticket ID</th>
             <th>Title</th>
             <th>Status</th>
+            <th>Category</th>
             <th>Start Date</th>
             <th>End Date</th>
             <th>Actions</th>
@@ -33,6 +34,7 @@
                         {{ $task->status }}
                     </span>
                 </td>
+                <td>{{ $task->category->name }}</td>
                 <td>{{ \Carbon\Carbon::parse($task->start_date)->format('F d Y h:i A') }}</td>
                 <td>{{ \Carbon\Carbon::parse($task->end_date)->format('F d Y h:i A') }}</td>
                 <td>

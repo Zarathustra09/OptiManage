@@ -29,6 +29,18 @@
             <label for="end_date">End Date</label>
             <input type="datetime-local" class="form-control" id="end_date" name="end_date" required>
         </div>
+
+        <div class="form-group">
+            <label for="task_category_id">Task Category</label>
+            <select class="form-control" id="task_category_id" name="task_category_id" required>
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+            </select>
+            @error('task_category_id')
+            <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
+        </div>
         <div class="form-group">
             <label for="inventory_items_display">Inventory Items</label>
             <div class="input-group">
@@ -39,6 +51,8 @@
                 </div>
             </div>
         </div>
+
+
         <div class="form-group">
             <label for="proof_of_work">Proof of Work</label>
             <input type="file" class="form-control" id="proof_of_work" name="proof_of_work" accept="image/*" required>

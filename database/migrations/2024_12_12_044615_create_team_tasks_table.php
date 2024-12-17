@@ -17,6 +17,7 @@ return new class extends Migration
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
             $table->text('proof_of_work')->nullable();
+            $table->foreignId('task_category_id')->constrained('task_categories'); // Add this line
             $table->timestamps();
         });
     }

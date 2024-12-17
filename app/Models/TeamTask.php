@@ -10,7 +10,7 @@ class TeamTask extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'proof_of_work'
+        'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'proof_of_work', 'task_category_id'
     ];
 
     protected $casts = [
@@ -26,5 +26,10 @@ class TeamTask extends Model
     public function inventories()
     {
         return $this->belongsToMany(Inventory::class, 'team_task_inventory')->withPivot('quantity');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(TaskCategory::class, 'task_category_id');
     }
 }
