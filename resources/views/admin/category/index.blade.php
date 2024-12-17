@@ -1,35 +1,38 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Categories</h1>
-
-    <div class="mb-3">
-        <button class="btn btn-success" onclick="createCategory()">Create Category</button>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Categories</h2>
+                <button class="btn btn-success" onclick="createCategory()">Create Category</button>
+            </div>
+            <div class="card-body">
+                <table id="categoryTable" class="table table-hover table-striped">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($categories as $category)
+                        <tr>
+                            <td>{{ $category->name }}</td>
+                            <td>{{ $category->description }}</td>
+                            <td>
+                                <button class="btn btn-info btn-sm" onclick="viewCategory({{ $category->id }})">View</button>
+                                <button class="btn btn-warning btn-sm" onclick="editCategory({{ $category->id }})">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteCategory({{ $category->id }})">Delete</button>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <table id="categoryTable" class="table table-striped">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($categories as $category)
-            <tr>
-                <td>{{ $category->name }}</td>
-                <td>{{ $category->description }}</td>
-                <td>
-                    <button class="btn btn-info btn-sm" onclick="viewCategory({{ $category->id }})">View</button>
-                    <button class="btn btn-warning btn-sm" onclick="editCategory({{ $category->id }})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteCategory({{ $category->id }})">Delete</button>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
-
 @endsection
 
 @push('scripts')

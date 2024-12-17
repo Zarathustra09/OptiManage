@@ -1,32 +1,33 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Tasks</h1>
-    @include('layouts.session')
-    <div class="mb-3">
-        <button class="btn btn-success" onclick="createTask()">Create Task</button>
-    </div>
-
-    <table id="taskTable" class="table table-striped">
-        <thead>
-        <tr>
-            <th>Ticket ID</th>
-            <th>Title</th>
-            <th>Assignee</th>
-            <th>Status</th>
-            <th>Category</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($tasks as $task)
-            <tr>
-                <td>{{ $task->ticket_id }}</td>
-                <td>{{ $task->title }}</td>
-                <td>{{ $task->user->name }}</td>
-                <td>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Tasks</h2>
+                <button class="btn btn-success" onclick="createTask()">Create Task</button>
+            </div>
+            <div class="card-body">
+                <table id="taskTable" class="table table-hover table-striped">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Title</th>
+                        <th>Assignee</th>
+                        <th>Status</th>
+                        <th>Category</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($tasks as $task)
+                        <tr>
+                            <td>{{ $task->ticket_id }}</td>
+                            <td>{{ $task->title }}</td>
+                            <td>{{ $task->user->name }}</td>
+                            <td>
                                 <span class="badge
                                     @if($task->status == 'Finished') bg-success
                                     @elseif($task->status == 'On Progress') bg-warning
@@ -35,19 +36,22 @@
                                     @endif">
                                     {{ $task->status }}
                                 </span>
-                </td>
-                <td>{{ $task->category->name }}</td>
-                <td>{{ \Carbon\Carbon::parse($task->start_date)->format('F d Y h:i A') }}</td>
-                <td>{{ \Carbon\Carbon::parse($task->end_date)->format('F d Y h:i A') }}</td>
-                <td>
-                    <button class="btn btn-info btn-sm" onclick="viewTask({{ $task->id }})">View</button>
-                    <button class="btn btn-warning btn-sm" onclick="editTask({{ $task->id }})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteTask({{ $task->id }})">Delete</button>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
+                            </td>
+                            <td>{{ $task->category->name }}</td>
+                            <td>{{ \Carbon\Carbon::parse($task->start_date)->format('F d Y h:i A') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($task->end_date)->format('F d Y h:i A') }}</td>
+                            <td>
+                                <button class="btn btn-info btn-sm" onclick="viewTask({{ $task->id }})">View</button>
+                                <button class="btn btn-warning btn-sm" onclick="editTask({{ $task->id }})">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteTask({{ $task->id }})">Delete</button>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')

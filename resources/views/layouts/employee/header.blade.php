@@ -44,7 +44,7 @@
                     <span class="align-middle">Inventory</span>
                 </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item" {{ request()->routeIs('admin.inventory.*') ? 'active' : '' }}>
                 <a class="sidebar-link" href="#">
                     <i class="align-middle" data-feather="file-text"></i>
                     <span class="align-middle">Logs</span>

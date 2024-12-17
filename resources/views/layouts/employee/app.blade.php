@@ -141,6 +141,36 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+
+        .log-properties-popup .swal2-content {
+            text-align: left;
+        }
+
+        .log-properties-container .comparison-table {
+            table-layout: fixed;
+        }
+
+        .log-properties-container .comparison-table td {
+            width: 50%;
+            vertical-align: middle;
+        }
+
+        .log-properties-container .comparison-table tr td:first-child {
+            border-right: 1px solid #dee2e6;
+        }
+
+        .log-properties-container .text-danger {
+            color: #dc3545 !important;
+        }
+
+        .log-properties-container .text-success {
+            color: #28a745 !important;
+        }
+
+        .log-properties-container em {
+            color: #6c757d;
+            font-style: italic;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>

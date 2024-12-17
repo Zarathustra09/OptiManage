@@ -1,40 +1,42 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Employees</h1>
-
-    <div class="mb-3">
-        <button class="btn btn-success" onclick="createEmployee()">Create Employee</button>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Employees</h2>
+                <button class="btn btn-success" onclick="createEmployee()">Create Employee</button>
+            </div>
+            <div class="card-body">
+                <table id="employeeTable" class="table table-hover table-striped">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($users as $user)
+                        <tr>
+                            <td>{{ $user->employee_id }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>{{ $user->phone_number }}</td>
+                            <td>
+                                <a href="{{ route('availabilities.show', $user->id) }}" class="btn btn-primary btn-sm">View Availability</a>
+                                <button class="btn btn-warning btn-sm" onclick="editUser({{ $user->id }})">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteUser({{ $user->id }})">Delete</button>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <table id="employeeTable" class="table table-striped">
-        <thead>
-        <tr>
-            <th>Employee ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone Number</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($users as $user)
-            <tr>
-                <td>{{ $user->employee_id }}</td>
-                <td>{{ $user->name }}</td>
-                <td>{{ $user->email }}</td>
-                <td>{{ $user->phone_number }}</td>
-                <td>
-                    <a href="{{ route('availabilities.show', $user->id) }}" class="btn btn-primary btn-sm">View Availability</a>
-                    <button class="btn btn-warning btn-sm" onclick="editUser({{ $user->id }})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteUser({{ $user->id }})">Delete</button>
-
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
-
 @endsection
 
 @push('scripts')

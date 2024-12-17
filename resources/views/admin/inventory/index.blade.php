@@ -1,39 +1,42 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Inventories</h1>
-
-    <div class="mb-3">
-        <button class="btn btn-success" onclick="createInventory()">Create Inventory</button>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Inventories</h2>
+                <button class="btn btn-success" onclick="createInventory()">Create Inventory</button>
+            </div>
+            <div class="card-body">
+                <table id="inventoryTable" class="table table-hover table-striped">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>Category</th>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($inventories as $inventory)
+                        <tr>
+                            <td>{{ $inventory->category->name }}</td>
+                            <td>{{ $inventory->name }}</td>
+                            <td>{{ $inventory->quantity }}</td>
+                            <td>{{ $inventory->description }}</td>
+                            <td>
+                                <button class="btn btn-info btn-sm" onclick="viewInventory({{ $inventory->id }})">View</button>
+                                <button class="btn btn-warning btn-sm" onclick="editInventory({{ $inventory->id }})">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteInventory({{ $inventory->id }})">Delete</button>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <table id="inventoryTable" class="table table-striped">
-        <thead>
-        <tr>
-            <th>Category</th>
-            <th>Name</th>
-            <th>Quantity</th>
-            <th>Description</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($inventories as $inventory)
-            <tr>
-                <td>{{ $inventory->category->name }}</td>
-                <td>{{ $inventory->name }}</td>
-                <td>{{ $inventory->quantity }}</td>
-                <td>{{ $inventory->description }}</td>
-                <td>
-                    <button class="btn btn-info btn-sm" onclick="viewInventory({{ $inventory->id }})">View</button>
-                    <button class="btn btn-warning btn-sm" onclick="editInventory({{ $inventory->id }})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteInventory({{ $inventory->id }})">Delete</button>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
-
 @endsection
 
 @push('scripts')

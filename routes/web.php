@@ -4,6 +4,7 @@ use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskCategoryController;
 use App\Http\Controllers\TaskController;
@@ -100,5 +101,6 @@ Route::get('/admin/taskCategory/{id}', [TaskCategoryController::class, 'show'])-
 Route::put('/admin/taskCategory/{id}', [TaskCategoryController::class, 'update'])->name('admin.taskCategory.update');
 Route::delete('/admin/taskCategory/{id}', [TaskCategoryController::class, 'destroy'])->name('admin.taskCategory.destroy');
 
+Route::get('/admin/logs', [LogController::class, 'index'])->name('admin.log.index');
 
 Route::get('/employee/home', [\App\Http\Controllers\Employee\HomeController::class, 'index'])->name('employee.home');

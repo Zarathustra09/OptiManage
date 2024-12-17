@@ -9,7 +9,7 @@ use Spatie\Activitylog\LogOptions;
 
 class Task extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
 
     protected $fillable = [
         'user_id', 'task_category_id', 'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'proof_of_work'
@@ -35,12 +35,12 @@ class Task extends Model
         return $this->belongsTo(TaskCategory::class, 'task_category_id');
     }
 
-    protected static $logAttributes = ['*'];
-    protected static $logName = 'task';
-
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['user_id', 'task_category_id', 'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'proof_of_work']);
-    }
+//    protected static $logAttributes = ['*'];
+//    protected static $logName = 'task';
+//
+//    public function getActivitylogOptions(): LogOptions
+//    {
+//        return LogOptions::defaults()
+//            ->logOnly(['user_id', 'task_category_id', 'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'proof_of_work']);
+//    }
 }

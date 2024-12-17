@@ -44,12 +44,13 @@
                     <span class="align-middle">Inventory</span>
                 </a>
             </li>
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="#">
+            <li class="sidebar-item {{ request()->routeIs('admin.log.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('admin.log.index') }}">
                     <i class="align-middle" data-feather="file-text"></i>
                     <span class="align-middle">Logs</span>
                 </a>
             </li>
+
             <li class="sidebar-header"> Employee Management </li>
             <li class="sidebar-item {{ request()->routeIs('admin.employee.*') || request()->routeIs('availabilities.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.employee.index') }}">
