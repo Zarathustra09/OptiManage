@@ -99,3 +99,6 @@ Route::post('/admin/taskCategory', [TaskCategoryController::class, 'store'])->na
 Route::get('/admin/taskCategory/{id}', [TaskCategoryController::class, 'show'])->name('admin.taskCategory.show');
 Route::put('/admin/taskCategory/{id}', [TaskCategoryController::class, 'update'])->name('admin.taskCategory.update');
 Route::delete('/admin/taskCategory/{id}', [TaskCategoryController::class, 'destroy'])->name('admin.taskCategory.destroy');
+
+
+Route::get('/employee/home', [\App\Http\Controllers\Employee\HomeController::class, 'index'])->name('employee.home');
