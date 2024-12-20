@@ -70,18 +70,8 @@ class EmployeeTaskController extends Controller
         $inventoryItems = json_decode($request->inventory_items, true);
 
         foreach ($inventoryItems as $item) {
-            $inventory = Inventory::findOrFail($item['inventory_id']);
-            if ($inventory->quantity < $item['quantity']) {
-                Log::error('Inventory out of stock', ['inventory_id' => $item['inventory_id'], 'requested_quantity' => $item['quantity'], 'available_quantity' => $inventory->quantity]);
-                return redirect()->back()->with('error', 'Selected inventory is out of stock.');
-            }
-
-            $inventory->quantity -= $item['quantity'];
-            $inventory->save();
-            Log::info('Inventory quantity updated', ['inventory_id' => $inventory->id, 'new_quantity' => $inventory->quantity]);
-
-            $task->inventories()->attach($inventory->id, ['quantity' => $item['quantity']]);
-            Log::info('Inventory attached to task', ['task_id' => $task->id, 'inventory_id' => $inventory->id, 'quantity' => $item['quantity']]);
+            $task->inventories()->attach($item['inventory_id'], ['quantity' => $item['quantity']]);
+            Log::info('Inventory attached to task', ['task_id' => $task->id, 'inventory_id' => $item['inventory_id'], 'quantity' => $item['quantity']]);
         }
 
         Log::info('Task creation process completed successfully', ['task_id' => $task->id]);

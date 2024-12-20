@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Inventory;
 use App\Models\Task;
 use App\Models\TaskCategory;
+use App\Models\TaskInventory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -68,7 +69,7 @@ class TaskController extends Controller
         }
 
         $task = Task::create(array_merge(
-            $request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date']), // Add task_category_id here
+            $request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date']),
             ['ticket_id' => $ticket_id, 'proof_of_work' => $proofOfWorkPath ?? null]
         ));
 
@@ -133,7 +134,26 @@ class TaskController extends Controller
             $task->proof_of_work = $proofOfWorkPath;
         }
 
-        $task->update($request->only(['title', 'description', 'status', 'task_category_id', 'start_date', 'end_date'])); // Add task_category_id here
+        $task->update($request->only(['title', 'description', 'status', 'task_category_id', 'start_date', 'end_date']));
+
+        $taskInventories = TaskInventory::where('task_id', $id)->get();
+
+        foreach ($taskInventories as $taskInventory) {
+            $inventory = Inventory::findOrFail($taskInventory->inventory_id);
+            if ($inventory->quantity < $taskInventory->quantity) {
+                Log::error('Inventory out of stock', ['inventory_id' => $taskInventory->inventory_id, 'requested_quantity' => $taskInventory->quantity, 'available_quantity' => $inventory->quantity]);
+                return response()->json(['error' => 'Selected inventory is out of stock.'], 422);
+            }
+
+            // Deduct inventory quantity
+            $inventory->quantity -= $taskInventory->quantity;
+            $inventory->save();
+            Log::info('Inventory quantity updated', ['inventory_id' => $inventory->id, 'new_quantity' => $inventory->quantity]);
+
+            // Attach inventory to task
+            $task->inventories()->syncWithoutDetaching([$inventory->id => ['quantity' => $taskInventory->quantity]]);
+            Log::info('Inventory attached to task', ['task_id' => $task->id, 'inventory_id' => $inventory->id, 'quantity' => $taskInventory->quantity]);
+        }
 
         return response()->json(['success' => 'Task has been updated successfully.']);
     }
