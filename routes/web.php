@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Employee\EmployeeTaskController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\LogController;
@@ -103,4 +104,17 @@ Route::delete('/admin/taskCategory/{id}', [TaskCategoryController::class, 'destr
 
 Route::get('/admin/logs', [LogController::class, 'index'])->name('admin.log.index');
 
+
+
 Route::get('/employee/home', [\App\Http\Controllers\Employee\HomeController::class, 'index'])->name('employee.home');
+
+//employee task
+
+Route::get('/employee/task', [EmployeeTaskController::class, 'index'])->name('employee.task.index');
+Route::get('/employee/task/create', [EmployeeTaskController::class, 'create'])->name('employee.task.create');
+Route::post('/employee/task', [EmployeeTaskController::class, 'store'])->name('employee.task.store');
+Route::get('/employee/task/{id}', [EmployeeTaskController::class, 'show'])->name('employee.task.show');
+Route::put('/employee/task/{id}', [EmployeeTaskController::class, 'update'])->name('employee.task.update');
+Route::delete('/employee/task/{id}', [EmployeeTaskController::class, 'destroy'])->name('employee.task.destroy');
+
+

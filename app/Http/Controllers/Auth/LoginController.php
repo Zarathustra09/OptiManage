@@ -10,20 +10,23 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    protected $redirectTo = '/home';
+    protected function redirectTo()
+    {
+        $role = auth()->user()->role_id;
+
+        switch ($role) {
+            case 0:
+                return '/employee/home';
+            case 1:
+                return '/home';
+            default:
+                return '/';
+        }
+    }
 
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
-    }
-
-    protected function authenticated(Request $request, $user)
-    {
-        if ($user->role_id == 0) {
-            return redirect()->route('employee.home');
-        } else if ($user->role_id == 1) {
-            return redirect()->route('home');
-        }
     }
 }
