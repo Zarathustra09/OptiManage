@@ -18,8 +18,8 @@
                 </a>
             </li>
 
-            <li class="sidebar-item {{ request()->routeIs('admin.teamTask.*') ? 'active' : '' }} ">
-                <a class="sidebar-link" href="#">
+            <li class="sidebar-item {{ request()->routeIs('employee.teamTask.*') ? 'active' : '' }} ">
+                <a class="sidebar-link" href="{{route('employee.teamTask.index')}}">
                     <i class="align-middle" data-feather="users"></i>
                     <span class="align-middle">Team Task</span>
                 </a>

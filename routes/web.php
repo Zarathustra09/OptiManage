@@ -3,6 +3,7 @@
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Employee\EmployeeTaskController;
+use App\Http\Controllers\Employee\EmployeeTeamTaskController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\LogController;
@@ -116,5 +117,9 @@ Route::post('/employee/task', [EmployeeTaskController::class, 'store'])->name('e
 Route::get('/employee/task/{id}', [EmployeeTaskController::class, 'show'])->name('employee.task.show');
 Route::put('/employee/task/{id}', [EmployeeTaskController::class, 'update'])->name('employee.task.update');
 Route::delete('/employee/task/{id}', [EmployeeTaskController::class, 'destroy'])->name('employee.task.destroy');
+
+
+Route::get('/employee/team-task', [EmployeeTeamTaskController::class, 'index'])->name('employee.teamTask.index');
+Route::get('/employee/team-task/{id}', [EmployeeTeamTaskController::class, 'show'])->name('employee.teamTask.show');
 
 
