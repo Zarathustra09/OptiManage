@@ -40,7 +40,7 @@ class HomeController extends Controller
      */
     private function getEmployeeCount()
     {
-        return User::where('role_id', 1)->count();
+        return User::where('role_id', 0)->count();
     }
 
     /**

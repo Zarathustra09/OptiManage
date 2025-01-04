@@ -29,7 +29,7 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Auth::routes();
+Auth::routes(['register' => false]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -121,5 +121,6 @@ Route::delete('/employee/task/{id}', [EmployeeTaskController::class, 'destroy'])
 
 Route::get('/employee/team-task', [EmployeeTeamTaskController::class, 'index'])->name('employee.teamTask.index');
 Route::get('/employee/team-task/{id}', [EmployeeTeamTaskController::class, 'show'])->name('employee.teamTask.show');
+Route::put('/employee/team-task/{id}', [EmployeeTeamTaskController::class, 'update'])->name('employee.task.update');
 
 

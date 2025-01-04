@@ -1,7 +1,6 @@
-@extends('layouts.app')
+@extends(auth()->user()->role_id == 1 ? 'layouts.app' : 'layouts.employee.app')
 
 @section('content')
-
     <style>
         .profile-image {
             object-fit: cover;
@@ -127,12 +126,7 @@
             </div>
         </div>
     </div>
-
-
-
-
 @endsection
-
 
 @push('scripts')
     <script>

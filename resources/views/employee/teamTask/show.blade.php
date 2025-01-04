@@ -48,6 +48,17 @@
                                         </div>
                                     </div>
                                 @endif
+
+                                <!-- Form to update proof of work -->
+                                <form id="updateProofOfWorkForm" enctype="multipart/form-data">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="mb-3">
+                                        <label for="proof_of_work" class="form-label">Update Proof of Work</label>
+                                        <input type="file" class="form-control" id="proof_of_work" name="proof_of_work" accept="image/*" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </form>
                             </div>
 
                             <div class="col-md-4">
@@ -117,6 +128,38 @@
     <script>
         $(document).ready(function() {
             $('#assigneesTable').DataTable();
+        });
+
+        $('#updateProofOfWorkForm').on('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            $.ajax({
+                url: '{{ route("employee.task.update", $task->id) }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-HTTP-Method-Override': 'PUT',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Updated!',
+                        text: response.success,
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.responseJSON.message,
+                        icon: 'error'
+                    });
+                }
+            });
         });
     </script>
 @endpush

@@ -3,10 +3,10 @@
 @section('content')
     <div class="container-fluid">
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h2 class="mb-0">Tasks</h2>
-                <button class="btn btn-success" onclick="createTask()">Create Task</button>
-            </div>
+{{--            <div class="card-header d-flex justify-content-between align-items-center">--}}
+{{--                <h2 class="mb-0">Tasks</h2>--}}
+{{--                <button class="btn btn-success" onclick="createTask()">Create Task</button>--}}
+{{--            </div>--}}
             <div class="card-body">
                 <table id="taskTable" class="table table-hover table-striped">
                     <thead class="thead-light">
