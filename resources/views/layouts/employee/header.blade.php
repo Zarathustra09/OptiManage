@@ -26,8 +26,8 @@
             </li>
 
             <li class="sidebar-header"> Resource Management </li>
-            <li class="sidebar-item {{ request()->routeIs('admin.inventory.*') ? 'active' : '' }}">
-                <a class="sidebar-link" href="#">
+            <li class="sidebar-item {{ request()->routeIs('employee.log.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{route('employee.log.index')}}">
                     <i class="align-middle" data-feather="archive"></i>
                     <span class="align-middle">Inventory</span>
                 </a>

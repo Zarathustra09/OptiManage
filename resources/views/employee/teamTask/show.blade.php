@@ -78,6 +78,7 @@
                                                     <span class="badge bg-primary rounded-pill">
                                                         Qty: {{ $inventory->pivot->quantity }}
                                                     </span>
+                                                    <button class="btn btn-danger btn-sm" onclick="returnSingleItem({{ $task->id }}, {{ $inventory->id }})">Return</button>
                                                 </div>
                                             @empty
                                                 <div class="list-group-item text-center text-muted">
@@ -85,6 +86,9 @@
                                                 </div>
                                             @endforelse
                                         </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-danger" onclick="returnAllItems({{ $task->id }})">Return All Items</button>
                                     </div>
                                 </div>
                             </div>
@@ -161,5 +165,80 @@
                 }
             });
         });
+
+        function returnSingleItem(teamTaskId, inventoryId) {
+            Swal.fire({
+                title: 'Enter quantity to return',
+                input: 'number',
+                inputAttributes: {
+                    min: 1,
+                    step: 1
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Return',
+                showLoaderOnConfirm: true,
+                preConfirm: (quantity) => {
+                    return $.ajax({
+                        url: `/item/return-single/${teamTaskId}/${inventoryId}/${quantity}`,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    }).then(response => {
+                        Swal.fire(
+                            'Returned!',
+                            response.success,
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    }).catch(error => {
+                        Swal.fire(
+                            'Error!',
+                            error.responseJSON.message,
+                            'error'
+                        );
+                    });
+                }
+            });
+        }
+
+        function returnAllItems(teamTaskId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You are about to return all items.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, return all!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/item/return-all/${teamTaskId}`,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                'Returned!',
+                                response.success,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(response) {
+                            Swal.fire(
+                                'Error!',
+                                response.responseJSON.message,
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        }
     </script>
 @endpush

@@ -67,6 +67,9 @@
                                                     <span class="badge bg-primary rounded-pill">
                                                         Qty: {{ $inventory->pivot->quantity }}
                                                     </span>
+                                                    <button class="btn btn-danger btn-sm" onclick="removeInventoryItem({{ $task->id }}, {{ $inventory->id }})">
+                                                        <i class="fas fa-trash me-1"></i>Remove
+                                                    </button>
                                                 </div>
                                             @empty
                                                 <div class="list-group-item text-center text-muted">
@@ -74,6 +77,11 @@
                                                 </div>
                                             @endforelse
                                         </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-sm btn-success" onclick="addInventoryItem()">
+                                            <i class="fas fa-plus me-1"></i>Add Inventory Item
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -121,6 +129,7 @@
         </div>
     </div>
 @endsection
+
 @push('scripts')
     <script>
         $(document).ready(function() {
@@ -223,6 +232,112 @@
                     });
                 }
             });
+        }
+
+        function addInventoryItem() {
+            fetchInventories().then(inventories => {
+                let inventoryOptions = inventories.map(inventory => `<option value="${inventory.id}">${inventory.name} (${inventory.quantity} available)</option>`).join('');
+                Swal.fire({
+                    title: 'Add Inventory Item',
+                    html: `
+                        <select id="swal-inventory-id" class="swal2-input">
+                            ${inventoryOptions}
+                        </select>
+                        <input id="swal-quantity" class="swal2-input" type="number" placeholder="Quantity" min="1" required>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Add',
+                    cancelButtonText: 'Cancel',
+                    preConfirm: () => {
+                        let inventoryId = document.getElementById('swal-inventory-id').value;
+                        let quantity = document.getElementById('swal-quantity').value;
+                        if (quantity <= 0) {
+                            Swal.showValidationMessage('Quantity must be greater than 0');
+                            return false;
+                        }
+                        return {
+                            team_task_id: '{{ $task->id }}',
+                            inventory_id: inventoryId,
+                            quantity: quantity
+                        };
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        storeInventoryItem(result.value);
+                    }
+                });
+            });
+        }
+
+        function storeInventoryItem(data) {
+            $.ajax({
+                url: '{{ route("admin.teamTaskInventory.store") }}',
+                type: 'POST',
+                data: data,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Added!',
+                        text: 'Inventory item has been added successfully.',
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was an error adding the inventory item.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+
+        function removeInventoryItem(teamTaskId, inventoryId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, remove it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ route("admin.teamTaskInventory.remove", "") }}/' + teamTaskId,
+                        type: 'DELETE',
+                        data: {
+                            inventory_id: inventoryId,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Removed!',
+                                text: 'Inventory item has been removed successfully.',
+                                icon: 'success'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(response) {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'There was an error removing the inventory item.',
+                                icon: 'error'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        async function fetchInventories() {
+            let response = await fetch('{{ route('admin.inventory.list') }}');
+            return await response.json();
         }
     </script>
 @endpush

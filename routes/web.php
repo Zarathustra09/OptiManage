@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Employee\EmployeeItemController;
+use App\Http\Controllers\Employee\EmployeeLogController;
 use App\Http\Controllers\Employee\EmployeeTaskController;
 use App\Http\Controllers\Employee\EmployeeTeamTaskController;
 use App\Http\Controllers\EmployeeController;
@@ -91,6 +93,10 @@ Route::put('/admin/team-task/{id}', [TeamTaskController::class, 'update'])->name
 Route::delete('/admin/team-task/{id}', [TeamTaskController::class, 'destroy'])->name('admin.teamTask.destroy');
 
 
+Route::post('/admin/team-task/add-inventory-item', [TeamTaskController::class, 'addInventoryItem'])->name('admin.teamTaskInventory.store');
+Route::delete('/admin/team-task/remove-inventory-item/{id}', [TeamTaskController::class, 'removeInventoryItem'])->name('admin.teamTaskInventory.remove');
+
+
 Route::get('/admin/team-assignee', [TeamAssigneeController::class, 'index'])->name('admin.teamAssignee.index');
 Route::post('/admin/team-assignee', [TeamAssigneeController::class, 'store'])->name('admin.teamAssignee.store');
 Route::get('/admin/team-assignee/{id}', [TeamAssigneeController::class, 'show'])->name('admin.teamAssignee.show');
@@ -123,4 +129,9 @@ Route::get('/employee/team-task', [EmployeeTeamTaskController::class, 'index'])-
 Route::get('/employee/team-task/{id}', [EmployeeTeamTaskController::class, 'show'])->name('employee.teamTask.show');
 Route::put('/employee/team-task/{id}', [EmployeeTeamTaskController::class, 'update'])->name('employee.task.update');
 
+
+Route::post('item/return-single/{teamTaskId}/{inventoryId}/{quantity}', [EmployeeItemController::class, 'returnSingle'])->name('employee.item.returnSingle');
+Route::post('item/return-all/{teamTaskId}', [EmployeeItemController::class, 'returnAll'])->name('employee.item.returnAll');
+
+Route::get('/employee/logs', [EmployeeLogController::class, 'index'])->name('employee.log.index');
 
