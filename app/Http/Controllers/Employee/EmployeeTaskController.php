@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Inventory;
 use App\Models\Task;
 use App\Models\TaskCategory;
+use App\Models\TaskImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -79,31 +80,33 @@ class EmployeeTaskController extends Controller
         return redirect()->route('employee.task.index')->with('success', 'Task has been created successfully.');
     }
 
+
     public function update(Request $request, $id)
     {
         $request->validate([
             'proof_of_work' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Log the task ID
-        Log::info('Update function called', ['task_id' => $id]);
-
-        // Attempt to find the task by its ID
         $task = Task::findOrFail($id);
 
-        // Delete the old proof of work if it exists
         if ($task->proof_of_work) {
             Storage::delete('public/' . $task->proof_of_work);
         }
 
-        // Store the new proof of work
         $filePath = $request->file('proof_of_work')->store('proof_of_work', 'public');
 
-        // Update the task with the new proof of work path
         $task->proof_of_work = $filePath;
         $task->save();
 
-        return response()->json(['success' => 'Proof of work updated successfully.']);
+        if ($request->hasFile('task_image')) {
+            $imagePath = $request->file('task_image')->store('task_images', 'public');
+            TaskImage::create([
+                'task_id' => $task->id,
+                'image_path' => $imagePath,
+            ]);
+        }
+
+        return response()->json(['success' => 'Proof of work and task image updated successfully.']);
     }
     public function show($id)
     {

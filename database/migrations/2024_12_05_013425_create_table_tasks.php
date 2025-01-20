@@ -19,7 +19,6 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->enum('status', ['To be Approved', 'On Progress', 'Finished', 'Cancel'])->default('To be Approved');
             $table->string('ticket_id')->unique();
-            $table->string('proof_of_work')->nullable();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
             $table->timestamps();

@@ -38,8 +38,6 @@
                                     </div>
                                 </div>
 
-
-
                                 @if($task->proof_of_work)
                                     <div class="mb-3">
                                         <div class="card">
@@ -51,15 +49,32 @@
                                     </div>
                                 @endif
 
-                                <form id="updateProofOfWorkForm" enctype="multipart/form-data" method="POST" action="{{ route('employee.task.update', $task->id) }}">
+                                <form id="updateProofOfWorkForm" enctype="multipart/form-data" method="POST" action="{{ route('image.store', ['taskId' => $task->id]) }}">
                                     @csrf
-                                    @method('PUT')
                                     <div class="mb-3">
-                                        <label for="proof_of_work" class="form-label">Update Proof of Work</label>
-                                        <input type="file" class="form-control" id="proof_of_work" name="proof_of_work" accept="image/*" required>
+                                        <label for="task_image" class="form-label">Upload Task Image</label>
+                                        <input type="file" class="form-control" id="task_image" name="image" accept="image/*">
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    <button type="submit" class="btn btn-primary">Upload</button>
                                 </form>
+
+                                <div class="mt-4">
+                                    <h5>Task Images</h5>
+                                    <div class="row">
+                                        @foreach($task->images as $image)
+                                            <div class="col-md-4 mb-3">
+                                                <div class="card">
+                                                    <img src="/storage/{{ $image->image_path }}" class="card-img-top" alt="Task Image">
+                                                    <div class="card-body text-center">
+                                                        <button class="btn btn-danger btn-sm" onclick="deleteImage({{ $image->id }})">
+                                                            <i class="fas fa-trash-alt"></i> Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="col-md-4">
@@ -107,19 +122,18 @@
             e.preventDefault();
             let formData = new FormData(this);
             $.ajax({
-                url: '{{ route("image.update", $task->id) }}',
+                url: '{{ route("image.store", ["taskId" => $task->id]) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,
                 headers: {
-                    'X-HTTP-Method-Override': 'PUT',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 success: function(response) {
                     console.log('AJAX request succeeded:', response);
                     Swal.fire({
-                        title: 'Updated!',
+                        title: 'Uploaded!',
                         text: response.success,
                         icon: 'success'
                     }).then(() => {
@@ -194,6 +208,44 @@
                         success: function(response) {
                             Swal.fire(
                                 'Returned!',
+                                response.success,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(response) {
+                            Swal.fire(
+                                'Error!',
+                                response.responseJSON.message,
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        }
+
+        function deleteImage(imageId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/api/delete/image/${imageId}`,
+                        type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                'Deleted!',
                                 response.success,
                                 'success'
                             ).then(() => {

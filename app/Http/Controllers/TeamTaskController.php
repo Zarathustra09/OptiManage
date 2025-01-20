@@ -71,41 +71,60 @@ class TeamTaskController extends Controller
         return redirect()->route('admin.teamTask.index')->with('success', 'Team Task created successfully.');
     }
 
-    public function update(Request $request, $id)
-    {
-        Log::info('Update function called', ['request' => $request->all(), 'team_task_id' => $id]);
+//    public function update(Request $request, $id)
+//    {
+//        Log::info('Update function called', ['request' => $request->all(), 'team_task_id' => $id]);
+//
+//        $request->validate([
+//            'title' => 'required|string|max:255',
+//            'description' => 'nullable|string',
+//            'status' => 'required|string|max:50',
+//            'start_date' => 'nullable|date',
+//            'end_date' => 'nullable|date',
+//            'proof_of_work' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+//            'task_category_id' => 'required|exists:task_categories,id',
+//        ]);
+//
+//        Log::info('Validation passed');
+//
+//        $task = TeamTask::findOrFail($id);
+//        $data = $request->all();
+//        if ($request->hasFile('proof_of_work')) {
+//            $file = $request->file('proof_of_work');
+//            $path = $file->store('proof_of_work', 'public');
+//            $data['proof_of_work'] = $path;
+//            Log::info('Proof of work uploaded', ['path' => $path]);
+//        }
+//
+//        $task->update($data);
+//        Log::info('Team task updated', ['team_task_id' => $task->id]);
+//
+//        return redirect()->route('admin.teamTask.index')->with('success', 'Team Task updated successfully.');
+//    }
 
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|string|max:50',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
-            'proof_of_work' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'task_category_id' => 'required|exists:task_categories,id',
-        ]);
 
-        Log::info('Validation passed');
+public function update(Request $request, $id)
+{
+    Log::info('Update function called', ['request' => $request->all(), 'team_task_id' => $id]);
 
-        $task = TeamTask::findOrFail($id);
-        $data = $request->all();
-        if ($request->hasFile('proof_of_work')) {
-            $file = $request->file('proof_of_work');
-            $path = $file->store('proof_of_work', 'public');
-            $data['proof_of_work'] = $path;
-            Log::info('Proof of work uploaded', ['path' => $path]);
-        }
+    $request->validate([
+        'status' => 'required|string|in:To be Approved,On Progress,Finished,Cancel',
+    ]);
 
-        $task->update($data);
-        Log::info('Team task updated', ['team_task_id' => $task->id]);
+    Log::info('Validation passed');
 
-        return redirect()->route('admin.teamTask.index')->with('success', 'Team Task updated successfully.');
-    }
+    $task = TeamTask::findOrFail($id);
+    $task->update(['status' => $request->status]);
+
+    Log::info('Team task status updated', ['team_task_id' => $task->id, 'status' => $task->status]);
+
+    return response()->json(['success' => 'Team Task status has been updated successfully.']);
+}
     public function show($id)
     {
-        $task = TeamTask::with(['assignees.user', 'inventories'])->findOrFail($id);
+        $teamTask = TeamTask::with(['assignees.user', 'inventories', 'images'])->findOrFail($id);
         $employees = User::where('role_id', 0)->get(['id', 'name']);
-        return view('admin.teamTask.show', compact('task', 'employees'));
+        return view('admin.teamTask.show', compact('teamTask', 'employees'));
     }
 
     public function showSingle($id)

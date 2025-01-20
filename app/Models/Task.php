@@ -12,7 +12,7 @@ class Task extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'task_category_id', 'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'proof_of_work'
+        'user_id', 'task_category_id', 'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date'
     ];
 
     protected $casts = [
@@ -35,12 +35,8 @@ class Task extends Model
         return $this->belongsTo(TaskCategory::class, 'task_category_id');
     }
 
-//    protected static $logAttributes = ['*'];
-//    protected static $logName = 'task';
-//
-//    public function getActivitylogOptions(): LogOptions
-//    {
-//        return LogOptions::defaults()
-//            ->logOnly(['user_id', 'task_category_id', 'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'proof_of_work']);
-//    }
+    public function images()
+    {
+        return $this->hasMany(TaskImage::class);
+    }
 }

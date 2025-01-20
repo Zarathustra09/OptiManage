@@ -1,4 +1,4 @@
-@extends('layouts.employee.app')
+@extends('layouts.app')
 
 @section('content')
     <div class="container-fluid p-4">
@@ -6,14 +6,14 @@
             <div class="col-12">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h1 class="h3 mb-0">Team Task Details</h1>
-                        <span class="badge bg-light text-primary">{{ $teamTask->status }}</span>
+                        <h1 class="h3 mb-0">Task Details</h1>
+                        <span class="badge bg-light text-primary">{{ $task->status }}</span>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-8">
-                                <h2 class="h4 text-primary mb-3">{{ $teamTask->title }}</h2>
-                                <p class="text-muted mb-3">{{ $teamTask->description }}</p>
+                                <h2 class="h4 text-primary mb-3">{{ $task->title }}</h2>
+                                <p class="text-muted mb-3">{{ $task->description }}</p>
 
                                 <div class="row mb-3">
                                     <div class="col-md-6">
@@ -21,7 +21,7 @@
                                             <div class="card-header bg-info text-white">Start Date</div>
                                             <div class="card-body p-2">
                                                 <p class="card-text text-center">
-                                                    {{ \Carbon\Carbon::parse($teamTask->start_date)->format('F d, Y h:i A') }}
+                                                    {{ \Carbon\Carbon::parse($task->start_date)->format('F d, Y h:i A') }}
                                                 </p>
                                             </div>
                                         </div>
@@ -31,32 +31,42 @@
                                             <div class="card-header bg-warning text-white">End Date</div>
                                             <div class="card-body p-2">
                                                 <p class="card-text text-center">
-                                                    {{ \Carbon\Carbon::parse($teamTask->end_date)->format('F d, Y h:i A') }}
+                                                    {{ \Carbon\Carbon::parse($task->end_date)->format('F d, Y h:i A') }}
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Form to upload team task image -->
-                                <form id="uploadTeamTaskImageForm" enctype="multipart/form-data">
+                                @if($task->proof_of_work)
+                                    <div class="mb-3">
+                                        <div class="card">
+                                            <div class="card-header bg-secondary text-white">Proof of Work</div>
+                                            <div class="card-body p-2">
+                                                <img src="/storage/{{ $task->proof_of_work }}" alt="Proof of Work" class="img-fluid rounded">
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <form id="updateProofOfWorkForm" enctype="multipart/form-data" method="POST" action="{{ route('image.store', ['taskId' => $task->id]) }}">
                                     @csrf
                                     <div class="mb-3">
-                                        <label for="team_task_image" class="form-label">Upload Task Image</label>
-                                        <input type="file" class="form-control" id="team_task_image" name="image" accept="image/*" required>
+                                        <label for="task_image" class="form-label">Upload Task Image</label>
+                                        <input type="file" class="form-control" id="task_image" name="image" accept="image/*">
                                     </div>
                                     <button type="submit" class="btn btn-primary">Upload</button>
                                 </form>
 
                                 <div class="mt-4">
-                                    <h5>Team Task Images</h5>
+                                    <h5>Task Images</h5>
                                     <div class="row">
-                                        @foreach($teamTask->images as $image)
+                                        @foreach($task->images as $image)
                                             <div class="col-md-4 mb-3">
                                                 <div class="card">
-                                                    <img src="/storage/{{ $image->image_path }}" class="card-img-top" alt="Team Task Image">
+                                                    <img src="/storage/{{ $image->image_path }}" class="card-img-top" alt="Task Image">
                                                     <div class="card-body text-center">
-                                                        <button class="btn btn-danger btn-sm" onclick="deleteTeamTaskImage({{ $image->id }})">
+                                                        <button class="btn btn-danger btn-sm" onclick="deleteImage({{ $image->id }})">
                                                             <i class="fas fa-trash-alt"></i> Delete
                                                         </button>
                                                     </div>
@@ -71,11 +81,11 @@
                                 <div class="card h-100">
                                     <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                                         Inventory Items
-                                        <span class="badge bg-light text-success">{{ $teamTask->inventories->count() }} Items</span>
+                                        <span class="badge bg-light text-success">{{ $task->inventories->count() }} Items</span>
                                     </div>
                                     <div class="card-body p-0">
                                         <div class="list-group list-group-flush">
-                                            @forelse($teamTask->inventories as $inventory)
+                                            @forelse($task->inventories as $inventory)
                                                 <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                                                     <div>
                                                         <h6 class="mb-1">{{ $inventory->name }}</h6>
@@ -84,7 +94,7 @@
                                                     <span class="badge bg-primary rounded-pill">
                                                         Qty: {{ $inventory->pivot->quantity }}
                                                     </span>
-                                                    <button class="btn btn-danger btn-sm" onclick="returnSingleItem({{ $teamTask->id }}, {{ $inventory->id }})">Return</button>
+                                                    <button class="btn btn-danger btn-sm" onclick="returnSingleTaskItem({{ $task->id }}, {{ $inventory->id }})">Return</button>
                                                 </div>
                                             @empty
                                                 <div class="list-group-item text-center text-muted">
@@ -94,38 +104,10 @@
                                         </div>
                                     </div>
                                     <div class="card-footer">
-                                        <button class="btn btn-danger" onclick="returnAllItems({{ $teamTask->id }})">Return All Items</button>
+                                        <button class="btn btn-danger" onclick="returnAllTaskItems({{ $task->id }})">Return All Items</button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card shadow-sm">
-                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-                        <h3 class="h4 mb-0">Assignees</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="assigneesTable" class="table table-hover">
-                                <thead class="table-light">
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Employee ID</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($teamTask->assignees as $assignee)
-                                    <tr>
-                                        <td>{{ $assignee->user->name }}</td>
-                                        <td>{{ $assignee->user->email }}</td>
-                                        <td>{{ $assignee->user->employee_id }}</td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
@@ -136,15 +118,11 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
-            $('#assigneesTable').DataTable();
-        });
-
-        $('#uploadTeamTaskImageForm').on('submit', function(e) {
+        $('#updateProofOfWorkForm').on('submit', function(e) {
             e.preventDefault();
             let formData = new FormData(this);
             $.ajax({
-                url: '{{ route("teamTaskImage.store", ["teamTaskId" => $teamTask->id]) }}',
+                url: '{{ route("image.store", ["taskId" => $task->id]) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -153,6 +131,7 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 success: function(response) {
+                    console.log('AJAX request succeeded:', response);
                     Swal.fire({
                         title: 'Uploaded!',
                         text: response.success,
@@ -162,6 +141,7 @@
                     });
                 },
                 error: function(response) {
+                    console.error('AJAX request failed:', response);
                     Swal.fire({
                         title: 'Error!',
                         text: response.responseJSON.message,
@@ -171,45 +151,7 @@
             });
         });
 
-        function deleteTeamTaskImage(imageId) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: `/api/delete/team-task-image/${imageId}`,
-                        type: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            Swal.fire(
-                                'Deleted!',
-                                response.success,
-                                'success'
-                            ).then(() => {
-                                location.reload();
-                            });
-                        },
-                        error: function(response) {
-                            Swal.fire(
-                                'Error!',
-                                response.responseJSON.message,
-                                'error'
-                            );
-                        }
-                    });
-                }
-            });
-        }
-
-        function returnSingleItem(teamTaskId, inventoryId) {
+        function returnSingleTaskItem(taskId, inventoryId) {
             Swal.fire({
                 title: 'Enter quantity to return',
                 input: 'number',
@@ -222,7 +164,7 @@
                 showLoaderOnConfirm: true,
                 preConfirm: (quantity) => {
                     return $.ajax({
-                        url: `/item/return-single/${teamTaskId}/${inventoryId}/${quantity}`,
+                        url: `/item/return-single-task-item/${taskId}/${inventoryId}/${quantity}`,
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -246,7 +188,7 @@
             });
         }
 
-        function returnAllItems(teamTaskId) {
+        function returnAllTaskItems(taskId) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You are about to return all items.",
@@ -258,7 +200,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `/item/return-all/${teamTaskId}`,
+                        url: `/item/return-all-task-items/${taskId}`,
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -266,6 +208,44 @@
                         success: function(response) {
                             Swal.fire(
                                 'Returned!',
+                                response.success,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(response) {
+                            Swal.fire(
+                                'Error!',
+                                response.responseJSON.message,
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        }
+
+        function deleteImage(imageId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/api/delete/image/${imageId}`,
+                        type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                'Deleted!',
                                 response.success,
                                 'success'
                             ).then(() => {
