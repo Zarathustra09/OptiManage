@@ -80,13 +80,6 @@
             <div class="alert alert-danger">{{ $message }}</div>
             @enderror
         </div>
-        <div class="form-group">
-            <label for="proof_of_work">Proof of Work</label>
-            <input type="file" class="form-control" id="proof_of_work" name="proof_of_work" accept="image/*" required>
-            @error('proof_of_work')
-            <div class="alert alert-danger">{{ $message }}</div>
-            @enderror
-        </div>
         <button type="submit" class="btn btn-primary">Create Task</button>
     </form>
 

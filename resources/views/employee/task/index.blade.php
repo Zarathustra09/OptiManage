@@ -87,18 +87,22 @@
         }
 
         function viewTask(taskId) {
-            $.get('/employee/task/' + taskId, function(task) {
-                let content = task.proof_of_work
-                    ? `<img src="/storage/${task.proof_of_work}" alt="Proof of Work" style="max-width: 100%;">`
-                    : 'No Proof of Work';
-
-                Swal.fire({
-                    title: 'Proof of Work',
-                    html: content,
-                    icon: 'info'
-                });
-            });
+            window.location.href = "{{ route('employee.task.showSingle', ':id') }}".replace(':id', taskId);
         }
+
+        // function viewTask(taskId) {
+        //     $.get('/employee/task/' + taskId, function(task) {
+        //         let content = task.proof_of_work
+        //             ? `<img src="/storage/${task.proof_of_work}" alt="Proof of Work" style="max-width: 100%;">`
+        //             : 'No Proof of Work';
+        //
+        //         Swal.fire({
+        //             title: 'Proof of Work',
+        //             html: content,
+        //             icon: 'info'
+        //         });
+        //     });
+        // }
 
         function editTask(taskId) {
             $.get('/employee/task/' + taskId, function(task) {
@@ -197,5 +201,7 @@
                 }
             });
         }
+
+
     </script>
 @endpush

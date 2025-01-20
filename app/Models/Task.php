@@ -27,7 +27,7 @@ class Task extends Model
 
     public function inventories()
     {
-        return $this->belongsToMany(Inventory::class, 'task_inventory');
+        return $this->belongsToMany(Inventory::class, 'task_inventory')->withPivot('quantity');
     }
 
     public function category()

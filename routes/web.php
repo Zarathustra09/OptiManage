@@ -121,8 +121,8 @@ Route::get('/employee/task', [EmployeeTaskController::class, 'index'])->name('em
 Route::get('/employee/task/create', [EmployeeTaskController::class, 'create'])->name('employee.task.create');
 Route::post('/employee/task', [EmployeeTaskController::class, 'store'])->name('employee.task.store');
 Route::get('/employee/task/{id}', [EmployeeTaskController::class, 'show'])->name('employee.task.show');
-Route::put('/employee/task/{id}', [EmployeeTaskController::class, 'update'])->name('employee.task.update');
 Route::delete('/employee/task/{id}', [EmployeeTaskController::class, 'destroy'])->name('employee.task.destroy');
+Route::get('/employee/task/showSingle/{id}', [EmployeeTaskController::class, 'showSingle'])->name('employee.task.showSingle');
 
 
 Route::get('/employee/team-task', [EmployeeTeamTaskController::class, 'index'])->name('employee.teamTask.index');
@@ -132,6 +132,8 @@ Route::put('/employee/team-task/{id}', [EmployeeTeamTaskController::class, 'upda
 
 Route::post('item/return-single/{teamTaskId}/{inventoryId}/{quantity}', [EmployeeItemController::class, 'returnSingle'])->name('employee.item.returnSingle');
 Route::post('item/return-all/{teamTaskId}', [EmployeeItemController::class, 'returnAll'])->name('employee.item.returnAll');
+Route::post('item/return-single-task-item/{taskId}/{inventoryId}/{quantity}', [EmployeeItemController::class, 'returnSingleTaskItem'])->name('employee.item.returnSingleTaskItem');
+Route::post('item/return-all-task-items/{taskId}', [EmployeeItemController::class, 'returnAllTaskItems'])->name('employee.item.returnAllTaskItems');
 
 Route::get('/employee/logs', [EmployeeLogController::class, 'index'])->name('employee.log.index');
 

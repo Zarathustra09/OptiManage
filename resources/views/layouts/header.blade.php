@@ -59,14 +59,5 @@
                 </a>
             </li>
         </ul>
-        <div class="sidebar-cta">
-            <div class="sidebar-cta-content">
-                <strong class="d-inline-block mb-2">Welcome to OptiManage</strong>
-                <div class="mb-3 text-sm"> We're glad to have you here! Explore the dashboard and discover all its features. </div>
-                <div class="d-grid">
-                    <a href="{{ route('home') }}" class="btn btn-primary">Go to Dashboard</a>
-                </div>
-            </div>
-        </div>
     </div>
 </nav>

@@ -40,7 +40,6 @@ class TaskController extends Controller
             'inventory_items' => 'required|json',
             'start_date' => 'nullable|date_format:Y-m-d\TH:i',
             'end_date' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
-            'proof_of_work' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         Log::info('Validation passed');
@@ -64,13 +63,9 @@ class TaskController extends Controller
         $ticket_id = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5)) . '-' . substr(str_shuffle('0123456789'), 0, 5);
         Log::info('Generated ticket ID', ['ticket_id' => $ticket_id]);
 
-        if ($request->hasFile('proof_of_work')) {
-            $proofOfWorkPath = $request->file('proof_of_work')->store('proof_of_work', 'public');
-        }
-
         $task = Task::create(array_merge(
             $request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date']),
-            ['ticket_id' => $ticket_id, 'proof_of_work' => $proofOfWorkPath ?? null]
+            ['ticket_id' => $ticket_id]
         ));
 
         Log::info('Task created', ['task_id' => $task->id]);

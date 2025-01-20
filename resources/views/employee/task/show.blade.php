@@ -1,0 +1,215 @@
+@extends('layouts.employee.app')
+
+@section('content')
+    <div class="container-fluid p-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h1 class="h3 mb-0">Task Details</h1>
+                        <span class="badge bg-light text-primary">{{ $task->status }}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h2 class="h4 text-primary mb-3">{{ $task->title }}</h2>
+                                <p class="text-muted mb-3">{{ $task->description }}</p>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="card border-info mb-3">
+                                            <div class="card-header bg-info text-white">Start Date</div>
+                                            <div class="card-body p-2">
+                                                <p class="card-text text-center">
+                                                    {{ \Carbon\Carbon::parse($task->start_date)->format('F d, Y h:i A') }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card border-warning mb-3">
+                                            <div class="card-header bg-warning text-white">End Date</div>
+                                            <div class="card-body p-2">
+                                                <p class="card-text text-center">
+                                                    {{ \Carbon\Carbon::parse($task->end_date)->format('F d, Y h:i A') }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                @if($task->proof_of_work)
+                                    <div class="mb-3">
+                                        <div class="card">
+                                            <div class="card-header bg-secondary text-white">Proof of Work</div>
+                                            <div class="card-body p-2">
+                                                <img src="/storage/{{ $task->proof_of_work }}" alt="Proof of Work" class="img-fluid rounded">
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <form id="updateProofOfWorkForm" enctype="multipart/form-data" method="POST" action="{{ route('employee.task.update', $task->id) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="mb-3">
+                                        <label for="proof_of_work" class="form-label">Update Proof of Work</label>
+                                        <input type="file" class="form-control" id="proof_of_work" name="proof_of_work" accept="image/*" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </form>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                                        Inventory Items
+                                        <span class="badge bg-light text-success">{{ $task->inventories->count() }} Items</span>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="list-group list-group-flush">
+                                            @forelse($task->inventories as $inventory)
+                                                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1">{{ $inventory->name }}</h6>
+                                                        <small class="text-muted">Inventory Code: {{ $inventory->code ?? 'N/A' }}</small>
+                                                    </div>
+                                                    <span class="badge bg-primary rounded-pill">
+                                                        Qty: {{ $inventory->pivot->quantity }}
+                                                    </span>
+                                                    <button class="btn btn-danger btn-sm" onclick="returnSingleTaskItem({{ $task->id }}, {{ $inventory->id }})">Return</button>
+                                                </div>
+                                            @empty
+                                                <div class="list-group-item text-center text-muted">
+                                                    No inventory items assigned
+                                                </div>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-danger" onclick="returnAllTaskItems({{ $task->id }})">Return All Items</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <script>
+        $('#updateProofOfWorkForm').on('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            $.ajax({
+                url: '{{ route("image.update", $task->id) }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-HTTP-Method-Override': 'PUT',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    console.log('AJAX request succeeded:', response);
+                    Swal.fire({
+                        title: 'Updated!',
+                        text: response.success,
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(response) {
+                    console.error('AJAX request failed:', response);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.responseJSON.message,
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+
+        function returnSingleTaskItem(taskId, inventoryId) {
+            Swal.fire({
+                title: 'Enter quantity to return',
+                input: 'number',
+                inputAttributes: {
+                    min: 1,
+                    step: 1
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Return',
+                showLoaderOnConfirm: true,
+                preConfirm: (quantity) => {
+                    return $.ajax({
+                        url: `/item/return-single-task-item/${taskId}/${inventoryId}/${quantity}`,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    }).then(response => {
+                        Swal.fire(
+                            'Returned!',
+                            response.success,
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    }).catch(error => {
+                        Swal.fire(
+                            'Error!',
+                            error.responseJSON.message,
+                            'error'
+                        );
+                    });
+                }
+            });
+        }
+
+        function returnAllTaskItems(taskId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You are about to return all items.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, return all!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/item/return-all-task-items/${taskId}`,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                'Returned!',
+                                response.success,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(response) {
+                            Swal.fire(
+                                'Error!',
+                                response.responseJSON.message,
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+@endpush

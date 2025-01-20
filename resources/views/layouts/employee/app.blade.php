@@ -8,7 +8,7 @@
     <meta name="description" content="Optimanage">
     <meta name="author" content="Optimanage">
     <meta name="keywords" content="OptiManage">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="shortcut icon" href="{{ asset('img/icons/icon-48x48.png') }}" />
 

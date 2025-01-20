@@ -34,7 +34,6 @@ class TeamTaskController extends Controller
             'status' => 'required|string|max:50',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'proof_of_work' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'inventory_items' => 'required|json',
             'task_category_id' => 'required|exists:task_categories,id',
         ]);
@@ -47,12 +46,6 @@ class TeamTaskController extends Controller
         Log::info('Generated ticket ID', ['ticket_id' => $ticket_id]);
 
         $data = $request->all();
-        if ($request->hasFile('proof_of_work')) {
-            $file = $request->file('proof_of_work');
-            $path = $file->store('proof_of_work', 'public');
-            $data['proof_of_work'] = $path;
-            Log::info('Proof of work uploaded', ['path' => $path]);
-        }
 
         $teamTask = TeamTask::create(array_merge($data, ['ticket_id' => $ticket_id]));
         Log::info('Team task created', ['team_task_id' => $teamTask->id]);

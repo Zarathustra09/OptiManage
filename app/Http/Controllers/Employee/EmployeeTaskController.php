@@ -9,6 +9,7 @@ use App\Models\TaskCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class EmployeeTaskController extends Controller
 {
@@ -81,48 +82,39 @@ class EmployeeTaskController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|in:Finished,Cancel',
-            'task_category_id' => 'required|exists:task_categories,id',
-            'start_date' => 'nullable|date_format:Y-m-d\TH:i',
-            'end_date' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
+            'proof_of_work' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $overlappingTasks = Task::where('user_id', Auth::id())
-            ->where('id', '!=', $id)
-            ->whereNotIn('status', ['Finished', 'Cancel'])
-            ->where(function ($query) use ($request) {
-                if ($request->start_date && $request->end_date) {
-                    $query->whereBetween('start_date', [$request->start_date, $request->end_date])
-                        ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
-                        ->orWhere(function ($query) use ($request) {
-                            $query->where('start_date', '<=', $request->start_date)
-                                ->where('end_date', '>=', $request->end_date);
-                        });
-                }
-            })->exists();
+        // Log the task ID
+        Log::info('Update function called', ['task_id' => $id]);
 
-        if ($overlappingTasks) {
-            return response()->json(['error' => 'The task overlaps with an existing task.'], 422);
+        // Attempt to find the task by its ID
+        $task = Task::findOrFail($id);
+
+        // Delete the old proof of work if it exists
+        if ($task->proof_of_work) {
+            Storage::delete('public/' . $task->proof_of_work);
         }
 
-        $task = Task::where('user_id', Auth::id())->findOrFail($id);
+        // Store the new proof of work
+        $filePath = $request->file('proof_of_work')->store('proof_of_work', 'public');
 
-        if ($request->hasFile('proof_of_work')) {
-            $proofOfWorkPath = $request->file('proof_of_work')->store('proof_of_work', 'public');
-            $task->proof_of_work = $proofOfWorkPath;
-        }
+        // Update the task with the new proof of work path
+        $task->proof_of_work = $filePath;
+        $task->save();
 
-        $task->update($request->only(['title', 'description', 'status', 'task_category_id', 'start_date', 'end_date']));
-
-        return response()->json(['success' => 'Task has been updated successfully.']);
+        return response()->json(['success' => 'Proof of work updated successfully.']);
     }
-
     public function show($id)
     {
         $task = Task::where('user_id', Auth::id())->findOrFail($id);
         return response()->json($task);
+    }
+
+    public function showSingle($id)
+    {
+        $task = Task::with('inventories')->findOrFail($id);
+        return view('employee.task.show', compact('task'));
     }
 
     public function destroy($id)

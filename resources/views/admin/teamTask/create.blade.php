@@ -2,7 +2,7 @@
 
 @section('content')
     <h1>Create Team Task</h1>
-    <form action="{{ route('admin.teamTask.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.teamTask.store') }}" method="POST">
         @csrf
         <div class="form-group">
             <label for="title">Title</label>
@@ -52,11 +52,6 @@
             </div>
         </div>
 
-
-        <div class="form-group">
-            <label for="proof_of_work">Proof of Work</label>
-            <input type="file" class="form-control" id="proof_of_work" name="proof_of_work" accept="image/*" required>
-        </div>
         <button type="submit" class="btn btn-primary">Create</button>
     </form>
 
