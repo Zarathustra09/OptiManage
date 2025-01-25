@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
+use App\Models\Task;
 use App\Models\TeamTask;
 use App\Models\TaskImage;
 use Illuminate\Http\Request;
