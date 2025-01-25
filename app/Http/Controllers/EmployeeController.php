@@ -24,9 +24,10 @@ class EmployeeController extends Controller
         ]);
 
         // Generate employee ID
-        $prefix = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5));
-        $suffix = substr(str_shuffle('0123456789'), 0, 5);
-        $employee_id = $prefix . '-' . $suffix;
+        $year = date('Y');
+        $employeeCount = User::where('role_id', 0)->count() + 1;
+        $employeeNumber = str_pad($employeeCount, 4, '0', STR_PAD_LEFT);
+        $employee_id = $year . '-' . $employeeNumber;
 
         $user = User::create([
             'name' => $request->name,
