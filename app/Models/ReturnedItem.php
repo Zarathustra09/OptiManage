@@ -9,7 +9,12 @@ class ReturnedItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['team_task_id', 'inventory_id', 'quantity', 'returned_at'];
+    protected $fillable = ['task_id', 'team_task_id', 'inventory_id', 'quantity', 'returned_at'];
+
+    public function task()
+    {
+        return $this->belongsTo(Task::class);
+    }
 
     public function teamTask()
     {

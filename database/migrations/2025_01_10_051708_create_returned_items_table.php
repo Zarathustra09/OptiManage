@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('returned_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('team_task_id')->constrained()->onDelete('cascade');
+            $table->foreignId('team_task_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('task_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('inventory_id')->constrained()->onDelete('cascade');
             $table->integer('quantity');
             $table->timestamp('returned_at')->useCurrent();

@@ -80,7 +80,7 @@ class EmployeeItemController extends Controller
             }
 
             ReturnedItem::create([
-                'team_task_id' => $taskId, // Save task_id in team_task_id field
+                'task_id' => $taskId, // Save task_id in team_task_id field
                 'inventory_id' => $item->inventory_id,
                 'quantity' => $quantity,
                 'returned_at' => now(),
@@ -109,7 +109,7 @@ class EmployeeItemController extends Controller
             }
 
             ReturnedItem::create([
-                'team_task_id' => $taskId, // Save task_id in team_task_id field
+                'task_id' => $taskId, // Save task_id in team_task_id field
                 'inventory_id' => $item->inventory_id,
                 'quantity' => $item->quantity,
                 'returned_at' => now(),
