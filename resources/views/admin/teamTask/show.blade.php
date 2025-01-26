@@ -108,6 +108,7 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
                         <h3 class="h4 mb-0">Assignees</h3>
+                        <button class="btn btn-success btn-sm" onclick="createAssignee()">Add Assignee</button>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -117,6 +118,7 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Employee ID</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -125,6 +127,11 @@
                                         <td>{{ $assignee->user->name }}</td>
                                         <td>{{ $assignee->user->email }}</td>
                                         <td>{{ $assignee->user->employee_id }}</td>
+                                        <td>
+                                            <button class="btn btn-danger btn-sm" onclick="deleteAssignee({{ $assignee->id }})">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </button>
+                                        </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -142,6 +149,104 @@
         $(document).ready(function() {
             $('#assigneesTable').DataTable();
         });
+
+        function createAssignee() {
+            let employeeOptions = @json($employees).map(employee => `<option value="${employee.id}">${employee.name}</option>`).join('');
+            Swal.fire({
+                title: 'Add Assignee',
+                html: `
+                    <select id="swal-input1" class="swal2-input">
+                        ${employeeOptions}
+                    </select>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Add',
+                cancelButtonText: 'Cancel',
+                preConfirm: () => {
+                    let formData = new FormData();
+                    formData.append('team_task_id', '{{ $teamTask->id }}');
+                    formData.append('user_id', document.getElementById('swal-input1').value);
+                    return formData;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    storeAssignee(result.value);
+                }
+            });
+        }
+
+        function storeAssignee(data) {
+            $.ajax({
+                url: '{{ route("admin.teamAssignee.store") }}',
+                type: 'POST',
+                data: data,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Added!',
+                        text: 'Assignee has been added successfully.',
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(response) {
+                    if (response.status === 422) {
+                        let errors = response.responseJSON.errors;
+                        let errorMessages = '';
+                        for (let field in errors) {
+                            errorMessages += `${errors[field].join(', ')}<br>`;
+                        }
+                        Swal.fire({
+                            title: 'Error!',
+                            html: errorMessages,
+                            icon: 'error'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'There was an error adding the assignee.',
+                            icon: 'error'
+                        });
+                    }
+                }
+            });
+        }
+
+        function deleteAssignee(assigneeId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/admin/team-assignee/' + assigneeId,
+                        type: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'Assignee has been deleted successfully.',
+                                icon: 'success'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        }
 
         $('#uploadTeamTaskImageForm').on('submit', function(e) {
             e.preventDefault();

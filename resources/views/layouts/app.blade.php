@@ -164,7 +164,7 @@
                         </a>
 
                         <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                            <img src="{{ auth()->user()->profile_image ? asset('storage/' . auth()->user()->profile_image) : 'https://via.placeholder.com/128' }}" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark">{{auth()->user()->name}}</span>
+                            <img src="{{ auth()->user()->profile_image ? asset('storage/' . auth()->user()->profile_image) : 'https://placehold.co/128' }}" class="avatar img-fluid rounded me-1" alt="" /> <span class="text-dark">{{auth()->user()->name}}</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
                             <a class="dropdown-item" href="{{route('profile')}}"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
