@@ -180,4 +180,51 @@ class TaskController extends Controller
 
         return response()->json(['success' => 'Task has been deleted successfully.']);
     }
+
+
+    public function addInventoryItem(Request $request)
+    {
+        $request->validate([
+            'task_id' => 'required|exists:team_tasks,id',
+            'inventory_id' => 'required|exists:inventories,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $teamTask = Task::findOrFail($request->task_id);
+        $inventory = Inventory::findOrFail($request->inventory_id);
+
+        if ($inventory->quantity < $request->quantity) {
+            return response()->json(['error' => 'Selected inventory is out of stock.'], 400);
+        }
+
+        $inventory->quantity -= $request->quantity;
+        $inventory->save();
+
+        $teamTask->inventories()->attach($inventory->id, ['quantity' => $request->quantity]);
+
+        return response()->json(['success' => 'Inventory item added successfully.']);
+    }
+
+
+    public function removeInventoryItem(Request $request, $id)
+    {
+        $request->validate([
+            'inventory_id' => 'required|exists:inventories,id',
+        ]);
+
+        $teamTask = Task::findOrFail($id);
+        $inventory = Inventory::findOrFail($request->inventory_id);
+
+        $pivotRow = $teamTask->inventories()->where('inventory_id', $inventory->id)->first();
+        if ($pivotRow) {
+            $inventory->quantity += $pivotRow->pivot->quantity;
+            $inventory->save();
+
+            $teamTask->inventories()->detach($inventory->id);
+
+            return response()->json(['success' => 'Inventory item removed successfully.']);
+        }
+
+        return response()->json(['error' => 'Inventory item not found.'], 404);
+    }
 }

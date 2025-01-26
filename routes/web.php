@@ -72,6 +72,8 @@ Route::get('/admin/task/{id}', [TaskController::class, 'show'])->name('admin.tas
 Route::put('/admin/task/{id}', [TaskController::class, 'update'])->name('admin.task.update');
 Route::delete('/admin/task/{id}', [TaskController::class, 'destroy'])->name('admin.task.destroy');
 
+Route::post('/admin/task/add-inventory-item', [TaskController::class, 'addInventoryItem'])->name('admin.taskInventory.store');
+Route::delete('/admin/task/remove-inventory-item/{id}', [TaskController::class, 'removeInventoryItem'])->name('admin.taskInventory.remove');
 
 //admin availability
 Route::get('availabilities/create/{userId}', [AvailabilityController::class, 'create'])->name('availabilities.create');

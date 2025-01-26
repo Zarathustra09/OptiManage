@@ -20,9 +20,7 @@
                                         <div class="card border-info mb-3">
                                             <div class="card-header bg-info text-white">Start Date</div>
                                             <div class="card-body p-2">
-                                                <p class="card-text text-center">
-                                                    {{ \Carbon\Carbon::parse($task->start_date)->format('F d, Y h:i A') }}
-                                                </p>
+                                                {{ \Carbon\Carbon::parse($task->start_date)->format('F d, Y h:i A') }}
                                             </div>
                                         </div>
                                     </div>
@@ -30,9 +28,7 @@
                                         <div class="card border-warning mb-3">
                                             <div class="card-header bg-warning text-white">End Date</div>
                                             <div class="card-body p-2">
-                                                <p class="card-text text-center">
-                                                    {{ \Carbon\Carbon::parse($task->end_date)->format('F d, Y h:i A') }}
-                                                </p>
+                                                {{ \Carbon\Carbon::parse($task->end_date)->format('F d, Y h:i A') }}
                                             </div>
                                         </div>
                                     </div>
@@ -104,7 +100,10 @@
                                         </div>
                                     </div>
                                     <div class="card-footer">
-                                        <button class="btn btn-danger" onclick="returnAllTaskItems({{ $task->id }})">Return All Items</button>
+                                        <button class="btn btn-sm btn-success" onclick="addInventoryItem()">
+                                            <i class="fas fa-plus me-1"></i>Add Inventory Item
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="returnAllTaskItems({{ $task->id }})">Return All Items</button>
                                     </div>
                                 </div>
                             </div>
@@ -131,7 +130,6 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 success: function(response) {
-                    console.log('AJAX request succeeded:', response);
                     Swal.fire({
                         title: 'Uploaded!',
                         text: response.success,
@@ -141,7 +139,6 @@
                     });
                 },
                 error: function(response) {
-                    console.error('AJAX request failed:', response);
                     Swal.fire({
                         title: 'Error!',
                         text: response.responseJSON.message,
@@ -224,6 +221,73 @@
                     });
                 }
             });
+        }
+
+        function addInventoryItem() {
+            fetchInventories().then(inventories => {
+                let inventoryOptions = inventories.map(inventory => `<option value="${inventory.id}">${inventory.name} (${inventory.quantity} available)</option>`).join('');
+                Swal.fire({
+                    title: 'Add Inventory Item',
+                    html: `
+                        <select id="swal-inventory-id" class="swal2-input">
+                            ${inventoryOptions}
+                        </select>
+                        <input id="swal-quantity" class="swal2-input" type="number" placeholder="Quantity" min="1" required>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Add',
+                    cancelButtonText: 'Cancel',
+                    preConfirm: () => {
+                        let inventoryId = document.getElementById('swal-inventory-id').value;
+                        let quantity = document.getElementById('swal-quantity').value;
+                        if (quantity <= 0) {
+                            Swal.showValidationMessage('Quantity must be greater than 0');
+                            return false;
+                        }
+                        return {
+                            task_id: '{{ $task->id }}',
+                            inventory_id: inventoryId,
+                            quantity: quantity
+                        };
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        storeInventoryItem(result.value);
+                    }
+                });
+            });
+        }
+
+        function storeInventoryItem(data) {
+            $.ajax({
+                url: '{{ route("admin.taskInventory.store") }}',
+                type: 'POST',
+                data: data,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Added!',
+                        text: 'Inventory item has been added successfully.',
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was an error adding the inventory item.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+
+        async function fetchInventories() {
+            let response = await fetch('{{ route('admin.inventory.list') }}');
+            return await response.json();
         }
 
         function deleteImage(imageId) {
