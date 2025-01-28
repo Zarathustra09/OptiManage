@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inventory;
 use App\Models\User;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -30,7 +31,9 @@ class HomeController extends Controller
         $onProgressTaskCount = $this->getOnProgressTaskCount();
         $toBeApprovedTaskCount = $this->getToBeApprovedTaskCount();
         $latestTasks = Task::latest()->take(8)->get();
-        return view('home', compact('employeeCount', 'finishedTaskCount', 'onProgressTaskCount', 'toBeApprovedTaskCount', 'latestTasks'));
+        $lowQuantityItems = $this->getLowQuantityItems();
+
+        return view('home', compact('employeeCount', 'finishedTaskCount', 'onProgressTaskCount', 'toBeApprovedTaskCount', 'latestTasks', 'lowQuantityItems'));
     }
 
     /**
@@ -71,5 +74,10 @@ class HomeController extends Controller
     private function getToBeApprovedTaskCount()
     {
         return Task::where('status', 'To be Approved')->count();
+    }
+
+    private function getLowQuantityItems()
+    {
+        return Inventory::where('quantity', '<', 10)->get(); // Adjust the threshold as needed
     }
 }

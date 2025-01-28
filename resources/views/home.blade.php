@@ -120,4 +120,31 @@
             </div>
         </div>
     </div>
+
+
+    <div class="row">
+        <div class="col-12 col-lg-12 col-xxl-12 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Low Quantity Inventory Items</h5>
+                </div>
+                <table class="table table-hover my-0">
+                    <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($lowQuantityItems as $item)
+                        <tr>
+                            <td>{{ $item->name }}</td>
+                            <td>{{ $item->quantity }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 @endsection
