@@ -1,6 +1,42 @@
 @extends('layouts.employee.app')
 
 @section('content')
+    <style>
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .progress-step {
+            width: 25%;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .progress-step.active {
+            color: #fff;
+            background: #007bff;
+            border-radius: 8px;
+        }
+
+        .progress-step:not(.active) {
+            background: #e0e0e0;
+            color: #555;
+            border-radius: 8px;
+        }
+
+        .progress-step span {
+            display: block;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
     <div class="container-fluid p-4">
         <div class="row">
             <div class="col-12">
@@ -39,13 +75,13 @@
                                 </div>
 
                                 <!-- Form to upload team task image -->
-                                <form id="uploadTeamTaskImageForm" enctype="multipart/form-data">
+                                <form id="uploadTeamTaskImageForm" enctype="multipart/form-data" @if($teamTask->status == 'To be Approved') disabled @endif>
                                     @csrf
                                     <div class="mb-3">
                                         <label for="team_task_image" class="form-label">Upload Task Image</label>
-                                        <input type="file" class="form-control" id="team_task_image" name="image" accept="image/*" required>
+                                        <input type="file" class="form-control" id="team_task_image" name="image" accept="image/*" required @if($teamTask->status == 'To be Approved') disabled @endif>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Upload</button>
+                                    <button type="submit" class="btn btn-primary" @if($teamTask->status == 'To be Approved') disabled @endif>Upload</button>
                                 </form>
 
                                 <div class="mt-4">
@@ -84,7 +120,7 @@
                                                     <span class="badge bg-primary rounded-pill">
                                                         Qty: {{ $inventory->pivot->quantity }}
                                                     </span>
-                                                    <button class="btn btn-danger btn-sm" onclick="returnSingleItem({{ $teamTask->id }}, {{ $inventory->id }})">Return</button>
+                                                    <button class="btn btn-danger btn-sm" onclick="returnSingleItem({{ $teamTask->id }}, {{ $inventory->id }})" @if($teamTask->status == 'To be Approved') disabled @endif>Return</button>
                                                 </div>
                                             @empty
                                                 <div class="list-group-item text-center text-muted">
@@ -94,12 +130,43 @@
                                         </div>
                                     </div>
                                     <div class="card-footer">
-                                        <button class="btn btn-sm btn-success" onclick="addInventoryItem()">
+                                        <button class="btn btn-sm btn-success" onclick="addInventoryItem()" @if($teamTask->status == 'To be Approved') disabled @endif>
                                             <i class="fas fa-plus me-1"></i>Add Inventory Item
                                         </button>
-                                        <button class="btn btn-sm btn-danger" onclick="returnAllItems({{ $teamTask->id }})">Return All Items</button>
+                                        <button class="btn btn-sm btn-danger" onclick="returnAllItems({{ $teamTask->id }})" @if($teamTask->status == 'To be Approved') disabled @endif>Return All Items</button>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="p-4 shadow rounded bg-white">
+                                <h3 class="mb-4 text-center text-primary">Update Task Status</h3>
+
+                                <!-- Progress Bar -->
+                                <div class="progress-container d-flex justify-content-between align-items-center mb-4">
+                                    <div class="progress-step {{ $teamTask->status == 'To be Approved' ? 'active' : '' }}" data-status="To be Approved">
+                                        <span>To be Approved</span>
+                                    </div>
+                                    <div class="progress-step {{ $teamTask->status == 'On Progress' ? 'active' : '' }}" data-status="On Progress">
+                                        <span>On Progress</span>
+                                    </div>
+                                    <div class="progress-step {{ $teamTask->status == 'Finished' ? 'active' : '' }}" data-status="Finished">
+                                        <span>Finished</span>
+                                    </div>
+                                    <div class="progress-step {{ $teamTask->status == 'Cancel' ? 'active' : '' }}" data-status="Cancel">
+                                        <span>Cancel</span>
+                                    </div>
+                                </div>
+
+                                <!-- Form Submission -->
+                                <form id="updateStatusForm" method="POST" action="{{ route('admin.teamTask.update', ['id' => $teamTask->id]) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" id="task_status" name="status" value="{{ $teamTask->status }}">
+
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg">Update Status</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -139,6 +206,46 @@
 
 @push('scripts')
     <script>
+
+        document.querySelectorAll('.progress-step').forEach(step => {
+            step.addEventListener('click', function() {
+                document.querySelectorAll('.progress-step').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('task_status').value = this.getAttribute('data-status');
+            });
+        });
+
+        $('#updateStatusForm').on('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            $.ajax({
+                url: '{{ route("admin.teamTask.update", ["id" => $teamTask->id]) }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-HTTP-Method-Override': 'PUT',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Updated!',
+                        text: response.success,
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.responseJSON.message,
+                        icon: 'error'
+                    });
+                }
+            });
+        });
         $(document).ready(function() {
             $('#assigneesTable').DataTable();
         });

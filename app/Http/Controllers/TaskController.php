@@ -181,6 +181,15 @@ class TaskController extends Controller
         return response()->json(['success' => 'Task has been deleted successfully.']);
     }
 
+    public function acceptTask($id)
+    {
+        $task = Task::findOrFail($id);
+        $task->status = 'On Progress';
+        $task->save();
+
+        return response()->json(['success' => 'Task has been accepted successfully.']);
+    }
+
 
     public function addInventoryItem(Request $request)
     {

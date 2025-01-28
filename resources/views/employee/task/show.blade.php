@@ -1,6 +1,43 @@
 @extends('layouts.employee.app')
 
 @section('content')
+    <style>
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .progress-step {
+            width: 25%;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .progress-step.active {
+            color: #fff;
+            background: #007bff;
+            border-radius: 8px;
+        }
+
+        .progress-step:not(.active) {
+            background: #e0e0e0;
+            color: #555;
+            border-radius: 8px;
+        }
+
+        .progress-step span {
+            display: block;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+
     <div class="container-fluid p-4">
         <div class="row">
             <div class="col-12">
@@ -49,9 +86,9 @@
                                     @csrf
                                     <div class="mb-3">
                                         <label for="task_image" class="form-label">Upload Task Image</label>
-                                        <input type="file" class="form-control" id="task_image" name="image" accept="image/*">
+                                        <input type="file" class="form-control" id="task_image" name="image" accept="image/*" {{ $task->status == 'To be Approved' ? 'disabled' : '' }}>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Upload</button>
+                                    <button type="submit" class="btn btn-primary" {{ $task->status == 'To be Approved' ? 'disabled' : '' }}>Upload</button>
                                 </form>
 
                                 <div class="mt-4">
@@ -71,6 +108,38 @@
                                         @endforeach
                                     </div>
                                 </div>
+
+                                <div class="p-4 shadow rounded bg-white">
+                                    <h3 class="mb-4 text-center text-primary">Update Task Status</h3>
+
+                                    <!-- Progress Bar -->
+                                    <div class="progress-container d-flex justify-content-between align-items-center mb-4">
+                                        <div class="progress-step {{ $task->status == 'To be Approved' ? 'active' : '' }}" data-status="To be Approved">
+                                            <span>To be Approved</span>
+                                        </div>
+                                        <div class="progress-step {{ $task->status == 'On Progress' ? 'active' : '' }}" data-status="On Progress">
+                                            <span>On Progress</span>
+                                        </div>
+                                        <div class="progress-step {{ $task->status == 'Finished' ? 'active' : '' }}" data-status="Finished">
+                                            <span>Finished</span>
+                                        </div>
+                                        <div class="progress-step {{ $task->status == 'Cancel' ? 'active' : '' }}" data-status="Cancel">
+                                            <span>Cancel</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Form Submission -->
+                                    <form id="updateStatusForm" method="POST" action="{{ route('admin.task.update', ['id' => $task->id]) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" id="task_status" name="status" value="{{ $task->status }}">
+
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-primary btn-lg">Update Status</button>
+                                        </div>
+                                    </form>
+                                </div>
+
                             </div>
 
                             <div class="col-md-4">
@@ -90,7 +159,7 @@
                                                     <span class="badge bg-primary rounded-pill">
                                                         Qty: {{ $inventory->pivot->quantity }}
                                                     </span>
-                                                    <button class="btn btn-danger btn-sm" onclick="returnSingleTaskItem({{ $task->id }}, {{ $inventory->id }})">Return</button>
+                                                    <button class="btn btn-danger btn-sm" onclick="returnSingleTaskItem({{ $task->id }}, {{ $inventory->id }})" {{ $task->status == 'To be Approved' ? 'disabled' : '' }}>Return</button>
                                                 </div>
                                             @empty
                                                 <div class="list-group-item text-center text-muted">
@@ -100,10 +169,10 @@
                                         </div>
                                     </div>
                                     <div class="card-footer">
-                                        <button class="btn btn-sm btn-success" onclick="addInventoryItem()">
+                                        <button class="btn btn-sm btn-success" onclick="addInventoryItem()" {{ $task->status == 'To be Approved' ? 'disabled' : '' }}>
                                             <i class="fas fa-plus me-1"></i>Add Inventory Item
                                         </button>
-                                        <button class="btn btn-sm btn-danger" onclick="returnAllTaskItems({{ $task->id }})">Return All Items</button>
+                                        <button class="btn btn-sm btn-danger" onclick="returnAllTaskItems({{ $task->id }})" {{ $task->status == 'To be Approved' ? 'disabled' : '' }}>Return All Items</button>
                                     </div>
                                 </div>
                             </div>
@@ -117,6 +186,15 @@
 
 @push('scripts')
     <script>
+
+        document.querySelectorAll('.progress-step').forEach(step => {
+            step.addEventListener('click', function() {
+                document.querySelectorAll('.progress-step').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('task_status').value = this.getAttribute('data-status');
+            });
+        });
+
         $('#updateProofOfWorkForm').on('submit', function(e) {
             e.preventDefault();
             let formData = new FormData(this);
@@ -132,6 +210,38 @@
                 success: function(response) {
                     Swal.fire({
                         title: 'Uploaded!',
+                        text: response.success,
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.responseJSON.message,
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+
+        $('#updateStatusForm').on('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            $.ajax({
+                url: '{{ route("admin.task.update", ["id" => $task->id]) }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-HTTP-Method-Override': 'PUT',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Updated!',
                         text: response.success,
                         icon: 'success'
                     }).then(() => {

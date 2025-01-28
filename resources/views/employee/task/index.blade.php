@@ -3,10 +3,6 @@
 @section('content')
     <div class="container-fluid">
         <div class="card">
-{{--            <div class="card-header d-flex justify-content-between align-items-center">--}}
-{{--                <h2 class="mb-0">Tasks</h2>--}}
-{{--                <button class="btn btn-success" onclick="createTask()">Create Task</button>--}}
-{{--            </div>--}}
             <div class="card-body">
                 <table id="taskTable" class="table table-hover table-striped">
                     <thead class="thead-light">
@@ -43,7 +39,11 @@
                                 @if($task->status == 'On Progress')
                                     <button class="btn btn-warning btn-sm" onclick="editTask({{ $task->id }})">Edit</button>
                                 @endif
+                                @if($task->status == 'To be Approved')
+                                    <button class="btn btn-success btn-sm" onclick="acceptTask({{ $task->id }})">Accept</button>
+                                @endif
                                 <button class="btn btn-danger btn-sm" onclick="deleteTask({{ $task->id }})">Delete</button>
+
                             </td>
                         </tr>
                     @endforeach
@@ -116,6 +116,9 @@
                 <input id="swal-input1" class="swal2-input" value="${task.title}" placeholder="Title">
                 <input id="swal-input2" class="swal2-input" value="${task.description}" placeholder="Description">
                 <select id="swal-input3" class="swal2-input">
+                    <option value="" disabled>Select Status</option>
+                    <option value="To be Approved" ${task.status === 'To be Approved' ? 'selected' : ''}>To be Approved</option>
+                    <option value="On Progress" ${task.status === 'On Progress' ? 'selected' : ''}>On Progress</option>
                     <option value="Finished" ${task.status === 'Finished' ? 'selected' : ''}>Finished</option>
                     <option value="Cancel" ${task.status === 'Cancel' ? 'selected' : ''}>Cancel</option>
                 </select>
@@ -124,8 +127,6 @@
                 </select>
                 <input id="swal-input5" class="swal2-input" type="datetime-local" value="${task.start_date ? task.start_date.replace(' ', 'T') : ''}" placeholder="Start Date">
                 <input id="swal-input6" class="swal2-input" type="datetime-local" value="${task.end_date ? task.end_date.replace(' ', 'T') : ''}" placeholder="End Date">
-                <input id="swal-input7" class="swal2-input" type="file" accept="image/*">
-                ${task.proof_of_work ? `<img src="/storage/${task.proof_of_work}" alt="Proof of Work" style="max-width: 100px; max-height: 100px;">` : 'No Proof of Work'}
             `,
                     showCancelButton: true,
                     confirmButtonText: 'Update',
@@ -138,10 +139,6 @@
                         formData.append('task_category_id', document.getElementById('swal-input4').value);
                         formData.append('start_date', document.getElementById('swal-input5').value);
                         formData.append('end_date', document.getElementById('swal-input6').value);
-                        let proofOfWorkFile = document.getElementById('swal-input7').files[0];
-                        if (proofOfWorkFile) {
-                            formData.append('proof_of_work', proofOfWorkFile);
-                        }
                         return formData;
                     }
                 }).then((result) => {
@@ -195,6 +192,45 @@
                                 icon: 'success'
                             }).then(() => {
                                 location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+
+        function acceptTask(taskId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You are about to accept this task.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, accept it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/admin/task/accept/' + taskId,
+                        type: 'PUT',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        success: function (response) {
+                            Swal.fire({
+                                title: 'Accepted!',
+                                text: response.success,
+                                icon: 'success'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function (response) {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: response.responseJSON.message,
+                                icon: 'error'
                             });
                         }
                     });

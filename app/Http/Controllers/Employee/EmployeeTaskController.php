@@ -84,30 +84,21 @@ class EmployeeTaskController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'proof_of_work' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'status' => 'nullable|in:To be Approved,On Progress,Finished,Cancel',
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'task_category_id' => 'nullable|exists:task_categories,id',
+            'start_date' => 'nullable|date_format:Y-m-d\TH:i',
+            'end_date' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
         ]);
 
-        $task = Task::findOrFail($id);
+        $task = Task::where('user_id', Auth::id())->findOrFail($id);
 
-        if ($task->proof_of_work) {
-            Storage::delete('public/' . $task->proof_of_work);
-        }
+        $task->update($request->only(['title', 'description', 'status', 'task_category_id', 'start_date', 'end_date']));
 
-        $filePath = $request->file('proof_of_work')->store('proof_of_work', 'public');
-
-        $task->proof_of_work = $filePath;
-        $task->save();
-
-        if ($request->hasFile('task_image')) {
-            $imagePath = $request->file('task_image')->store('task_images', 'public');
-            TaskImage::create([
-                'task_id' => $task->id,
-                'image_path' => $imagePath,
-            ]);
-        }
-
-        return response()->json(['success' => 'Proof of work and task image updated successfully.']);
+        return response()->json(['success' => 'Task updated successfully.']);
     }
+
     public function show($id)
     {
         $task = Task::where('user_id', Auth::id())->findOrFail($id);

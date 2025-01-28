@@ -72,6 +72,7 @@ Route::get('/admin/task/{id}', [TaskController::class, 'show'])->name('admin.tas
 Route::put('/admin/task/{id}', [TaskController::class, 'update'])->name('admin.task.update');
 Route::delete('/admin/task/{id}', [TaskController::class, 'destroy'])->name('admin.task.destroy');
 
+Route::put('/admin/task/accept/{id}', [TaskController::class, 'acceptTask'])->name('admin.task.accept');
 Route::post('/admin/task/add-inventory-item', [TaskController::class, 'addInventoryItem'])->name('admin.taskInventory.store');
 Route::delete('/admin/task/remove-inventory-item/{id}', [TaskController::class, 'removeInventoryItem'])->name('admin.taskInventory.remove');
 
@@ -123,6 +124,7 @@ Route::get('/employee/task', [EmployeeTaskController::class, 'index'])->name('em
 Route::get('/employee/task/create', [EmployeeTaskController::class, 'create'])->name('employee.task.create');
 Route::post('/employee/task', [EmployeeTaskController::class, 'store'])->name('employee.task.store');
 Route::get('/employee/task/{id}', [EmployeeTaskController::class, 'show'])->name('employee.task.show');
+Route::put('/employee/task/{id}', [EmployeeTaskController::class, 'update'])->name('employee.task.update');
 Route::delete('/employee/task/{id}', [EmployeeTaskController::class, 'destroy'])->name('employee.task.destroy');
 Route::get('/employee/task/showSingle/{id}', [EmployeeTaskController::class, 'showSingle'])->name('employee.task.showSingle');
 
