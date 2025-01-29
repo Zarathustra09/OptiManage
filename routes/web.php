@@ -44,6 +44,7 @@ Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.
 //admin employee
 Route::get('/admin/employee', [EmployeeController::class, 'index'])->name('admin.employee.index');
 Route::get('/admin/employee/{id}', [EmployeeController::class, 'show'])->name('admin.employee.show');
+Route::get('/admin/employee-create', [EmployeeController::class, 'create'])->name('admin.employee.create');
 Route::post('/admin/employee', [EmployeeController::class, 'store'])->name('admin.employee.store');
 Route::put('/admin/employee/{id}', [EmployeeController::class, 'update'])->name('admin.employee.update');
 Route::delete('/admin/employee/{id}', [EmployeeController::class, 'destroy'])->name('admin.employee.destroy');

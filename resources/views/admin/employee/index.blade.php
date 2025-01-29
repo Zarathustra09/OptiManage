@@ -5,7 +5,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h2 class="mb-0">Employees</h2>
-                <button class="btn btn-success" onclick="createEmployee()">Create Employee</button>
+                <a href="{{ route('admin.employee.create') }}" class="btn btn-success">Create Employee</a>
             </div>
             <div class="card-body">
                 <table id="employeeTable" class="table table-hover table-striped">
@@ -40,68 +40,10 @@
 @endsection
 
 @push('scripts')
-
     <script>
         $(document).ready(function() {
             $('#employeeTable').DataTable();
         });
-
-        async function createEmployee() {
-            await Swal.fire({
-                title: 'Create Employee',
-                html: `
-                <input id="swal-input1" class="swal2-input" placeholder="Name">
-                <input id="swal-input2" class="swal2-input" placeholder="Email">
-                <input id="swal-input3" class="swal2-input" placeholder="Phone Number">
-                <input id="swal-input4" class="swal2-input" type="password" placeholder="Password">
-                <input id="swal-input5" class="swal2-input" type="password" placeholder="Confirm Password">
-            `,
-                showConfirmButton: true,
-                confirmButtonText: 'Create',
-                showCloseButton: true,
-                preConfirm: () => {
-                    return {
-                        name: document.getElementById('swal-input1').value,
-                        email: document.getElementById('swal-input2').value,
-                        phone_number: document.getElementById('swal-input3').value,
-                        password: document.getElementById('swal-input4').value,
-                        password_confirmation: document.getElementById('swal-input5').value
-                    }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    storeEmployee(result.value);
-                }
-            });
-        }
-
-        function storeEmployee(data) {
-            $.ajax({
-                url: '/admin/employee',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    ...data
-                },
-                success: function(response) {
-                    Swal.fire('Created!', 'Employee has been created successfully.', 'success').then(() => {
-                        location.reload();
-                    });
-                },
-                error: function(response) {
-                    if (response.status === 422) {
-                        let errors = response.responseJSON.errors;
-                        let errorMessages = '';
-                        for (let field in errors) {
-                            errorMessages += `${errors[field].join(', ')}<br>`;
-                        }
-                        Swal.fire('Error!', errorMessages, 'error');
-                    } else {
-                        Swal.fire('Error!', 'There was an error creating the employee.', 'error');
-                    }
-                }
-            });
-        }
 
         function editUser(userId) {
             $.get('/admin/employee/' + userId, function(user) {

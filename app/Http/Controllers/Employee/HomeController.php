@@ -28,41 +28,55 @@ class HomeController extends Controller
 
     private function getFinishedTaskCount()
     {
-        $finishedTaskCount = Task::where('status', 'Finished')->count();
-        $finishedTeamTaskCount = TeamTask::whereHas('assignees', function ($query) {
-            $query->where('user_id', Auth::id());
-        })->where('status', 'Finished')->count();
+        $finishedTaskCount = $this->getUserTasks('Finished')->count();
+        $finishedTeamTaskCount = $this->getUserTeamTasks('Finished')->count();
         return $finishedTaskCount + $finishedTeamTaskCount;
     }
 
     private function getOnProgressTaskCount()
     {
-        $onProgressTaskCount = Task::where('status', 'On Progress')->count();
-        $onProgressTeamTaskCount = TeamTask::whereHas('assignees', function ($query) {
-            $query->where('user_id', Auth::id());
-        })->where('status', 'On Progress')->count();
+        $onProgressTaskCount = $this->getUserTasks('On Progress')->count();
+        $onProgressTeamTaskCount = $this->getUserTeamTasks('On Progress')->count();
         return $onProgressTaskCount + $onProgressTeamTaskCount;
     }
 
     private function getToBeApprovedTaskCount()
     {
-        $toBeApprovedTaskCount = Task::where('status', 'To be Approved')->count();
-        $toBeApprovedTeamTaskCount = TeamTask::whereHas('assignees', function ($query) {
-            $query->where('user_id', Auth::id());
-        })->where('status', 'To be Approved')->count();
+        $toBeApprovedTaskCount = $this->getUserTasks('To be Approved')->count();
+        $toBeApprovedTeamTaskCount = $this->getUserTeamTasks('To be Approved')->count();
         return $toBeApprovedTaskCount + $toBeApprovedTeamTaskCount;
     }
 
     private function getLatestTasks()
     {
-        $latestTasks = Task::where('user_id', Auth::id())->latest()->take(4)->get();
+        $latestTasks = $this->getUserTasks()->latest()->take(4)->get();
         Log::info('Latest Tasks: '.$latestTasks);
-        $latestTeamTasks = TeamTask::whereHas('assignees', function ($query) {
-            $query->where('user_id', Auth::id());
-        })->latest()->take(4)->get();
+        $latestTeamTasks = $this->getUserTeamTasks()->latest()->take(4)->get();
         Log::info('Latest Team Tasks: '. $latestTeamTasks);
-        $mergedTasks = $latestTasks->merge($latestTeamTasks)->sortByDesc('created_at')->take(4);
-        Log::info('Merged Tasks: '. $mergedTasks);
-        return $mergedTasks;
+
+        $combinedTasks = $latestTasks->concat($latestTeamTasks)->sortByDesc('created_at')->take(4);
+        Log::info('Combined Tasks: '. $combinedTasks);
+
+        return $combinedTasks;
+    }
+
+    private function getUserTasks($status = null)
+    {
+        $query = Task::where('user_id', Auth::id());
+        if ($status) {
+            $query->where('status', $status);
+        }
+        return $query;
+    }
+
+    private function getUserTeamTasks($status = null)
+    {
+        $query = TeamTask::whereHas('assignees', function ($query) {
+            $query->where('user_id', Auth::id());
+        });
+        if ($status) {
+            $query->where('status', $status);
+        }
+        return $query;
     }
 }

@@ -193,23 +193,40 @@ class TaskController extends Controller
 
     public function addInventoryItem(Request $request)
     {
-        $request->validate([
-            'task_id' => 'required|exists:team_tasks,id',
+        Log::info('Add inventory item function called', ['request' => $request->all()]);
+
+        $validator = \Validator::make($request->all(), [
+            'task_id' => 'required|exists:tasks,id',
             'inventory_id' => 'required|exists:inventories,id',
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $teamTask = Task::findOrFail($request->task_id);
+        if ($validator->fails()) {
+            Log::error('Validation failed', ['errors' => $validator->errors()]);
+            return response()->json(['error' => 'Validation failed', 'messages' => $validator->errors()], 422);
+        }
+
+        $task = Task::findOrFail($request->task_id);
         $inventory = Inventory::findOrFail($request->inventory_id);
 
         if ($inventory->quantity < $request->quantity) {
             return response()->json(['error' => 'Selected inventory is out of stock.'], 400);
         }
 
+        $existingItem = $task->inventories()->where('inventory_id', $request->inventory_id)->first();
+
+        if ($existingItem) {
+            // Update the quantity of the existing item
+            $newQuantity = $existingItem->pivot->quantity + $request->quantity;
+            $task->inventories()->updateExistingPivot($request->inventory_id, ['quantity' => $newQuantity]);
+        } else {
+            // Attach the new item
+            $task->inventories()->attach($inventory->id, ['quantity' => $request->quantity]);
+        }
+
+        // Deduct the inventory quantity
         $inventory->quantity -= $request->quantity;
         $inventory->save();
-
-        $teamTask->inventories()->attach($inventory->id, ['quantity' => $request->quantity]);
 
         return response()->json(['success' => 'Inventory item added successfully.']);
     }

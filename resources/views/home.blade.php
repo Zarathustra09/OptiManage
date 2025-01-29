@@ -101,7 +101,7 @@
                         <tr>
                             <td>{{ $task->ticket_id }}</td>
                             <td>{{ $task->title }}</td>
-                            <td>{{ $task->user->name }}</td>
+                            <td>{{ optional($task->user)->name }}</td>
                             <td>
                                 <span class="badge
                                     @if($task->status == 'Finished') bg-success
@@ -120,7 +120,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="row">
         <div class="col-12 col-lg-12 col-xxl-12 d-flex">

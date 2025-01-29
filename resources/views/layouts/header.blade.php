@@ -11,26 +11,31 @@
                     <span class="align-middle">Dashboard</span>
                 </a>
             </li>
-            <li class="sidebar-item {{ request()->routeIs('admin.task.*') ? 'active' : '' }}">
-                <a class="sidebar-link" href="{{ route('admin.task.index') }}">
-                    <i class="align-middle" data-feather="clipboard"></i>
-                    <span class="align-middle">Tasks</span>
+
+            <li class="sidebar-item {{ request()->routeIs('admin.task.*') || request()->routeIs('admin.teamTask.*') ? 'active' : '' }}">
+                <a href="#tasks" data-bs-toggle="collapse" class="sidebar-link collapsed">
+                    <i class="align-middle" data-feather="edit"></i>
+                    <span class="align-middle">Create Task</span>
+                    <i class="align-middle float-end" data-feather="chevron-down"></i>
                 </a>
+
+                <ul id="tasks" class="sidebar-dropdown list-unstyled collapse {{ request()->routeIs('admin.task.*') || request()->routeIs('admin.teamTask.*') ? 'show' : '' }}"
+                    data-bs-parent="#sidebar">
+                    <li class="sidebar-item {{ request()->routeIs('admin.task.*') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('admin.task.index') }}">
+                            <i class="align-middle" data-feather="user"></i>
+                            <span class="align-middle">Individual Task</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {{ request()->routeIs('admin.teamTask.*') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('admin.teamTask.index') }}">
+                            <i class="align-middle" data-feather="users"></i>
+                            <span class="align-middle">Team Task</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
 
-            <li class="sidebar-item {{ request()->routeIs('admin.teamTask.*') ? 'active' : '' }} ">
-                <a class="sidebar-link" href="{{route('admin.teamTask.index')}}">
-                    <i class="align-middle" data-feather="users"></i>
-                    <span class="align-middle">Team Task</span>
-                </a>
-            </li>
-
-{{--            <li class="sidebar-item {{ request()->routeIs('admin.taskCategory.*') ? 'active' : '' }} ">--}}
-{{--                <a class="sidebar-link" href="{{route('admin.taskCategory.index')}}">--}}
-{{--                    <i class="align-middle" data-feather="align-justify"></i>--}}
-{{--                    <span class="align-middle">Task Category</span>--}}
-{{--                </a>--}}
-{{--            </li>--}}
             <li class="sidebar-header"> Resource Management </li>
             <li class="sidebar-item {{ request()->routeIs('admin.category.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.category.index') }}">
@@ -61,3 +66,46 @@
         </ul>
     </div>
 </nav>
+
+<style>
+    .sidebar-dropdown {
+        padding-left: 1.5rem;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize Feather Icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+
+        // Add event listeners for the Tasks dropdown
+        const tasksLink = document.querySelector('a[href="#tasks"]');
+        const tasksCollapse = document.getElementById('tasks');
+
+        if (tasksLink && tasksCollapse) {
+            const arrow = tasksLink.querySelector('i.float-end[data-feather]');
+
+            // Function to update the arrow icon
+            const updateArrowIcon = () => {
+                if (arrow) {
+                    const isShown = tasksCollapse.classList.contains('show');
+                    arrow.setAttribute('data-feather', isShown ? 'chevron-up' : 'chevron-down');
+                    feather.replace(); // Refresh icons
+                }
+            };
+
+            // Set initial arrow state
+            updateArrowIcon();
+
+            // Update the arrow icon when the collapse state changes
+            tasksCollapse.addEventListener('show.bs.collapse', updateArrowIcon);
+            tasksCollapse.addEventListener('hide.bs.collapse', updateArrowIcon);
+        } else {
+            console.error('Tasks link or collapse element not found!');
+        }
+    });
+
+
+</script>

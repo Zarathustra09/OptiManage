@@ -3,81 +3,90 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inventory;
+use App\Models\TeamTask;
 use App\Models\User;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index()
     {
         $employeeCount = $this->getEmployeeCount();
         $finishedTaskCount = $this->getFinishedTaskCount();
         $onProgressTaskCount = $this->getOnProgressTaskCount();
         $toBeApprovedTaskCount = $this->getToBeApprovedTaskCount();
-        $latestTasks = Task::latest()->take(8)->get();
+        $latestTasks = $this->getLatestTasks();
         $lowQuantityItems = $this->getLowQuantityItems();
 
         return view('home', compact('employeeCount', 'finishedTaskCount', 'onProgressTaskCount', 'toBeApprovedTaskCount', 'latestTasks', 'lowQuantityItems'));
     }
 
-    /**
-     * Get the count of users with role_id 1.
-     *
-     * @return int
-     */
     private function getEmployeeCount()
     {
         return User::where('role_id', 0)->count();
     }
 
-    /**
-     * Get the count of tasks with status "Finished".
-     *
-     * @return int
-     */
     private function getFinishedTaskCount()
     {
-        return Task::where('status', 'Finished')->count();
+        $finishedTaskCount = $this->getAllTasks('Finished')->count();
+        $finishedTeamTaskCount = $this->getAllTeamTasks('Finished')->count();
+        return $finishedTaskCount + $finishedTeamTaskCount;
     }
 
-    /**
-     * Get the count of tasks with status "On Progress".
-     *
-     * @return int
-     */
     private function getOnProgressTaskCount()
     {
-        return Task::where('status', 'On Progress')->count();
+        $onProgressTaskCount = $this->getAllTasks('On Progress')->count();
+        $onProgressTeamTaskCount = $this->getAllTeamTasks('On Progress')->count();
+        return $onProgressTaskCount + $onProgressTeamTaskCount;
     }
 
-    /**
-     * Get the count of tasks with status "To be Approved".
-     *
-     * @return int
-     */
     private function getToBeApprovedTaskCount()
     {
-        return Task::where('status', 'To be Approved')->count();
+        $toBeApprovedTaskCount = $this->getAllTasks('To be Approved')->count();
+        $toBeApprovedTeamTaskCount = $this->getAllTeamTasks('To be Approved')->count();
+        return $toBeApprovedTaskCount + $toBeApprovedTeamTaskCount;
+    }
+
+    private function getLatestTasks()
+    {
+        $latestTasks = $this->getAllTasks()->latest()->take(4)->get();
+        Log::info('Latest Tasks: '.$latestTasks);
+        $latestTeamTasks = $this->getAllTeamTasks()->latest()->take(4)->get();
+        Log::info('Latest Team Tasks: '. $latestTeamTasks);
+
+        $combinedTasks = $latestTasks->concat($latestTeamTasks)->sortByDesc('created_at')->take(4);
+        Log::info('Combined Tasks: '. $combinedTasks);
+
+        return $combinedTasks;
+    }
+
+    private function getAllTasks($status = null)
+    {
+        $query = Task::query();
+        if ($status) {
+            $query->where('status', $status);
+        }
+        return $query;
+    }
+
+    private function getAllTeamTasks($status = null)
+    {
+        $query = TeamTask::query();
+        if ($status) {
+            $query->where('status', $status);
+        }
+        return $query;
     }
 
     private function getLowQuantityItems()
     {
-        return Inventory::where('quantity', '<', 10)->get(); // Adjust the threshold as needed
+        return Inventory::where('quantity', '<', 10)->get();
     }
 }

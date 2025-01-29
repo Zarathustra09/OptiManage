@@ -14,6 +14,11 @@ class EmployeeController extends Controller
         return view('admin.employee.index', compact('users'));
     }
 
+    public function create()
+    {
+        return view('admin.employee.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([

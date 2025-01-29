@@ -166,10 +166,20 @@ public function update(Request $request, $id)
             return response()->json(['error' => 'Selected inventory is out of stock.'], 400);
         }
 
+        $existingItem = $teamTask->inventories()->where('inventory_id', $request->inventory_id)->first();
+
+        if ($existingItem) {
+            // Update the quantity of the existing item
+            $newQuantity = $existingItem->pivot->quantity + $request->quantity;
+            $teamTask->inventories()->updateExistingPivot($request->inventory_id, ['quantity' => $newQuantity]);
+        } else {
+            // Attach the new item
+            $teamTask->inventories()->attach($inventory->id, ['quantity' => $request->quantity]);
+        }
+
+        // Deduct the inventory quantity
         $inventory->quantity -= $request->quantity;
         $inventory->save();
-
-        $teamTask->inventories()->attach($inventory->id, ['quantity' => $request->quantity]);
 
         return response()->json(['success' => 'Inventory item added successfully.']);
     }
