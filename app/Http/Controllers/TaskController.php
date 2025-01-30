@@ -45,6 +45,33 @@ class TaskController extends Controller
 
         Log::info('Validation passed');
 
+        $user = User::findOrFail($request->user_id);
+        $availabilities = $user->availabilities;
+
+        $timezone = new \DateTimeZone('Asia/Manila');
+        $taskStart = new \DateTime($request->start_date, $timezone);
+        $taskEnd = new \DateTime($request->end_date, $timezone);
+
+        $fitsInAvailability = false;
+
+        foreach ($availabilities as $availability) {
+            if ($availability->status !== 'active') {
+                continue;
+            }
+
+            $availableFrom = new \DateTime($availability->available_from, $timezone);
+            $availableTo = new \DateTime($availability->available_to, $timezone);
+
+            if ($taskStart >= $availableFrom && $taskEnd <= $availableTo) {
+                $fitsInAvailability = true;
+                break;
+            }
+        }
+
+        if (!$fitsInAvailability) {
+            return redirect()->back()->with('error', 'The task does not fit within the user\'s active availability.');
+        }
+
         $task = Task::create($request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date', 'ticket_id']));
 
         Log::info('Task created', ['task_id' => $task->id]);

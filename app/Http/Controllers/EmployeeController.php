@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Availability;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends Controller
@@ -27,13 +29,8 @@ class EmployeeController extends Controller
             'phone_number' => 'required|string|max:15|unique:users',
             'employee_id' => 'required|string|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'shift' => 'required|in:day,night',
         ]);
-
-        // Commented out the auto-creation of employee ID
-        // $year = date('Y');
-        // $employeeCount = User::where('role_id', 0)->count() + 1;
-        // $employeeNumber = str_pad($employeeCount, 4, '0', STR_PAD_LEFT);
-        // $employee_id = $year . '-' . $employeeNumber;
 
         $user = User::create([
             'name' => $request->name,
@@ -41,8 +38,20 @@ class EmployeeController extends Controller
             'phone_number' => $request->phone_number,
             'password' => Hash::make($request->password),
             'role_id' => 0,
-            'employee_id' => $request->employee_id, // Use the provided employee ID
+            'employee_id' => $request->employee_id,
         ]);
+
+        $shiftTimings = Config::get('shifts.' . $request->shift);
+
+        foreach ($shiftTimings as $day => $timing) {
+            Availability::create([
+                'user_id' => $user->id,
+                'day' => $day,
+                'available_from' => $timing['from'],
+                'available_to' => $timing['to'],
+                'status' => 'active',
+            ]);
+        }
 
         return response()->json(['success' => 'Employee created successfully']);
     }

@@ -27,6 +27,14 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="shift">Shift</label>
+                        <select class="form-control" id="shift" name="shift" required>
+                            <option value="day">Day Shift</option>
+                            <option value="night">Night Shift</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>

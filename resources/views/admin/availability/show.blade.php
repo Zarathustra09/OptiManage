@@ -57,7 +57,10 @@
                 </select>
                 <input id="swal-input2" class="swal2-input" type="time" value="${moment(availability.available_from, 'HH:mm:ss').format('HH:mm')}">
                 <input id="swal-input3" class="swal2-input" type="time" value="${moment(availability.available_to, 'HH:mm:ss').format('HH:mm')}">
-                <input id="swal-input4" class="swal2-input" value="${availability.status}" placeholder="Status">
+                <select id="swal-input4" class="swal2-input">
+                    <option value="active" ${availability.status === 'active' ? 'selected' : ''}>Active</option>
+                    <option value="inactive" ${availability.status === 'inactive' ? 'selected' : ''}>Inactive</option>
+                </select>
             `,
                     showCancelButton: true,
                     confirmButtonText: 'Update',
