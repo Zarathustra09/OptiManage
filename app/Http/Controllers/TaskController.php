@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TaskAssigned;
 use App\Models\Inventory;
 use App\Models\Task;
 use App\Models\TaskCategory;
@@ -9,6 +10,7 @@ use App\Models\TaskInventory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class TaskController extends Controller
 {
@@ -33,46 +35,29 @@ class TaskController extends Controller
 
         $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|in:To be Approved,On Progress,Finished,Cancel',
+            'description' => 'required|string',
+            'status' => 'required|string|in:To be Approved,On Progress,Finished,Cancel',
             'user_id' => 'required|exists:users,id',
             'task_category_id' => 'required|exists:task_categories,id',
-            'inventory_items' => 'required|json',
-            'start_date' => 'nullable|date_format:Y-m-d\TH:i',
-            'end_date' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
-            'ticket_id' => 'required|string|max:255|unique:tasks,ticket_id',
+            'start_date' => 'required|date_format:Y-m-d\TH:i',
+            'end_date' => 'required|date_format:Y-m-d\TH:i|after:start_date',
         ]);
 
         Log::info('Validation passed');
 
-        $user = User::findOrFail($request->user_id);
-        $availabilities = $user->availabilities;
+        $taskStart = new \DateTime($request->start_date);
+        $taskEnd = new \DateTime($request->end_date);
 
-        $timezone = new \DateTimeZone('Asia/Manila');
-        $taskStart = new \DateTime($request->start_date, $timezone);
-        $taskEnd = new \DateTime($request->end_date, $timezone);
-
-        $fitsInAvailability = false;
-
-        foreach ($availabilities as $availability) {
-            if ($availability->status !== 'active') {
-                continue;
-            }
-
-            $availableFrom = new \DateTime($availability->available_from, $timezone);
-            $availableTo = new \DateTime($availability->available_to, $timezone);
-
-            if ($taskStart >= $availableFrom && $taskEnd <= $availableTo) {
-                $fitsInAvailability = true;
-                break;
-            }
-        }
-
-        if (!$fitsInAvailability) {
-            return redirect()->back()->with('error', 'The task does not fit within the user\'s active availability.');
-        }
-
-        $task = Task::create($request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date', 'ticket_id']));
+        $task = Task::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'status' => $request->status,
+            'user_id' => $request->user_id,
+            'task_category_id' => $request->task_category_id,
+            'start_date' => $taskStart,
+            'end_date' => $taskEnd,
+            'ticket_id' => $request->ticket_id,
+        ]);
 
         Log::info('Task created', ['task_id' => $task->id]);
 
@@ -91,8 +76,7 @@ class TaskController extends Controller
         foreach ($combinedInventoryItems as $item) {
             $inventory = Inventory::findOrFail($item['inventory_id']);
             if ($inventory->quantity < $item['quantity']) {
-                Log::error('Inventory out of stock', ['inventory_id' => $item['inventory_id'], 'requested_quantity' => $item['quantity'], 'available_quantity' => $inventory->quantity]);
-                return redirect()->back()->with('error', 'Selected inventory is out of stock.');
+                return response()->json(['error' => 'Selected inventory is out of stock.'], 400);
             }
 
             // Deduct inventory quantity
@@ -101,9 +85,12 @@ class TaskController extends Controller
             Log::info('Inventory quantity updated', ['inventory_id' => $inventory->id, 'new_quantity' => $inventory->quantity]);
 
             // Attach inventory to task
-            $task->inventories()->attach($inventory->id, ['quantity' => $item['quantity']]);
+            $task->inventories()->syncWithoutDetaching([$inventory->id => ['quantity' => $item['quantity']]]);
             Log::info('Inventory attached to task', ['task_id' => $task->id, 'inventory_id' => $inventory->id, 'quantity' => $item['quantity']]);
         }
+
+        $user = User::findOrFail($request->user_id);
+        Mail::to($user->email)->send(new TaskAssigned($task));
 
         Log::info('Task creation process completed successfully', ['task_id' => $task->id]);
         return redirect()->route('admin.task.index')->with('success', 'Task has been created successfully.');
