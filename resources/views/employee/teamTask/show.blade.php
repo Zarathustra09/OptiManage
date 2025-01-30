@@ -1,42 +1,6 @@
 @extends('layouts.employee.app')
 
 @section('content')
-    <style>
-        .progress-container {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .progress-step {
-            width: 25%;
-            text-align: center;
-            padding: 10px;
-            font-weight: bold;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .progress-step.active {
-            color: #fff;
-            background: #007bff;
-            border-radius: 8px;
-        }
-
-        .progress-step:not(.active) {
-            background: #e0e0e0;
-            color: #555;
-            border-radius: 8px;
-        }
-
-        .progress-step span {
-            display: block;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-    </style>
     <div class="container-fluid p-4">
         <div class="row">
             <div class="col-12">

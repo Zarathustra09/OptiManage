@@ -36,23 +36,29 @@ class TeamTaskController extends Controller
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'inventory_items' => 'required|json',
             'task_category_id' => 'required|exists:task_categories,id',
+            'ticket_id' => 'required|string|max:255|unique:team_tasks,ticket_id',
         ]);
 
         Log::info('Validation passed');
 
-        $prefix = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5));
-        $suffix = substr(str_shuffle('0123456789'), 0, 5);
-        $ticket_id = $prefix . '-' . $suffix;
-        Log::info('Generated ticket ID', ['ticket_id' => $ticket_id]);
-
         $data = $request->all();
 
-        $teamTask = TeamTask::create(array_merge($data, ['ticket_id' => $ticket_id]));
+        $teamTask = TeamTask::create($data);
         Log::info('Team task created', ['team_task_id' => $teamTask->id]);
 
         $inventoryItems = json_decode($request->inventory_items, true);
 
+        // Combine overlapping inventory items
+        $combinedInventoryItems = [];
         foreach ($inventoryItems as $item) {
+            if (isset($combinedInventoryItems[$item['inventory_id']])) {
+                $combinedInventoryItems[$item['inventory_id']]['quantity'] += $item['quantity'];
+            } else {
+                $combinedInventoryItems[$item['inventory_id']] = $item;
+            }
+        }
+
+        foreach ($combinedInventoryItems as $item) {
             $inventory = Inventory::findOrFail($item['inventory_id']);
             if ($inventory->quantity < $item['quantity']) {
                 Log::error('Inventory out of stock', ['inventory_id' => $item['inventory_id'], 'requested_quantity' => $item['quantity'], 'available_quantity' => $inventory->quantity]);
@@ -70,6 +76,7 @@ class TeamTaskController extends Controller
         Log::info('Team task creation process completed successfully', ['team_task_id' => $teamTask->id]);
         return redirect()->route('admin.teamTask.index')->with('success', 'Team Task created successfully.');
     }
+
 
 //    public function update(Request $request, $id)
 //    {

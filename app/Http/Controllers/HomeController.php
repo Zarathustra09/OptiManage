@@ -87,6 +87,6 @@ class HomeController extends Controller
 
     private function getLowQuantityItems()
     {
-        return Inventory::where('quantity', '<', 10)->get();
+        return Inventory::where('quantity', '<', 20)->get();
     }
 }

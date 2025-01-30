@@ -40,39 +40,28 @@ class TaskController extends Controller
             'inventory_items' => 'required|json',
             'start_date' => 'nullable|date_format:Y-m-d\TH:i',
             'end_date' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
+            'ticket_id' => 'required|string|max:255|unique:tasks,ticket_id',
         ]);
 
         Log::info('Validation passed');
 
-        $overlappingTasks = Task::where('user_id', $request->user_id)
-            ->whereNotIn('status', ['Finished', 'Cancel'])
-            ->where(function($query) use ($request) {
-                $query->whereBetween('start_date', [$request->start_date, $request->end_date])
-                    ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
-                    ->orWhere(function($query) use ($request) {
-                        $query->where('start_date', '<=', $request->start_date)
-                            ->where('end_date', '>=', $request->end_date);
-                    });
-            })->exists();
-
-        if ($overlappingTasks) {
-            Log::warning('Overlapping task detected', ['user_id' => $request->user_id, 'start_date' => $request->start_date, 'end_date' => $request->end_date]);
-            return redirect()->back()->with('error', 'The task overlaps with an existing task.');
-        }
-
-        $ticket_id = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5)) . '-' . substr(str_shuffle('0123456789'), 0, 5);
-        Log::info('Generated ticket ID', ['ticket_id' => $ticket_id]);
-
-        $task = Task::create(array_merge(
-            $request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date']),
-            ['ticket_id' => $ticket_id]
-        ));
+        $task = Task::create($request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date', 'ticket_id']));
 
         Log::info('Task created', ['task_id' => $task->id]);
 
         $inventoryItems = json_decode($request->inventory_items, true);
 
+        // Combine overlapping inventory items
+        $combinedInventoryItems = [];
         foreach ($inventoryItems as $item) {
+            if (isset($combinedInventoryItems[$item['inventory_id']])) {
+                $combinedInventoryItems[$item['inventory_id']]['quantity'] += $item['quantity'];
+            } else {
+                $combinedInventoryItems[$item['inventory_id']] = $item;
+            }
+        }
+
+        foreach ($combinedInventoryItems as $item) {
             $inventory = Inventory::findOrFail($item['inventory_id']);
             if ($inventory->quantity < $item['quantity']) {
                 Log::error('Inventory out of stock', ['inventory_id' => $item['inventory_id'], 'requested_quantity' => $item['quantity'], 'available_quantity' => $inventory->quantity]);

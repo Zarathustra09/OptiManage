@@ -25,14 +25,15 @@ class EmployeeController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'phone_number' => 'required|string|max:15|unique:users',
+            'employee_id' => 'required|string|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // Generate employee ID
-        $year = date('Y');
-        $employeeCount = User::where('role_id', 0)->count() + 1;
-        $employeeNumber = str_pad($employeeCount, 4, '0', STR_PAD_LEFT);
-        $employee_id = $year . '-' . $employeeNumber;
+        // Commented out the auto-creation of employee ID
+        // $year = date('Y');
+        // $employeeCount = User::where('role_id', 0)->count() + 1;
+        // $employeeNumber = str_pad($employeeCount, 4, '0', STR_PAD_LEFT);
+        // $employee_id = $year . '-' . $employeeNumber;
 
         $user = User::create([
             'name' => $request->name,
@@ -40,18 +41,24 @@ class EmployeeController extends Controller
             'phone_number' => $request->phone_number,
             'password' => Hash::make($request->password),
             'role_id' => 0,
-            'employee_id' => $employee_id,
+            'employee_id' => $request->employee_id, // Use the provided employee ID
         ]);
 
         return response()->json(['success' => 'Employee created successfully']);
     }
 
+//    public function show($id)
+//    {
+//        $user = User::findOrFail($id);
+//        return response()->json($user);
+//    }
+
+
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return response()->json($user);
+        return view('admin.employee.show', compact('user'));
     }
-
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);

@@ -75,6 +75,33 @@
                                         @endforeach
                                     </div>
                                 </div>
+
+
+                                <div class="progress-container d-flex justify-content-between align-items-center mb-4">
+                                    <div class="progress-step {{ $task->status == 'To be Approved' ? 'active' : '' }}" data-status="To be Approved">
+                                        <span>To be Approved</span>
+                                    </div>
+                                    <div class="progress-step {{ $task->status == 'On Progress' ? 'active' : '' }}" data-status="On Progress">
+                                        <span>On Progress</span>
+                                    </div>
+                                    <div class="progress-step {{ $task->status == 'Finished' ? 'active' : '' }}" data-status="Finished">
+                                        <span>Finished</span>
+                                    </div>
+                                    <div class="progress-step {{ $task->status == 'Cancel' ? 'active' : '' }}" data-status="Cancel">
+                                        <span>Cancel</span>
+                                    </div>
+                                </div>
+
+                                <!-- Form Submission -->
+                                <form id="updateStatusForm" method="POST" action="{{ route('admin.task.update', ['id' => $task->id]) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" id="task_status" name="status" value="{{ $task->status }}">
+
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg">Update Status</button>
+                                    </div>
+                                </form>
                             </div>
 
                             <div class="col-md-4">
@@ -121,6 +148,46 @@
 
 @push('scripts')
     <script>
+        document.querySelectorAll('.progress-step').forEach(step => {
+            step.addEventListener('click', function() {
+                document.querySelectorAll('.progress-step').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('task_status').value = this.getAttribute('data-status');
+            });
+        });
+
+        $('#updateStatusForm').on('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            $.ajax({
+                url: '{{ route("admin.task.update", ["id" => $task->id]) }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-HTTP-Method-Override': 'PUT',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Updated!',
+                        text: response.success,
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.responseJSON.message,
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+
         $('#updateProofOfWorkForm').on('submit', function(e) {
             e.preventDefault();
             let formData = new FormData(this);

@@ -4,6 +4,14 @@
     <h1>Create Team Task</h1>
     <form action="{{ route('admin.teamTask.store') }}" method="POST">
         @csrf
+
+        <div class="form-group">
+            <label for="ticket_id">Ticket ID</label>
+            <input type="text" class="form-control" id="ticket_id" name="ticket_id" required>
+            @error('ticket_id')
+            <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
+        </div>
         <div class="form-group">
             <label for="title">Title</label>
             <input type="text" class="form-control" id="title" name="title" required>

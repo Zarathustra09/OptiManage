@@ -46,43 +46,47 @@
         });
 
         function editUser(userId) {
-            $.get('/admin/employee/' + userId, function(user) {
-                Swal.fire({
-                    title: 'Edit User',
-                    html: `
-                        <input id="swal-input1" class="swal2-input" value="${user.name}" placeholder="Name">
-                        <input id="swal-input2" class="swal2-input" value="${user.email}" placeholder="Email">
-                        <input id="swal-input3" class="swal2-input" value="${user.phone_number}" placeholder="Phone Number">
-                    `,
-                    showCancelButton: true,
-                    confirmButtonText: 'Update',
-                    cancelButtonText: 'Cancel',
-                    preConfirm: () => {
-                        return {
-                            name: document.getElementById('swal-input1').value,
-                            email: document.getElementById('swal-input2').value,
-                            phone_number: document.getElementById('swal-input3').value
-                        }
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: '/admin/employee/' + userId,
-                            type: 'PUT',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                ...result.value
-                            },
-                            success: function(response) {
-                                Swal.fire('Updated!', response.success, 'success').then(() => {
-                                    location.reload();
-                                });
-                            }
-                        });
-                    }
-                });
-            });
+            window.location.href = '/admin/employee/' + userId;
         }
+
+        {{--function editUser(userId) {--}}
+        {{--    $.get('/admin/employee/' + userId, function(user) {--}}
+        {{--        Swal.fire({--}}
+        {{--            title: 'Edit User',--}}
+        {{--            html: `--}}
+        {{--                <input id="swal-input1" class="swal2-input" value="${user.name}" placeholder="Name">--}}
+        {{--                <input id="swal-input2" class="swal2-input" value="${user.email}" placeholder="Email">--}}
+        {{--                <input id="swal-input3" class="swal2-input" value="${user.phone_number}" placeholder="Phone Number">--}}
+        {{--            `,--}}
+        {{--            showCancelButton: true,--}}
+        {{--            confirmButtonText: 'Update',--}}
+        {{--            cancelButtonText: 'Cancel',--}}
+        {{--            preConfirm: () => {--}}
+        {{--                return {--}}
+        {{--                    name: document.getElementById('swal-input1').value,--}}
+        {{--                    email: document.getElementById('swal-input2').value,--}}
+        {{--                    phone_number: document.getElementById('swal-input3').value--}}
+        {{--                }--}}
+        {{--            }--}}
+        {{--        }).then((result) => {--}}
+        {{--            if (result.isConfirmed) {--}}
+        {{--                $.ajax({--}}
+        {{--                    url: '/admin/employee/' + userId,--}}
+        {{--                    type: 'PUT',--}}
+        {{--                    data: {--}}
+        {{--                        _token: '{{ csrf_token() }}',--}}
+        {{--                        ...result.value--}}
+        {{--                    },--}}
+        {{--                    success: function(response) {--}}
+        {{--                        Swal.fire('Updated!', response.success, 'success').then(() => {--}}
+        {{--                            location.reload();--}}
+        {{--                        });--}}
+        {{--                    }--}}
+        {{--                });--}}
+        {{--            }--}}
+        {{--        });--}}
+        {{--    });--}}
+        {{--}--}}
 
         function deleteUser(userId) {
             Swal.fire({

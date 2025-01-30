@@ -10,6 +10,10 @@
                 <form id="createEmployeeForm">
                     @csrf
                     <div class="form-group">
+                        <label for="employee_id">Employee ID</label>
+                        <input type="text" class="form-control" id="employee_id" name="employee_id" required>
+                    </div>
+                    <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" class="form-control" id="name" name="name" required>
                     </div>
@@ -21,6 +25,7 @@
                         <label for="phone_number">Phone Number</label>
                         <input type="text" class="form-control" id="phone_number" name="phone_number" required>
                     </div>
+
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" name="password" required>
