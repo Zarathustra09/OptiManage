@@ -42,6 +42,8 @@ class EmployeeController extends Controller
         ]);
 
         $shiftTimings = Config::get('shifts.' . $request->shift);
+        $shiftType = $shiftTimings['shift_type'];
+        unset($shiftTimings['shift_type']);
 
         foreach ($shiftTimings as $day => $timing) {
             Availability::create([
@@ -50,6 +52,7 @@ class EmployeeController extends Controller
                 'available_from' => $timing['from'],
                 'available_to' => $timing['to'],
                 'status' => 'active',
+                'shift_type' => $shiftType,
             ]);
         }
 

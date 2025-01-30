@@ -18,6 +18,7 @@ return new class extends Migration
             $table->time('available_from')->nullable();
             $table->time('available_to')->nullable();
             $table->string('status');
+            $table->tinyInteger('shift_type')->default(0); // 0 for day, 1 for night
             $table->timestamps();
         });
     }
