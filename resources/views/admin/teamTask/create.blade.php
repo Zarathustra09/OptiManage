@@ -42,9 +42,14 @@
             <label for="task_category_id">Task Category</label>
             <div class="input-group">
                 <select class="form-control" id="task_category_id" name="task_category_id" required onchange="handleCategoryChange(this)">
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
+                    @if($categories->isEmpty())
+                        <option value="" disabled selected>Select a category or create a new one</option>
+                    @else
+                        <option value="" disabled selected>Select a category</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    @endif
                     <option value="create_new">Create New Category</option>
                 </select>
                 <div class="input-group-append">

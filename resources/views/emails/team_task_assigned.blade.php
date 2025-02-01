@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -115,38 +116,38 @@
     <div class="inner-body">
         <div class="header">
             <p class="text-white" style="font-weight: 600">OptiManage</p>
-            <h1 class="title">Task Assigned</h1>
+            <h1 class="title">Team Task Assigned</h1>
         </div>
 
-        <p>Hello {{ $task->user->name }},</p>
+        <p>Hello {{ $user->name }},</p>
 
-        <p>You have been assigned a new task. Here are the details:</p>
+        <p>You have been assigned a new team task. Here are the details:</p>
 
         <div class="task-details">
             <div class="detail-row">
                 <span class="detail-label">Title:</span>
-                <span>{{ $task->title }}</span>
+                <span>{{ $teamTask->title }}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Description:</span>
-                <span>{{ $task->description }}</span>
+                <span>{{ $teamTask->description }}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Status:</span>
-                <span>{{ $task->status }}</span>
+                <span>{{ $teamTask->status }}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Start Date:</span>
-                <span>{{ $task->start_date->format('F j, Y H:i') }}</span>
+                <span>{{ $teamTask->start_date->format('F j, Y H:i') }}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">End Date:</span>
-                <span>{{ $task->end_date->format('F j, Y H:i') }}</span>
+                <span>{{ $teamTask->end_date->format('F j, Y H:i') }}</span>
             </div>
         </div>
 
         <div style="text-align: center;">
-            <a href="{{ route('employee.task.showSingle', $task->id) }}" class="button">
+            <a href="{{ route('employee.teamTask.show', $teamTask->id) }}" class="button">
                 View Task
             </a>
         </div>

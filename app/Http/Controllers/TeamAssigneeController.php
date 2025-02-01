@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TaskAssigned;
+use App\Mail\TeamTaskAssigned;
 use App\Models\TeamAssignee;
+use App\Models\TeamTask;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class TeamAssigneeController extends Controller
 {
@@ -21,6 +26,16 @@ class TeamAssigneeController extends Controller
         ]);
 
         $assignee = TeamAssignee::create($request->all());
+
+        // Fetch the team task details
+        $teamTask = TeamTask::findOrFail($request->team_task_id);
+
+        // Fetch the user details
+        $user = User::findOrFail($request->user_id);
+
+        // Send the email
+        Mail::to($user->email)->send(new TeamTaskAssigned($teamTask, $user));
+
         return response()->json($assignee, 201);
     }
 
