@@ -132,6 +132,7 @@
                     <tr>
                         <th>Item Name</th>
                         <th>Quantity</th>
+                        <th>Status</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -139,6 +140,12 @@
                         <tr>
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->quantity }}</td>
+                            <td> <span class="badge
+                                    @if($item->quantity < 20) bg-danger
+                                    @else bg-success
+                                    @endif">
+                                    {{ $item->quantity < 20 ? 'Low Stock' : 'In Stock' }}
+                                </span></td>
                         </tr>
                     @endforeach
                     </tbody>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Availability;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -83,5 +84,49 @@ class AvailabilityController extends Controller
         $availability->delete();
 
         return response()->json(['success' => true, 'message' => 'Availability deleted successfully.']);
+    }
+
+    public function getAvailableUsers(Request $request)
+    {
+        $startDate = Carbon::parse($request->query('start_date'));
+        $endDate = Carbon::parse($request->query('end_date'));
+        $shiftType = $request->query('shift_type');
+
+        // Get shift configuration
+        $shifts = config('shifts');
+        $shift = $shiftType === '1' ? $shifts['night'] : $shifts['day'];
+        $day = $startDate->format('l');
+
+        // Get configured shift times
+        $shiftStart = Carbon::parse($shift[$day]['from']);
+        $shiftEnd = Carbon::parse($shift[$day]['to']);
+
+        // Check if time is within shift range
+        $requestStart = Carbon::parse($startDate->format('H:i'));
+        $requestEnd = Carbon::parse($endDate->format('H:i'));
+
+        if ($shiftType === '0') {
+            // Day shift validation (8:00-17:00)
+            if ($requestStart->lt($shiftStart) || $requestEnd->gt($shiftEnd)) {
+                return response()->json(['error' => 'Time must be between 08:00-17:00 for day shift'], 400);
+            }
+        } else {
+            // Night shift validation (20:00-05:00)
+            if ($requestStart->lt($shiftStart) && $requestStart->gt($shiftEnd)) {
+                return response()->json(['error' => 'Time must be between 20:00-05:00 for night shift'], 400);
+            }
+        }
+
+        $users = User::whereHas('availabilities', function ($query) use ($day, $shiftType) {
+            $query->where('day', $day)
+                ->where('shift_type', $shiftType)
+                ->where('status', 'active');
+        })
+
+//            ->with(['availabilities' => function ($query) use ($day) {
+//            $query->where('day', $day);
+        ->get();
+
+        return response()->json($users);
     }
 }

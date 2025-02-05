@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\Employee\EmployeeTaskController;
 use App\Http\Controllers\Employee\ImageController;
 use Illuminate\Http\Request;
@@ -25,3 +26,7 @@ Route::post('/post/image/{taskId}', [ImageController::class, 'storeTaskImage'])-
 Route::delete('/delete/image/{id}', [ImageController::class, 'destroyImage'])->name('image.destroy');
 Route::post('/post/team-task-image/{teamTaskId}', [ImageController::class, 'storeTeamTaskImage'])->name('teamTaskImage.store');
 Route::delete('/delete/team-task-image/{id}', [ImageController::class, 'destroyTeamTaskImage'])->name('teamTaskImage.destroy');
+
+
+
+Route::get('/free/employee', [AvailabilityController::class, 'getAvailableUsers'])->name('available.employee.index');

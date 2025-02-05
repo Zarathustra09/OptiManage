@@ -1,80 +1,106 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Create Team Task</h1>
-    <form action="{{ route('admin.teamTask.store') }}" method="POST">
+    @include('layouts.session')
+    <form action="{{ route('admin.teamTask.store') }}" method="POST" id="createTeamTaskForm" enctype="multipart/form-data" class="container bg-white shadow p-4 rounded">
         @csrf
+        <h3 class="mb-4">Create Team Task</h3>
 
-        <div class="form-group">
-            <label for="ticket_id">Ticket ID</label>
-            <input type="text" class="form-control" id="ticket_id" name="ticket_id" required>
-            @error('ticket_id')
-            <div class="alert alert-danger">{{ $message }}</div>
-            @enderror
-        </div>
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" class="form-control" id="title" name="title" required>
-        </div>
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea class="form-control" id="description" name="description" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="status">Status</label>
-            <select class="form-control" id="status" name="status" required>
-                <option value="To be Approved">To be Approved</option>
-                <option value="On Progress">On Progress</option>
-                <option value="Finished">Finished</option>
-                <option value="Cancel">Cancel</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="start_date">Start Date</label>
-            <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
-        </div>
-        <div class="form-group">
-            <label for="end_date">End Date</label>
-            <input type="datetime-local" class="form-control" id="end_date" name="end_date" required>
-        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="ticket_id" class="form-label">Ticket ID</label>
+                <input type="text" class="form-control" id="ticket_id" name="ticket_id" required>
+                @error('ticket_id')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
 
-        <div class="form-group">
-            <label for="task_category_id">Task Category</label>
-            <div class="input-group">
-                <select class="form-control" id="task_category_id" name="task_category_id" required onchange="handleCategoryChange(this)">
-                    @if($categories->isEmpty())
-                        <option value="" disabled selected>Select a category or create a new one</option>
-                    @else
-                        <option value="" disabled selected>Select a category</option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                        @endforeach
-                    @endif
-                    <option value="create_new">Create New Category</option>
+            <div class="col-md-6">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+                @error('title')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-12">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                @error('description')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status" name="status" required>
+                    <option value="To be Approved">To be Approved</option>
+                    <option value="On Progress">On Progress</option>
+                    <option value="Finished">Finished</option>
+                    <option value="Cancel">Cancel</option>
                 </select>
-                <div class="input-group-append">
+                @error('status')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="task_category_id" class="form-label">Task Category</label>
+                <div class="input-group">
+                    <select class="form-select" id="task_category_id" name="task_category_id" required onchange="handleCategoryChange(this)">
+                        @if($categories->isEmpty())
+                            <option value="" disabled selected>Select a category or create a new one</option>
+                        @else
+                            <option value="" disabled selected>Select a category</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        @endif
+                        <option value="create_new">Create New Category</option>
+                    </select>
                     <button type="button" class="btn btn-danger" onclick="toggleDeleteCategory()">Delete Category</button>
                 </div>
+                @error('task_category_id')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
             </div>
-            @error('task_category_id')
-            <div class="alert alert-danger">{{ $message }}</div>
-            @enderror
-        </div>
-        <div class="form-group">
-            <label for="inventory_items_display">Inventory Items</label>
-            <div class="input-group">
-                <input type="text" class="form-control" id="inventory_items_display" readonly required>
-                <input type="hidden" id="inventory_items" name="inventory_items" required>
-                <div class="input-group-append">
+
+            <div class="col-md-6">
+                <label for="start_date" class="form-label">Start Date and Time</label>
+                <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
+                @error('start_date')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="end_date" class="form-label">End Date and Time</label>
+                <input type="datetime-local" class="form-control" id="end_date" name="end_date" required>
+                @error('end_date')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-12">
+                <label for="inventory_items_display" class="form-label">Inventory Items</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="inventory_items_display" readonly required>
+                    <input type="hidden" id="inventory_items" name="inventory_items" required>
                     <button type="button" class="btn btn-primary" onclick="selectInventoryQuantity()">Add Inventory Items</button>
                 </div>
+                @error('inventory_items')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-12 mt-4">
+                <button type="submit" class="btn btn-primary">Create Team Task</button>
             </div>
         </div>
-
-        <button type="submit" class="btn btn-primary">Create</button>
     </form>
 
     <script>
+        // Include the same JavaScript functions as in the task creation form
         let initialInventories = {};
 
         async function selectInventoryQuantity() {

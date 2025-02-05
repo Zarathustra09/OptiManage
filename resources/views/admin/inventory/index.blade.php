@@ -15,6 +15,7 @@
                         <th>Name</th>
                         <th>Quantity</th>
                         <th>Description</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -25,6 +26,12 @@
                             <td>{{ $inventory->name }}</td>
                             <td>{{ $inventory->quantity }}</td>
                             <td>{{ $inventory->description }}</td>
+                            <td> <span class="badge
+    @if($inventory->quantity < 20) bg-danger
+    @else bg-success
+    @endif">
+    {{ $inventory->quantity < 20 ? 'Low Stock' : 'In Stock' }}
+</span></td>
                             <td>
                                 <button class="btn btn-info btn-sm" onclick="viewInventory({{ $inventory->id }})">View</button>
                                 <button class="btn btn-warning btn-sm" onclick="editInventory({{ $inventory->id }})">Edit</button>
