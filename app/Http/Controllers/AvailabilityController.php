@@ -90,42 +90,29 @@ class AvailabilityController extends Controller
     {
         $startDate = Carbon::parse($request->query('start_date'));
         $endDate = Carbon::parse($request->query('end_date'));
-        $shiftType = $request->query('shift_type');
 
-        // Get shift configuration
-        $shifts = config('shifts');
-        $shift = $shiftType === '1' ? $shifts['night'] : $shifts['day'];
-        $day = $startDate->format('l');
+        // Determine shift type based on start and end times
+        $shiftType = null;
+        $startHour = $startDate->hour;
+        $endHour = $endDate->hour;
 
-        // Get configured shift times
-        $shiftStart = Carbon::parse($shift[$day]['from']);
-        $shiftEnd = Carbon::parse($shift[$day]['to']);
-
-        // Check if time is within shift range
-        $requestStart = Carbon::parse($startDate->format('H:i'));
-        $requestEnd = Carbon::parse($endDate->format('H:i'));
-
-        if ($shiftType === '0') {
-            // Day shift validation (8:00-17:00)
-            if ($requestStart->lt($shiftStart) || $requestEnd->gt($shiftEnd)) {
-                return response()->json(['error' => 'Time must be between 08:00-17:00 for day shift'], 400);
-            }
+        if ($startHour >= 8 && $startHour < 17 && $endHour >= 8 && $endHour <= 17) {
+            $shiftType = 0; // Day shift
+        } elseif (($startHour >= 20 || $startHour < 5) && ($endHour >= 20 || $endHour < 5)) {
+            $shiftType = 1; // Night shift
         } else {
-            // Night shift validation (20:00-05:00)
-            if ($requestStart->lt($shiftStart) && $requestStart->gt($shiftEnd)) {
-                return response()->json(['error' => 'Time must be between 20:00-05:00 for night shift'], 400);
-            }
+            return response()->json(['error' => 'Invalid shift time range'], 400);
         }
+
+        Log::info('Shift type: ' . $shiftType);
+
+        $day = $startDate->format('l');
 
         $users = User::whereHas('availabilities', function ($query) use ($day, $shiftType) {
             $query->where('day', $day)
                 ->where('shift_type', $shiftType)
                 ->where('status', 'active');
-        })
-
-//            ->with(['availabilities' => function ($query) use ($day) {
-//            $query->where('day', $day);
-        ->get();
+        })->get();
 
         return response()->json($users);
     }

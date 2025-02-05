@@ -82,17 +82,6 @@
             </div>
 
             <div class="col-md-6">
-                <label for="shift_type" class="form-label">Shift Type</label>
-                <select class="form-select" id="shift_type" name="shift_type" required>
-                    <option value="0">Day Shift</option>
-                    <option value="1">Night Shift</option>
-                </select>
-                @error('shift_type')
-                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="col-md-6">
                 <label for="user_id" class="form-label">User</label>
                 <select class="form-select" id="user_id" name="user_id" required>
                     <option value="" disabled selected>Select a user</option>
@@ -118,18 +107,31 @@
     </form>
 
     <script>
-
         document.getElementById('start_date').addEventListener('change', checkAndFetchAvailableUsers);
         document.getElementById('end_date').addEventListener('change', checkAndFetchAvailableUsers);
-        document.getElementById('shift_type').addEventListener('change', checkAndFetchAvailableUsers);
 
         function checkAndFetchAvailableUsers() {
             const startDate = document.getElementById('start_date').value;
             const endDate = document.getElementById('end_date').value;
-            const shiftType = document.getElementById('shift_type').value;
 
-            if (startDate && endDate && shiftType) {
+            if (startDate && endDate) {
+                const shiftType = calculateShiftType(startDate, endDate);
                 fetchAvailableUsers(startDate, endDate, shiftType);
+            }
+        }
+
+        function calculateShiftType(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const startHour = start.getHours();
+            const endHour = end.getHours();
+
+            if (startHour >= 8 && startHour < 17 && endHour >= 8 && endHour <= 17) {
+                return 0; // Day shift
+            } else if ((startHour >= 20 || startHour < 5) && (endHour >= 20 || endHour < 5)) {
+                return 1; // Night shift
+            } else {
+                throw new Error('Invalid shift time range');
             }
         }
 
