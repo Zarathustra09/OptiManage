@@ -106,6 +106,11 @@
         </div>
     </form>
 
+
+@endsection
+
+
+@push('scripts')
     <script>
         document.getElementById('start_date').addEventListener('change', checkAndFetchAvailableUsers);
         document.getElementById('end_date').addEventListener('change', checkAndFetchAvailableUsers);
@@ -113,34 +118,34 @@
         function checkAndFetchAvailableUsers() {
             const startDate = document.getElementById('start_date').value;
             const endDate = document.getElementById('end_date').value;
+            const userSelect = document.getElementById('user_id');
 
             if (startDate && endDate) {
-                const shiftType = calculateShiftType(startDate, endDate);
-                fetchAvailableUsers(startDate, endDate, shiftType);
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+
+                if (start.getHours() < 8 || (start.getDate() === end.getDate() && end.getHours() >= 17) || (start.getDate() !== end.getDate() && (end.getHours() < 8 || end.getHours() >= 17))) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Overtime',
+                        text: 'The selected time range includes overtime hours.',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                    });
+                }
+
+                fetchAvailableUsers(startDate, endDate);
             }
         }
-
-        function calculateShiftType(startDate, endDate) {
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            const startHour = start.getHours();
-            const endHour = end.getHours();
-
-            if (startHour >= 8 && startHour < 17 && endHour >= 8 && endHour <= 17) {
-                return 0; // Day shift
-            } else if ((startHour >= 20 || startHour < 5) && (endHour >= 20 || endHour < 5)) {
-                return 1; // Night shift
-            } else {
-                throw new Error('Invalid shift time range');
-            }
-        }
-
-        async function fetchAvailableUsers(startDate, endDate, shiftType) {
+        async function fetchAvailableUsers(startDate, endDate) {
             const userSelect = document.getElementById('user_id');
             userSelect.innerHTML = '<option value="" selected disabled>Select User</option>';
 
             try {
-                const response = await fetch(`/api/free/employee?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}&shift_type=${shiftType}`);
+                const response = await fetch(`/api/free/employee?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`);
                 const users = await response.json();
 
                 users.forEach(user => {
@@ -361,4 +366,5 @@
             });
         }
     </script>
-@endsection
+
+@endpush

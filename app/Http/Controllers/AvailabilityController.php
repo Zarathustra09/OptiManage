@@ -91,26 +91,16 @@ class AvailabilityController extends Controller
         $startDate = Carbon::parse($request->query('start_date'));
         $endDate = Carbon::parse($request->query('end_date'));
 
-        // Determine shift type based on start and end times
-        $shiftType = null;
-        $startHour = $startDate->hour;
-        $endHour = $endDate->hour;
-
-        if ($startHour >= 8 && $startHour < 17 && $endHour >= 8 && $endHour <= 17) {
-            $shiftType = 0; // Day shift
-        } elseif (($startHour >= 20 || $startHour < 5) && ($endHour >= 20 || $endHour < 5)) {
-            $shiftType = 1; // Night shift
-        } else {
-            return response()->json(['error' => 'Invalid shift time range'], 400);
+        // Check if start time is before 8 AM or end time is after 5 PM
+        if ($startDate->hour < 8 || $endDate->hour >= 17) {
+            return response()->json(['error' => 'Invalid shift time range. Start time must be after 8 AM and end time must be before 5 PM.'], 400);
         }
-
-        Log::info('Shift type: ' . $shiftType);
 
         $day = $startDate->format('l');
 
-        $users = User::whereHas('availabilities', function ($query) use ($day, $shiftType) {
+        $users = User::whereHas('availabilities', function ($query) use ($day) {
             $query->where('day', $day)
-                ->where('shift_type', $shiftType)
+                ->where('shift_type', 0) // Day shift
                 ->where('status', 'active');
         })->get();
 

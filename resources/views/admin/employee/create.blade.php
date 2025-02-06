@@ -26,13 +26,13 @@
                         <input type="text" class="form-control" id="phone_number" name="phone_number" required>
                     </div>
 
-                    <div class="form-group">
-                        <label for="shift">Shift</label>
-                        <select class="form-control" id="shift" name="shift" required>
-                            <option value="day">Day Shift</option>
-                            <option value="night">Night Shift</option>
-                        </select>
-                    </div>
+{{--                    <div class="form-group">--}}
+{{--                        <label for="shift">Shift</label>--}}
+{{--                        <select class="form-control" id="shift" name="shift" required>--}}
+{{--                            <option value="day">Day Shift</option>--}}
+{{--                            <option value="night">Night Shift</option>--}}
+{{--                        </select>--}}
+{{--                    </div>--}}
 
                     <div class="form-group">
                         <label for="password">Password</label>

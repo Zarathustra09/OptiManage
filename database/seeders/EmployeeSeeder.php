@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\Availability;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Config;
 
 class EmployeeSeeder extends Seeder
 {
@@ -54,7 +56,22 @@ class EmployeeSeeder extends Seeder
         ];
 
         foreach ($employees as $employee) {
-            User::create($employee);
+            $user = User::create($employee);
+
+            $shiftTimings = Config::get('shifts.day');
+            $shiftType = $shiftTimings['shift_type'];
+            unset($shiftTimings['shift_type']);
+
+            foreach ($shiftTimings as $day => $timing) {
+                Availability::create([
+                    'user_id' => $user->id,
+                    'day' => $day,
+                    'available_from' => $timing['from'],
+                    'available_to' => $timing['to'],
+                    'status' => 'active',
+                    'shift_type' => $shiftType,
+                ]);
+            }
         }
     }
 }

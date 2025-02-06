@@ -29,7 +29,6 @@ class EmployeeController extends Controller
             'phone_number' => 'required|string|max:15|unique:users',
             'employee_id' => 'required|string|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'shift' => 'required|in:day,night',
         ]);
 
         $user = User::create([
@@ -41,7 +40,7 @@ class EmployeeController extends Controller
             'employee_id' => $request->employee_id,
         ]);
 
-        $shiftTimings = Config::get('shifts.' . $request->shift);
+        $shiftTimings = Config::get('shifts.day');
         $shiftType = $shiftTimings['shift_type'];
         unset($shiftTimings['shift_type']);
 
