@@ -78,37 +78,36 @@ class TeamTaskController extends Controller
     }
 
 
-//    public function update(Request $request, $id)
-//    {
-//        Log::info('Update function called', ['request' => $request->all(), 'team_task_id' => $id]);
-//
-//        $request->validate([
-//            'title' => 'required|string|max:255',
-//            'description' => 'nullable|string',
-//            'status' => 'required|string|max:50',
-//            'start_date' => 'nullable|date',
-//            'end_date' => 'nullable|date',
-//            'proof_of_work' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-//            'task_category_id' => 'required|exists:task_categories,id',
-//        ]);
-//
-//        Log::info('Validation passed');
-//
-//        $task = TeamTask::findOrFail($id);
-//        $data = $request->all();
-//        if ($request->hasFile('proof_of_work')) {
-//            $file = $request->file('proof_of_work');
-//            $path = $file->store('proof_of_work', 'public');
-//            $data['proof_of_work'] = $path;
-//            Log::info('Proof of work uploaded', ['path' => $path]);
-//        }
-//
-//        $task->update($data);
-//        Log::info('Team task updated', ['team_task_id' => $task->id]);
-//
-//        return redirect()->route('admin.teamTask.index')->with('success', 'Team Task updated successfully.');
-//    }
+    public function updateAdmin(Request $request, $id)
+    {
+        Log::info('Update function called', ['request' => $request->all(), 'team_task_id' => $id]);
 
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|string|max:50',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'proof_of_work' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'task_category_id' => 'required|exists:task_categories,id',
+        ]);
+
+        Log::info('Validation passed');
+
+        $task = TeamTask::findOrFail($id);
+        $data = $request->all();
+        if ($request->hasFile('proof_of_work')) {
+            $file = $request->file('proof_of_work');
+            $path = $file->store('proof_of_work', 'public');
+            $data['proof_of_work'] = $path;
+            Log::info('Proof of work uploaded', ['path' => $path]);
+        }
+
+        $task->update($data);
+        Log::info('Team task updated', ['team_task_id' => $task->id]);
+
+        return response()->json(['success' => 'Team Task updated successfully.'], 200);
+    }
 
 public function update(Request $request, $id)
 {

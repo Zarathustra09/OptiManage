@@ -91,6 +91,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/team-task', [TeamTaskController::class, 'index'])->name('admin.teamTask.index');
     Route::get('/admin/team-task/create', [TeamTaskController::class, 'create'])->name('admin.teamTask.create');
     Route::get('/admin/team-task/single/{id}', [TeamTaskController::class, 'showSingle'])->name('admin.teamTask.single');
+    Route::put('/admin/team-task/update/{id}', [TeamTaskController::class, 'updateAdmin'])->name('admin.teamTask.adminUpdate');
     Route::get('/admin/team-task/{id}', [TeamTaskController::class, 'show'])->name('admin.teamTask.show');
     Route::post('/admin/team-task', [TeamTaskController::class, 'store'])->name('admin.teamTask.store');
     Route::get('/admin/team-task/{id}/edit', [TeamTaskController::class, 'edit'])->name('admin.teamTask.edit');
