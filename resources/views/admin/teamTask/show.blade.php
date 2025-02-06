@@ -20,7 +20,7 @@
                                         <div class="card border-info mb-3">
                                             <div class="card-header bg-info text-white">Start Date</div>
                                             <div class="card-body p-2">
-                                                <p class="card-text text-center">
+                                                <p class="card-text text-center" id="startDate">
                                                     {{ \Carbon\Carbon::parse($teamTask->start_date)->format('F d, Y h:i A') }}
                                                 </p>
                                             </div>
@@ -30,7 +30,7 @@
                                         <div class="card border-warning mb-3">
                                             <div class="card-header bg-warning text-white">End Date</div>
                                             <div class="card-body p-2">
-                                                <p class="card-text text-center">
+                                                <p class="card-text text-center" id="endDate">
                                                     {{ \Carbon\Carbon::parse($teamTask->end_date)->format('F d, Y h:i A') }}
                                                 </p>
                                             </div>
@@ -178,6 +178,112 @@
 
 @push('scripts')
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const startDateElement = document.getElementById("startDate");
+            const endDateElement = document.getElementById("endDate");
+
+            if (startDateElement && endDateElement) {
+                const startDate = startDateElement.textContent.trim();
+                const endDate = endDateElement.textContent.trim();
+
+                fetchAvailableUsers(startDate, endDate);
+            }
+        });
+
+        async function fetchAvailableUsers(startDate, endDate) {
+            try {
+                const response = await fetch(`/api/free/employee?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch available users');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching available users:', error);
+                return [];
+            }
+        }
+
+        async function createAssignee() {
+            const startDateElement = document.getElementById("startDate");
+            const endDateElement = document.getElementById("endDate");
+
+            if (startDateElement && endDateElement) {
+                const startDate = startDateElement.textContent.trim();
+                const endDate = endDateElement.textContent.trim();
+
+                const users = await fetchAvailableUsers(startDate, endDate);
+
+                if (users.length === 0) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'No Users Available',
+                        text: 'There are no users available for the selected time range.',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                    });
+                    return;
+                }
+
+                let employeeOptions = users.map(user => `<option value="${user.id}">${user.name}</option>`).join('');
+
+                Swal.fire({
+                    title: 'Add Assignee',
+                    html: `
+                <select id="swal-input1" class="swal2-input">
+                    ${employeeOptions}
+                </select>
+            `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Add',
+                    cancelButtonText: 'Cancel',
+                    preConfirm: () => {
+                        let formData = new FormData();
+                        formData.append('team_task_id', '{{ $teamTask->id }}');
+                        formData.append('user_id', document.getElementById('swal-input1').value);
+                        return formData;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        storeAssignee(result.value);
+                    }
+                });
+            }
+        }
+
+        function checkAndFetchAvailableUsers() {
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            const userSelect = document.getElementById('user_id');
+
+            if (startDate && endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+
+                if (start.getHours() < 8 || (start.getDate() === end.getDate() && end.getHours() >= 17) || (start.getDate() !== end.getDate() && (end.getHours() < 8 || end.getHours() >= 17))) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Overtime',
+                        text: 'The selected time range includes overtime hours.',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                    });
+                }
+
+                fetchAvailableUsers(startDate, endDate);
+            }
+        }
+
+        document.getElementById('start_date').addEventListener('change', checkAndFetchAvailableUsers);
+        document.getElementById('end_date').addEventListener('change', checkAndFetchAvailableUsers);
+
+
+
 
 
 
@@ -225,30 +331,6 @@
             $('#assigneesTable').DataTable();
         });
 
-        function createAssignee() {
-            let employeeOptions = @json($employees).map(employee => `<option value="${employee.id}">${employee.name}</option>`).join('');
-            Swal.fire({
-                title: 'Add Assignee',
-                html: `
-                    <select id="swal-input1" class="swal2-input">
-                        ${employeeOptions}
-                    </select>
-                `,
-                showCancelButton: true,
-                confirmButtonText: 'Add',
-                cancelButtonText: 'Cancel',
-                preConfirm: () => {
-                    let formData = new FormData();
-                    formData.append('team_task_id', '{{ $teamTask->id }}');
-                    formData.append('user_id', document.getElementById('swal-input1').value);
-                    return formData;
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    storeAssignee(result.value);
-                }
-            });
-        }
 
         function storeAssignee(data) {
             $.ajax({
