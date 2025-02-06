@@ -140,56 +140,90 @@
             });
         }
 
-       function editTask(taskId) {
-    $.get('/admin/task/' + taskId, function(task) {
-        Swal.fire({
-            title: 'Edit Task Status',
-            html: `
+        function editTask(taskId) {
+            $.get('{{ route("admin.task.showSingle", ":id") }}'.replace(':id', taskId), function(task) {
+                if (!task || !task.start_date || !task.end_date) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Task data is incomplete or not found.',
+                        icon: 'error'
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Edit Task',
+                    html: `
+                <input id="swal-input1" class="swal2-input" placeholder="Title" value="${task.title}">
+                <textarea id="swal-input2" class="swal2-textarea" placeholder="Description">${task.description}</textarea>
                 <select id="swal-input3" class="swal2-input">
                     <option value="To be Approved" ${task.status === 'To be Approved' ? 'selected' : ''}>To be Approved</option>
                     <option value="On Progress" ${task.status === 'On Progress' ? 'selected' : ''}>On Progress</option>
                     <option value="Finished" ${task.status === 'Finished' ? 'selected' : ''}>Finished</option>
                     <option value="Cancel" ${task.status === 'Cancel' ? 'selected' : ''}>Cancel</option>
                 </select>
-            `,
-            showCancelButton: true,
-            confirmButtonText: 'Update',
-            cancelButtonText: 'Cancel',
-            preConfirm: () => {
-                return {
-                    status: document.getElementById('swal-input3').value
-                };
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/admin/task/' + taskId,
-                    type: 'PUT',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        status: result.value.status
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            title: 'Updated!',
-                            text: response.success,
-                            icon: 'success'
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function(response) {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: response.responseJSON.message,
-                            icon: 'error'
+                <input id="swal-input4" class="swal2-input" type="datetime-local" placeholder="Start Date" value="${task.start_date.replace(' ', 'T')}">
+                <input id="swal-input5" class="swal2-input" type="datetime-local" placeholder="End Date" value="${task.end_date.replace(' ', 'T')}">
+                <select id="swal-input6" class="swal2-input">
+                    @foreach($categories as $category)
+                    <option value="{{ $category->id }}" ${task.task_category_id === {{ $category->id }} ? 'selected' : ''}>{{ $category->name }}</option>
+                    @endforeach
+                    </select>
+`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Update',
+                    cancelButtonText: 'Cancel',
+                    preConfirm: () => {
+                        return {
+                            title: document.getElementById('swal-input1').value,
+                            description: document.getElementById('swal-input2').value,
+                            status: document.getElementById('swal-input3').value,
+                            start_date: document.getElementById('swal-input4').value,
+                            end_date: document.getElementById('swal-input5').value,
+                            task_category_id: document.getElementById('swal-input6').value
+                        };
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '{{ route("admin.task.updateAdmin", ":id") }}'.replace(':id', taskId),
+                            type: 'PUT',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                title: result.value.title,
+                                description: result.value.description,
+                                status: result.value.status,
+                                start_date: result.value.start_date,
+                                end_date: result.value.end_date,
+                                task_category_id: result.value.task_category_id
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    title: 'Updated!',
+                                    text: response.success,
+                                    icon: 'success'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            },
+                            error: function(response) {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: response.responseJSON.message,
+                                    icon: 'error'
+                                });
+                            }
                         });
                     }
                 });
-            }
-        });
-    });
-}
+            }).fail(function() {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to fetch task data.',
+                    icon: 'error'
+                });
+            });
+        }
 
         function deleteTask(taskId) {
             Swal.fire({

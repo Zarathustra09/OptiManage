@@ -96,66 +96,22 @@ class TaskController extends Controller
         return redirect()->route('admin.task.index')->with('success', 'Task has been created successfully.');
     }
 
-//    public function update(Request $request, $id)
-//    {
-//        $request->validate([
-//            'title' => 'required|string|max:255',
-//            'description' => 'nullable|string',
-//            'status' => 'required|in:To be Approved,On Progress,Finished,Cancel',
-//            'task_category_id' => 'required|exists:task_categories,id',
-//            'start_date' => 'nullable|date_format:Y-m-d\TH:i',
-//            'end_date' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
-//        ]);
-//
-//        $overlappingTasks = Task::where('user_id', $request->user_id)
-//            ->where('id', '!=', $id)
-//            ->whereNotIn('status', ['Finished', 'Cancel'])
-//            ->where(function($query) use ($request) {
-//                if ($request->start_date && $request->end_date) {
-//                    $query->whereBetween('start_date', [$request->start_date, $request->end_date])
-//                        ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
-//                        ->orWhere(function($query) use ($request) {
-//                            $query->where('start_date', '<=', $request->start_date)
-//                                ->where('end_date', '>=', $request->end_date);
-//                        });
-//                }
-//            })->exists();
-//
-//        if ($overlappingTasks) {
-//            return response()->json(['error' => 'The task overlaps with an existing task.'], 422);
-//        }
-//
-//        $task = Task::findOrFail($id);
-//
-//        if ($request->hasFile('proof_of_work')) {
-//            $proofOfWorkPath = $request->file('proof_of_work')->store('proof_of_work', 'public');
-//            $task->proof_of_work = $proofOfWorkPath;
-//        }
-//
-//        $task->update($request->only(['title', 'description', 'status', 'task_category_id', 'start_date', 'end_date']));
-//
-//        $taskInventories = TaskInventory::where('task_id', $id)->get();
-//
-//        foreach ($taskInventories as $taskInventory) {
-//            $inventory = Inventory::findOrFail($taskInventory->inventory_id);
-//            if ($inventory->quantity < $taskInventory->quantity) {
-//                Log::error('Inventory out of stock', ['inventory_id' => $taskInventory->inventory_id, 'requested_quantity' => $taskInventory->quantity, 'available_quantity' => $inventory->quantity]);
-//                return response()->json(['error' => 'Selected inventory is out of stock.'], 422);
-//            }
-//
-//            // Deduct inventory quantity
-//            $inventory->quantity -= $taskInventory->quantity;
-//            $inventory->save();
-//            Log::info('Inventory quantity updated', ['inventory_id' => $inventory->id, 'new_quantity' => $inventory->quantity]);
-//
-//            // Attach inventory to task
-//            $task->inventories()->syncWithoutDetaching([$inventory->id => ['quantity' => $taskInventory->quantity]]);
-//            Log::info('Inventory attached to task', ['task_id' => $task->id, 'inventory_id' => $inventory->id, 'quantity' => $taskInventory->quantity]);
-//        }
-//
-//        return response()->json(['success' => 'Task has been updated successfully.']);
-//    }
+    public function updateAdmin(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:To be Approved,On Progress,Finished,Cancel',
+            'task_category_id' => 'required|exists:task_categories,id',
+            'start_date' => 'nullable|date_format:Y-m-d\TH:i',
+            'end_date' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
+        ]);
 
+        $task = Task::findOrFail($id);
+        $task->update($request->only(['title', 'description', 'status', 'task_category_id', 'start_date', 'end_date']));
+
+        return response()->json(['success' => 'Task has been updated successfully.'], 200);
+    }
 
     public function update(Request $request, $id)
     {
@@ -173,6 +129,12 @@ class TaskController extends Controller
     {
         $task = Task::with(['user', 'inventories', 'images'])->findOrFail($id);
         return view('admin.task.show', compact('task'));
+    }
+
+    public function showSingle($id)
+    {
+        $task = Task::with(['user', 'inventories', 'images'])->findOrFail($id);
+        return response()->json($task);
     }
 
 
