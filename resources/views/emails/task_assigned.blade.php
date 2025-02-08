@@ -114,7 +114,6 @@
 <div class="wrapper">
     <div class="inner-body">
         <div class="header">
-            <p class="text-white" style="font-weight: 600">OptiManage</p>
             <h1 class="title">Task Assigned</h1>
         </div>
 
