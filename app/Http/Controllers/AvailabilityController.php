@@ -88,21 +88,29 @@ class AvailabilityController extends Controller
 
     public function getAvailableUsers(Request $request)
     {
+        Log::info('getAvailableUsers called', ['request' => $request->all()]);
+
         $startDate = Carbon::parse($request->query('start_date'));
         $endDate = Carbon::parse($request->query('end_date'));
 
+        Log::info('Parsed dates', ['startDate' => $startDate, 'endDate' => $endDate]);
+
         // Check if start time is before 8 AM or end time is after 5 PM
         if ($startDate->hour < 8 || $endDate->hour >= 17) {
+            Log::warning('Invalid shift time range', ['startDate' => $startDate, 'endDate' => $endDate]);
             return response()->json(['error' => 'Invalid shift time range. Start time must be after 8 AM and end time must be before 5 PM.'], 400);
         }
 
         $day = $startDate->format('l');
+        Log::info('Day of the week', ['day' => $day]);
 
         $users = User::whereHas('availabilities', function ($query) use ($day) {
             $query->where('day', $day)
                 ->where('shift_type', 0) // Day shift
                 ->where('status', 'active');
         })->get();
+
+        Log::info('Fetched users', ['users' => $users]);
 
         return response()->json($users);
     }
