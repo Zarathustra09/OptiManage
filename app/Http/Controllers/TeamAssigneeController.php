@@ -25,10 +25,29 @@ class TeamAssigneeController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
-        $assignee = TeamAssignee::create($request->all());
-
         // Fetch the team task details
         $teamTask = TeamTask::findOrFail($request->team_task_id);
+
+        // Check for overlapping tasks
+        $overlappingTasks = TeamTask::where('id', '!=', $teamTask->id)
+            ->whereHas('assignees', function($query) use ($request) {
+                $query->where('user_id', $request->user_id);
+            })
+            ->whereNotIn('status', ['Finished', 'Cancel'])
+            ->where(function($query) use ($teamTask) {
+                $query->whereBetween('start_date', [$teamTask->start_date, $teamTask->end_date])
+                    ->orWhereBetween('end_date', [$teamTask->start_date, $teamTask->end_date])
+                    ->orWhere(function($query) use ($teamTask) {
+                        $query->where('start_date', '<=', $teamTask->start_date)
+                            ->where('end_date', '>=', $teamTask->end_date);
+                    });
+            })->exists();
+
+        if ($overlappingTasks) {
+            return response()->json(['error' => 'The task overlaps with an existing task for the user.'], 400);
+        }
+
+        $assignee = TeamAssignee::create($request->all());
 
         // Fetch the user details
         $user = User::findOrFail($request->user_id);

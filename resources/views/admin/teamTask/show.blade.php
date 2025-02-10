@@ -363,6 +363,12 @@
                             html: errorMessages,
                             icon: 'error'
                         });
+                    } else if (response.status === 400 && response.responseJSON.error) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.responseJSON.error,
+                            icon: 'error'
+                        });
                     } else {
                         Swal.fire({
                             title: 'Error!',

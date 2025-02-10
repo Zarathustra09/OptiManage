@@ -29,6 +29,11 @@ class TaskController extends Controller
         return view('admin.task.create', compact('users', 'inventories', 'categories'));
     }
 
+    private function checkTicketIdExists($ticketId)
+    {
+        return Task::where('ticket_id', $ticketId)->exists();
+    }
+
     public function store(Request $request)
     {
         Log::info('Store function called', ['request' => $request->all()]);
@@ -41,9 +46,16 @@ class TaskController extends Controller
             'task_category_id' => 'required|exists:task_categories,id',
             'start_date' => 'required|date_format:Y-m-d\TH:i',
             'end_date' => 'required|date_format:Y-m-d\TH:i|after:start_date',
+            'ticket_id' => 'required|string|unique:tasks,ticket_id',
         ]);
 
         Log::info('Validation passed');
+
+        // Check if the ticket ID already exists
+        if ($this->checkTicketIdExists($request->ticket_id)) {
+            Log::warning('Ticket ID already exists', ['ticket_id' => $request->ticket_id]);
+            return redirect()->back()->with('error', 'The ticket ID already exists. Please use a different Ticket ID.');
+        }
 
         // Check for overlapping tasks
         $overlappingTasks = Task::where('user_id', $request->user_id)

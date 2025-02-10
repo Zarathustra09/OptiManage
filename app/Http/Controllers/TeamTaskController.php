@@ -24,6 +24,11 @@ class TeamTaskController extends Controller
         return view('admin.teamTask.create', compact('categories')); // Add this line
     }
 
+    private function checkTicketIdExists($ticketId)
+    {
+        return TeamTask::where('ticket_id', $ticketId)->exists();
+    }
+
     public function store(Request $request)
     {
         Log::info('Store function called', ['request' => $request->all()]);
@@ -40,6 +45,12 @@ class TeamTaskController extends Controller
         ]);
 
         Log::info('Validation passed');
+
+        // Check if the ticket ID already exists
+        if ($this->checkTicketIdExists($request->ticket_id)) {
+            Log::warning('Ticket ID already exists', ['ticket_id' => $request->ticket_id]);
+            return redirect()->back()->with('error', 'The ticket ID already exists. Please use a different Ticket ID.');
+        }
 
         $data = $request->all();
 
