@@ -23,6 +23,11 @@ class Inventory extends Model
         return $this->belongsToMany(Task::class, 'task_inventory');
     }
 
+    public function defects()
+    {
+        return $this->hasMany(Defect::class);
+    }
+
     protected static $logAttributes = ['*'];
     protected static $logName = 'inventory';
 

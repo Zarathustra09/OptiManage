@@ -49,6 +49,13 @@
                     <span class="align-middle">Inventory</span>
                 </a>
             </li>
+
+            <li class="sidebar-item {{ request()->routeIs('admin.defect.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('admin.defect.index') }}">
+                    <i class="align-middle" data-feather="corner-down-left"></i>
+                    <span class="align-middle">Returns</span>
+                </a>
+            </li>
             <li class="sidebar-item {{ request()->routeIs('admin.log.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.log.index') }}">
                     <i class="align-middle" data-feather="file-text"></i>

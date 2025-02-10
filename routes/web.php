@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DefectController;
 use App\Http\Controllers\Employee\EmployeeItemController;
 use App\Http\Controllers\Employee\EmployeeLogController;
 use App\Http\Controllers\Employee\EmployeeTaskController;
@@ -119,6 +120,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/logs', [LogController::class, 'index'])->name('admin.log.index');
 
+    Route::get('/admin/defect', [DefectController::class, 'index'])->name('admin.defect.index');
+    Route::post('/admin/defect', [DefectController::class, 'store'])->name('admin.defect.store');
+    Route::get('/admin/defect/{id}', [DefectController::class, 'show'])->name('admin.defect.show');
+    Route::put('/admin/defect/{id}', [DefectController::class, 'update'])->name('admin.defect.update');
+    Route::delete('/admin/defect/{id}', [DefectController::class, 'destroy'])->name('admin.defect.destroy');
+
 
 
     Route::get('/employee/home', [\App\Http\Controllers\Employee\HomeController::class, 'index'])->name('employee.home');
@@ -145,6 +152,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('item/return-all-task-items/{taskId}', [EmployeeItemController::class, 'returnAllTaskItems'])->name('employee.item.returnAllTaskItems');
 
     Route::get('/employee/logs', [EmployeeLogController::class, 'index'])->name('employee.log.index');
+
 
 
 
