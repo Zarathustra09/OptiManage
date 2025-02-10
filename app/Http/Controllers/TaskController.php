@@ -45,19 +45,34 @@ class TaskController extends Controller
 
         Log::info('Validation passed');
 
+        // Check for overlapping tasks
+        $overlappingTasks = Task::where('user_id', $request->user_id)
+            ->whereNotIn('status', ['Finished', 'Cancel'])
+            ->where(function($query) use ($request) {
+                $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                    ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
+                    ->orWhere(function($query) use ($request) {
+                        $query->where('start_date', '<=', $request->start_date)
+                            ->where('end_date', '>=', $request->end_date);
+                    });
+            })->exists();
+
+        if ($overlappingTasks) {
+            Log::warning('Overlapping task detected', ['user_id' => $request->user_id, 'start_date' => $request->start_date, 'end_date' => $request->end_date]);
+            return redirect()->back()->with('error', 'The task overlaps with an existing task.');
+        }
+
+        // Generate a unique ticket ID
+        $ticket_id = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5)) . '-' . substr(str_shuffle('0123456789'), 0, 5);
+        Log::info('Generated ticket ID', ['ticket_id' => $ticket_id]);
+
         $taskStart = new \DateTime($request->start_date);
         $taskEnd = new \DateTime($request->end_date);
 
-        $task = Task::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'status' => $request->status,
-            'user_id' => $request->user_id,
-            'task_category_id' => $request->task_category_id,
-            'start_date' => $taskStart,
-            'end_date' => $taskEnd,
-            'ticket_id' => $request->ticket_id,
-        ]);
+        $task = Task::create(array_merge(
+            $request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date']),
+            ['ticket_id' => $ticket_id]
+        ));
 
         Log::info('Task created', ['task_id' => $task->id]);
 

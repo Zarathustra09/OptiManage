@@ -141,11 +141,12 @@
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->quantity }}</td>
                             <td> <span class="badge
-                                    @if($item->quantity < 20) bg-danger
-                                    @else bg-success
-                                    @endif">
-                                    {{ $item->quantity < 20 ? 'Low Stock' : 'In Stock' }}
-                                </span></td>
+                                @if($item->quantity == 0) bg-danger
+                                @elseif($item->quantity < 20) bg-warning
+                                @else bg-success
+                                @endif">
+                                {{ $item->quantity == 0 ? 'Out of Stock' : ($item->quantity < 20 ? 'Low Stock' : 'In Stock') }}
+                            </span></td>
                         </tr>
                     @endforeach
                     </tbody>

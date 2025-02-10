@@ -27,10 +27,11 @@
                             <td>{{ $inventory->quantity }}</td>
                             <td>{{ $inventory->description }}</td>
                             <td> <span class="badge
-    @if($inventory->quantity < 20) bg-danger
+    @if($inventory->quantity == 0) bg-danger
+    @elseif($inventory->quantity < 20) bg-warning
     @else bg-success
     @endif">
-    {{ $inventory->quantity < 20 ? 'Low Stock' : 'In Stock' }}
+    {{ $inventory->quantity == 0 ? 'Out of Stock' : ($inventory->quantity < 20 ? 'Low Stock' : 'In Stock') }}
 </span></td>
                             <td>
                                 <button class="btn btn-info btn-sm" onclick="viewInventory({{ $inventory->id }})">View</button>
