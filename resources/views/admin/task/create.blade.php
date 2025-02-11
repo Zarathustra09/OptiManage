@@ -34,10 +34,9 @@
             <div class="col-md-6">
                 <label for="status" class="form-label">Status</label>
                 <select class="form-select" id="status" name="status" required>
-                    <option value="To be Approved">To be Approved</option>
-                    <option value="On Progress">On Progress</option>
-                    <option value="Finished">Finished</option>
-                    <option value="Cancel">Cancel</option>
+                    @foreach($statuses as $status)
+                        <option value="{{ $status }}">{{ $status }}</option>
+                    @endforeach
                 </select>
                 @error('status')
                 <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>

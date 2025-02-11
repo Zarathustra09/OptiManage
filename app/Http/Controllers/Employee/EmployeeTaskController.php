@@ -84,7 +84,7 @@ class EmployeeTaskController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'status' => 'nullable|in:To be Approved,On Progress,Finished,Cancel',
+            'status' => 'required|string|in:To be Approved,Checked,On Progress,Finished,Cancel',
             'title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'task_category_id' => 'nullable|exists:task_categories,id',

@@ -110,6 +110,9 @@
                                     <div class="progress-step {{ $teamTask->status == 'To be Approved' ? 'active' : '' }}" data-status="To be Approved">
                                         <span>To be Approved</span>
                                     </div>
+                                    <div class="progress-step {{ $teamTask->status == 'Checked' ? 'active' : '' }}" data-status="Checked">
+                                        <span>Checked</span>
+                                    </div>
                                     <div class="progress-step {{ $teamTask->status == 'On Progress' ? 'active' : '' }}" data-status="On Progress">
                                         <span>On Progress</span>
                                     </div>

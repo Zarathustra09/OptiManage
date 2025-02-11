@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('status');
+            $table->enum('status', ['To be Approved','Checked', 'On Progress', 'Finished', 'Cancel'])->default('To be Approved');
             $table->string('ticket_id')->nullable();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();

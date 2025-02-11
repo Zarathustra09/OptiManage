@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('task_category_id')->constrained()->onDelete('cascade'); // Add this line
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('status', ['To be Approved', 'On Progress', 'Finished', 'Cancel'])->default('To be Approved');
+            $table->enum('status', ['To be Approved','Checked', 'On Progress', 'Finished', 'Cancel'])->default('To be Approved');
             $table->string('ticket_id')->unique();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();

@@ -2,10 +2,10 @@
 
 return [
     'statuses' => [
-        'to_be_approved' => 'To be Approved',
-        'checked' => 'Checked',
-        'on_progress' => 'On Progress',
-        'finished' => 'Finished',
-        'cancel' => 'Cancel',
+        'To be Approved',
+        'Checked',
+        'On Progress',
+        'Finished',
+        'Cancel',
     ],
 ];

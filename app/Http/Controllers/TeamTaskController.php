@@ -13,15 +13,17 @@ class TeamTaskController extends Controller
 {
     public function index()
     {
+        $statuses = config('status.statuses');
         $tasks = TeamTask::with('assignees')->get();
         $categories = TaskCategory::all();
-        return view('admin.teamTask.index', compact('tasks', 'categories'));
+        return view('admin.teamTask.index', compact('tasks', 'categories', 'statuses'));
     }
 
     public function create()
     {
+        $statuses = config('status.statuses');
         $categories = TaskCategory::all(); // Add this line
-        return view('admin.teamTask.create', compact('categories')); // Add this line
+        return view('admin.teamTask.create', compact('categories', 'statuses')); // Add this line
     }
 
     private function checkTicketIdExists($ticketId)
@@ -120,23 +122,23 @@ class TeamTaskController extends Controller
         return response()->json(['success' => 'Team Task updated successfully.'], 200);
     }
 
-public function update(Request $request, $id)
-{
-    Log::info('Update function called', ['request' => $request->all(), 'team_task_id' => $id]);
+    public function update(Request $request, $id)
+    {
+        Log::info('Update function called', ['request' => $request->all(), 'team_task_id' => $id]);
 
-    $request->validate([
-        'status' => 'required|string|in:To be Approved,On Progress,Finished,Cancel',
-    ]);
+        $request->validate([
+            'status' => 'required|string|in:To be Approved,Checked,On Progress,Finished,Cancel',
+        ]);
 
-    Log::info('Validation passed');
+        Log::info('Validation passed');
 
-    $task = TeamTask::findOrFail($id);
-    $task->update(['status' => $request->status]);
+        $task = TeamTask::findOrFail($id);
+        $task->update(['status' => $request->status]);
 
-    Log::info('Team task status updated', ['team_task_id' => $task->id, 'status' => $task->status]);
+        Log::info('Team task status updated', ['team_task_id' => $task->id, 'status' => $task->status]);
 
-    return response()->json(['success' => 'Team Task status has been updated successfully.']);
-}
+        return response()->json(['success' => 'Team Task status has been updated successfully.'], 200);
+    }
     public function show($id)
     {
         $teamTask = TeamTask::with(['assignees.user', 'inventories', 'images'])->findOrFail($id);

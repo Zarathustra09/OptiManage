@@ -111,6 +111,10 @@
                                     <div class="progress-step {{ $teamTask->status == 'To be Approved' ? 'active' : '' }}" data-status="To be Approved">
                                         <span>To be Approved</span>
                                     </div>
+                                    <div class="progress-step {{ $teamTask->status == 'Checked' ? 'active' : '' }}" data-status="Checked">
+                                        <span>Checked</span>
+                                    </div>
+
                                     <div class="progress-step {{ $teamTask->status == 'On Progress' ? 'active' : '' }}" data-status="On Progress">
                                         <span>On Progress</span>
                                     </div>
@@ -178,6 +182,50 @@
 
 @push('scripts')
     <script>
+
+        document.querySelectorAll('.progress-step').forEach(step => {
+            step.addEventListener('click', function() {
+                document.querySelectorAll('.progress-step').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('task_status').value = this.getAttribute('data-status');
+            });
+        });
+
+        $('#updateStatusForm').on('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            $.ajax({
+                url: '{{ route("admin.teamTask.update", ["id" => $teamTask->id]) }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-HTTP-Method-Override': 'PUT',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response, status, xhr) {
+                    if (xhr.status === 200) {
+                        Swal.fire({
+                            title: 'Updated!',
+                            text: response.success,
+                            icon: 'success'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    }
+                },
+                error: function(response) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.responseJSON.message,
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+
+
         document.addEventListener("DOMContentLoaded", function () {
             const startDateElement = document.getElementById("startDate");
             const endDateElement = document.getElementById("endDate");
@@ -284,48 +332,6 @@
 
 
 
-
-
-
-        document.querySelectorAll('.progress-step').forEach(step => {
-            step.addEventListener('click', function() {
-                document.querySelectorAll('.progress-step').forEach(s => s.classList.remove('active'));
-                this.classList.add('active');
-                document.getElementById('task_status').value = this.getAttribute('data-status');
-            });
-        });
-
-        $('#updateStatusForm').on('submit', function(e) {
-            e.preventDefault();
-            let formData = new FormData(this);
-            $.ajax({
-                url: '{{ route("admin.teamTask.update", ["id" => $teamTask->id]) }}',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-HTTP-Method-Override': 'PUT',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    Swal.fire({
-                        title: 'Updated!',
-                        text: response.success,
-                        icon: 'success'
-                    }).then(() => {
-                        location.reload();
-                    });
-                },
-                error: function(response) {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: response.responseJSON.message,
-                        icon: 'error'
-                    });
-                }
-            });
-        });
 
         $(document).ready(function() {
             $('#assigneesTable').DataTable();

@@ -26,10 +26,11 @@
                             <td>{{ $task->ticket_id }}</td>
                             <td>{{ $task->title }}</td>
                             <td>
-                                <span class="badge
+                                 <span class="badge
                                     @if($task->status == 'Finished') bg-success
                                     @elseif($task->status == 'On Progress') bg-warning
                                     @elseif($task->status == 'To be Approved') bg-primary
+                                     @elseif($task->status == 'Checked') bg-info
                                     @elseif($task->status == 'Cancel') bg-danger
                                     @endif">
                                     {{ $task->status }}
@@ -54,6 +55,8 @@
 
 @push('scripts')
 
+    const statuses = @json($statuses);
+
     @if(session('success'))
         <script>
             Swal.fire({
@@ -77,6 +80,8 @@
     @endif
 
     <script>
+        const statuses = @json($statuses);
+
         $(document).ready(function() {
             $('#teamTaskTable').DataTable();
         });
@@ -91,23 +96,22 @@
 
         function editTeamTask(taskId) {
             $.get('{{ route("admin.teamTask.single", ":id") }}'.replace(':id', taskId), function(task) {
+                let statusOptions = statuses.map(status => `<option value="${status}" ${task.status === status ? 'selected' : ''}>${status}</option>`).join('');
+
                 Swal.fire({
                     title: 'Edit Team Task',
                     html: `
-                <input id="swal-input1" class="swal2-input" placeholder="Title" value="${task.title}">
-                <textarea id="swal-input2" class="swal2-textarea" placeholder="Description">${task.description}</textarea>
-                <select id="swal-input3" class="swal2-input">
-                    <option value="To be Approved" ${task.status === 'To be Approved' ? 'selected' : ''}>To be Approved</option>
-                    <option value="On Progress" ${task.status === 'On Progress' ? 'selected' : ''}>On Progress</option>
-                    <option value="Finished" ${task.status === 'Finished' ? 'selected' : ''}>Finished</option>
-                    <option value="Cancel" ${task.status === 'Cancel' ? 'selected' : ''}>Cancel</option>
-                </select>
-                <input id="swal-input4" class="swal2-input" type="datetime-local" placeholder="Start Date" value="${task.start_date.replace(' ', 'T')}">
-                <input id="swal-input5" class="swal2-input" type="datetime-local" placeholder="End Date" value="${task.end_date.replace(' ', 'T')}">
-                <select id="swal-input6" class="swal2-input">
-                    @foreach($categories as $category)
+                        <input id="swal-input1" class="swal2-input" placeholder="Title" value="${task.title}">
+                        <textarea id="swal-input2" class="swal2-textarea" placeholder="Description">${task.description}</textarea>
+                        <select id="swal-input3" class="swal2-input">
+                            ${statusOptions}
+                        </select>
+                        <input id="swal-input4" class="swal2-input" type="datetime-local" placeholder="Start Date" value="${task.start_date.replace(' ', 'T')}">
+                        <input id="swal-input5" class="swal2-input" type="datetime-local" placeholder="End Date" value="${task.end_date.replace(' ', 'T')}">
+                        <select id="swal-input6" class="swal2-input">
+                            @foreach($categories as $category)
                     <option value="{{ $category->id }}" ${task.task_category_id === {{ $category->id }} ? 'selected' : ''}>{{ $category->name }}</option>
-                    @endforeach
+                            @endforeach
                     </select>
 `,
                     showCancelButton: true,

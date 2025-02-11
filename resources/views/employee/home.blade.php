@@ -87,6 +87,7 @@
                                     @if($task->status == 'Finished') bg-success
                                     @elseif($task->status == 'On Progress') bg-warning
                                     @elseif($task->status == 'To be Approved') bg-primary
+                                     @elseif($task->status == 'Checked') bg-info
                                     @elseif($task->status == 'Cancel') bg-danger
                                     @endif">
                                     {{ $task->status }}

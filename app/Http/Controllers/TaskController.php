@@ -18,15 +18,17 @@ class TaskController extends Controller
     {
         $tasks = Task::all();
         $categories = TaskCategory::all();
-        return view('admin.task.index', compact('tasks', 'categories')); // Pass categories to the view
+        $statuses = config('status.statuses');
+        return view('admin.task.index', compact('tasks', 'categories', 'statuses')); // Pass categories to the view
     }
 
     public function create()
     {
+        $statuses = config('status.statuses');
         $users = User::where('role_id', 0)->get();
         $inventories = Inventory::all();
         $categories = TaskCategory::all(); // Add this line
-        return view('admin.task.create', compact('users', 'inventories', 'categories'));
+        return view('admin.task.create', compact('users', 'inventories', 'categories','statuses'));
     }
 
     private function checkTicketIdExists($ticketId)
@@ -41,7 +43,7 @@ class TaskController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'status' => 'required|string|in:To be Approved,On Progress,Finished,Cancel',
+            'status' => 'required|string|in:To be Approved,Checked,On Progress,Finished,Cancel',
             'user_id' => 'required|exists:users,id',
             'task_category_id' => 'required|exists:task_categories,id',
             'start_date' => 'required|date_format:Y-m-d\TH:i',
@@ -128,7 +130,7 @@ class TaskController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'status' => 'required|in:To be Approved,On Progress,Finished,Cancel',
+            'status' => 'required|string|in:To be Approved,Checked,On Progress,Finished,Cancel',
             'task_category_id' => 'required|exists:task_categories,id',
             'start_date' => 'nullable|date_format:Y-m-d\TH:i',
             'end_date' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
@@ -143,7 +145,7 @@ class TaskController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:To be Approved,On Progress,Finished,Cancel',
+            'status' => 'required|string|in:To be Approved,Checked,On Progress,Finished,Cancel',
         ]);
 
         $task = Task::findOrFail($id);
