@@ -12,6 +12,7 @@
                     <thead class="thead-light">
                     <tr>
                         <th>Category</th>
+                        <th>SKU</th>
                         <th>Name</th>
                         <th>Quantity</th>
                         <th>Description</th>
@@ -23,6 +24,7 @@
                     @foreach($inventories as $inventory)
                         <tr>
                             <td>{{ $inventory->category->name }}</td>
+                            <td>{{ $inventory->sku }}</td>
                             <td>{{ $inventory->name }}</td>
                             <td>{{ $inventory->quantity }}</td>
                             <td>{{ $inventory->description }}</td>
@@ -63,9 +65,10 @@
                     <select id="swal-input1" class="swal2-input">
                         ${categoryOptions}
                     </select>
-                    <input id="swal-input2" class="swal2-input" placeholder="Name">
-                    <input id="swal-input3" class="swal2-input" placeholder="Quantity">
-                    <input id="swal-input4" class="swal2-input" placeholder="Description">
+                    <input id="swal-input2" class="swal2-input" placeholder="SKU">
+                    <input id="swal-input3" class="swal2-input" placeholder="Name">
+                    <input id="swal-input4" class="swal2-input" placeholder="Quantity">
+                    <input id="swal-input5" class="swal2-input" placeholder="Description">
                 `,
                 showConfirmButton: true,
                 confirmButtonText: 'Create',
@@ -87,9 +90,10 @@
                 preConfirm: () => {
                     return {
                         category_id: document.getElementById('swal-input1').value,
-                        name: document.getElementById('swal-input2').value,
-                        quantity: document.getElementById('swal-input3').value,
-                        description: document.getElementById('swal-input4').value
+                        sku: document.getElementById('swal-input2').value,
+                        name: document.getElementById('swal-input3').value,
+                        quantity: document.getElementById('swal-input4').value,
+                        description: document.getElementById('swal-input5').value
                     }
                 }
             }).then((result) => {
@@ -142,9 +146,10 @@
                         <select id="swal-input1" class="swal2-input">
                             ${selectedCategoryOptions}
                         </select>
-                        <input id="swal-input2" class="swal2-input" value="${inventory.name}" placeholder="Name">
-                        <input id="swal-input3" class="swal2-input" value="${inventory.quantity}" placeholder="Quantity">
-                        <input id="swal-input4" class="swal2-input" value="${inventory.description}" placeholder="Description">
+                        <input id="swal-input2" class="swal2-input" value="${inventory.sku}" placeholder="SKU">
+                        <input id="swal-input3" class="swal2-input" value="${inventory.name}" placeholder="Name">
+                        <input id="swal-input4" class="swal2-input" value="${inventory.quantity}" placeholder="Quantity">
+                        <input id="swal-input5" class="swal2-input" value="${inventory.description}" placeholder="Description">
                     `,
                     showCancelButton: true,
                     confirmButtonText: 'Update',
@@ -166,9 +171,10 @@
                     preConfirm: () => {
                         return {
                             category_id: document.getElementById('swal-input1').value,
-                            name: document.getElementById('swal-input2').value,
-                            quantity: document.getElementById('swal-input3').value,
-                            description: document.getElementById('swal-input4').value
+                            sku: document.getElementById('swal-input2').value,
+                            name: document.getElementById('swal-input3').value,
+                            quantity: document.getElementById('swal-input4').value,
+                            description: document.getElementById('swal-input5').value
                         }
                     }
                 }).then((result) => {
@@ -261,6 +267,7 @@
                     Swal.fire({
                         title: 'Inventory Details',
                         html: `<p>Category: ${inventory.category.name}</p>
+                               <p>SKU: ${inventory.sku}</p>
                                <p>Name: ${inventory.name}</p>
                                <p>Quantity: ${inventory.quantity}</p>
                                <p>Description: ${inventory.description}</p>`,

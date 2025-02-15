@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->string('sku')->unique();
             $table->string('name');
             $table->integer('quantity')->default(0);
             $table->text('description')->nullable();

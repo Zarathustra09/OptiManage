@@ -24,9 +24,9 @@
                         <tr>
                             <td>{{ $log->description }}</td>
                             <td>
-                                    <span class="badge badge-{{ $log->event === 'created' ? 'success' : ($log->event === 'updated' ? 'warning' : 'secondary') }}">
-                                        {{ ucfirst($log->event) }}
-                                    </span>
+                                <span class="badge bg-{{ $log->event === 'created' ? 'success' : ($log->event === 'updated' ? 'warning' : 'secondary') }}">
+                                    {{ ucfirst($log->event) }}
+                                </span>
                             </td>
                             <td>
                                 @if($log->subject_type == 'App\Models\Task')

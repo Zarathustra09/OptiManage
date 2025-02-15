@@ -23,6 +23,7 @@ class InventoryController extends Controller
     {
         $request->validate([
             'category_id' => 'required|exists:categories,id',
+            'sku' => 'required|string|max:255|unique:inventories,sku',
             'name' => 'required|string|max:255',
             'quantity' => 'required|integer',
             'description' => 'nullable|string',
@@ -44,6 +45,7 @@ class InventoryController extends Controller
         $inventory = Inventory::findOrFail($id);
         $request->validate([
             'category_id' => 'required|exists:categories,id',
+            'sku' => 'required|string|max:255|unique:inventories,sku,' . $inventory->id,
             'name' => 'required|string|max:255',
             'quantity' => 'required|integer',
             'description' => 'nullable|string',

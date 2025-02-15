@@ -11,7 +11,7 @@ class Inventory extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $fillable = ['category_id', 'name', 'quantity', 'description'];
+    protected $fillable = ['category_id', 'sku', 'name', 'quantity', 'description'];
 
     public function category()
     {
@@ -34,6 +34,6 @@ class Inventory extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['category_id', 'name', 'quantity', 'description']);
+            ->logOnly(['category_id', 'sku', 'name', 'quantity', 'description']);
     }
 }

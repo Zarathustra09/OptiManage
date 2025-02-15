@@ -79,7 +79,7 @@
                                                 <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                                                     <div>
                                                         <h6 class="mb-1">{{ $inventory->name }}</h6>
-                                                        <small class="text-muted">Inventory Code: {{ $inventory->code ?? 'N/A' }}</small>
+                                                        <small class="text-muted">Inventory Code: {{ $inventory->sku ?? 'N/A' }}</small>
                                                     </div>
                                                     <span class="badge bg-primary rounded-pill">
                                                         Qty: {{ $inventory->pivot->quantity }}
