@@ -76,17 +76,10 @@ class TaskController extends Controller
             return redirect()->back()->with('error', 'The task overlaps with an existing task.');
         }
 
-        // Generate a unique ticket ID
-        $ticket_id = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5)) . '-' . substr(str_shuffle('0123456789'), 0, 5);
-        Log::info('Generated ticket ID', ['ticket_id' => $ticket_id]);
-
         $taskStart = new \DateTime($request->start_date);
         $taskEnd = new \DateTime($request->end_date);
 
-        $task = Task::create(array_merge(
-            $request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date']),
-            ['ticket_id' => $ticket_id]
-        ));
+        $task = Task::create($request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date', 'ticket_id']));
 
         Log::info('Task created', ['task_id' => $task->id]);
 
