@@ -15,6 +15,7 @@
                         <th>Title</th>
                         <th>Status</th>
                         <th>Category</th>
+                        <th>Area</th> <!-- Add this line -->
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Actions</th>
@@ -26,17 +27,18 @@
                             <td>{{ $task->ticket_id }}</td>
                             <td>{{ $task->title }}</td>
                             <td>
-                                 <span class="badge
-                                    @if($task->status == 'Finished') bg-success
-                                    @elseif($task->status == 'On Progress') bg-warning
-                                    @elseif($task->status == 'To be Approved') bg-primary
-                                     @elseif($task->status == 'Checked') bg-info
-                                    @elseif($task->status == 'Cancel') bg-danger
-                                    @endif">
-                                    {{ $task->status }}
-                                </span>
+            <span class="badge
+                @if($task->status == 'Finished') bg-success
+                @elseif($task->status == 'On Progress') bg-warning
+                @elseif($task->status == 'To be Approved') bg-primary
+                @elseif($task->status == 'Checked') bg-info
+                @elseif($task->status == 'Cancel') bg-danger
+                @endif">
+                {{ $task->status }}
+            </span>
                             </td>
                             <td>{{ $task->category->name }}</td>
+                            <td>{{ $task->area->name }}</td> <!-- Add this line -->
                             <td>{{ \Carbon\Carbon::parse($task->start_date)->format('F d Y h:i A') }}</td>
                             <td>{{ \Carbon\Carbon::parse($task->end_date)->format('F d Y h:i A') }}</td>
                             <td>

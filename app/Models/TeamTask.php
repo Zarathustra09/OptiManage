@@ -12,7 +12,7 @@ class TeamTask extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'task_category_id', 'team_id'
+        'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'task_category_id', 'team_id', 'area_id'
     ];
 
     protected $casts = [

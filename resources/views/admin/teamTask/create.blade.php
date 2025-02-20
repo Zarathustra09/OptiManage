@@ -32,6 +32,33 @@
             </div>
 
             <div class="col-md-6">
+                <label for="area_id" class="form-label">Area</label>
+                <select class="form-select" id="area_id" name="area_id" required>
+                    <option value="" disabled selected>Select an area</option>
+                    @foreach($areas as $area)
+                        <option value="{{ $area->id }}">{{ $area->name }}</option>
+                    @endforeach
+                </select>
+                @error('area_id')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+
+            <div class="col-md-6">
+                <label for="team_id" class="form-label">Team</label>
+                <select class="form-select" id="team_id" name="team_id" required>
+                    <option value="" disabled selected>Select a team</option>
+                    @foreach($teams as $team)
+                        <option value="{{ $team->id }}">{{ $team->name }}</option>
+                    @endforeach
+                </select>
+                @error('team_id')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
                 <label for="status" class="form-label">Status</label>
                 <select class="form-select" id="status" name="status" required>
                     @foreach($statuses as $status)

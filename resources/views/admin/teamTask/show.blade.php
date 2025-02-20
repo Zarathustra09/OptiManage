@@ -38,6 +38,29 @@
                                     </div>
                                 </div>
 
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="card border-success mb-3">
+                                            <div class="card-header bg-success text-white">Area</div>
+                                            <div class="card-body p-2">
+                                                <p class="card-text text-center">
+                                                    {{ $teamTask->area->name }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card border-danger mb-3">
+                                            <div class="card-header bg-danger text-white">Team</div>
+                                            <div class="card-body p-2">
+                                                <p class="card-text text-center">
+                                                    {{ $teamTask->team->name }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Form to upload team task image -->
                                 <form id="uploadTeamTaskImageForm" enctype="multipart/form-data">
                                     @csrf
@@ -102,7 +125,6 @@
                                 </div>
                             </div>
 
-
                             <div class="p-4 shadow rounded bg-white">
                                 <h3 class="mb-4 text-center text-primary">Update Task Status</h3>
 
@@ -144,7 +166,7 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
                         <h3 class="h4 mb-0">Assignees</h3>
-                        <button class="btn btn-success btn-sm" onclick="createAssignee()">Add Assignee</button>
+{{--                        <button class="btn btn-success btn-sm" onclick="createAssignee()">Add Assignee</button>--}}
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -182,7 +204,6 @@
 
 @push('scripts')
     <script>
-
         document.querySelectorAll('.progress-step').forEach(step => {
             step.addEventListener('click', function() {
                 document.querySelectorAll('.progress-step').forEach(s => s.classList.remove('active'));
@@ -224,7 +245,6 @@
                 }
             });
         });
-
 
         document.addEventListener("DOMContentLoaded", function () {
             const startDateElement = document.getElementById("startDate");
@@ -280,10 +300,10 @@
                 Swal.fire({
                     title: 'Add Assignee',
                     html: `
-                <select id="swal-input1" class="swal2-input">
-                    ${employeeOptions}
-                </select>
-            `,
+                        <select id="swal-input1" class="swal2-input">
+                            ${employeeOptions}
+                        </select>
+                    `,
                     showCancelButton: true,
                     confirmButtonText: 'Add',
                     cancelButtonText: 'Cancel',
@@ -300,43 +320,6 @@
                 });
             }
         }
-
-        function checkAndFetchAvailableUsers() {
-            const startDate = document.getElementById('start_date').value;
-            const endDate = document.getElementById('end_date').value;
-            const userSelect = document.getElementById('user_id');
-
-            if (startDate && endDate) {
-                const start = new Date(startDate);
-                const end = new Date(endDate);
-
-                if (start.getHours() < 8 || (start.getDate() === end.getDate() && end.getHours() >= 17) || (start.getDate() !== end.getDate() && (end.getHours() < 8 || end.getHours() >= 17))) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Overtime',
-                        text: 'The selected time range includes overtime hours.',
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                    });
-                }
-
-                fetchAvailableUsers(startDate, endDate);
-            }
-        }
-
-        document.getElementById('start_date').addEventListener('change', checkAndFetchAvailableUsers);
-        document.getElementById('end_date').addEventListener('change', checkAndFetchAvailableUsers);
-
-
-
-
-        $(document).ready(function() {
-            $('#assigneesTable').DataTable();
-        });
-
 
         function storeAssignee(data) {
             $.ajax({

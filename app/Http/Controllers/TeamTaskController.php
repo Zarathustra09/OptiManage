@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
 use App\Models\Inventory;
+use App\Models\Team;
 use App\Models\TeamTask;
 use App\Models\TaskCategory;
 use App\Models\User;
@@ -22,8 +24,10 @@ class TeamTaskController extends Controller
     public function create()
     {
         $statuses = config('status.statuses');
-        $categories = TaskCategory::all(); // Add this line
-        return view('admin.teamTask.create', compact('categories', 'statuses')); // Add this line
+        $categories = TaskCategory::all();
+        $areas = Area::all();
+        $teams = Team::all();
+        return view('admin.teamTask.create', compact('categories', 'statuses', 'areas', 'teams')); // Add this line
     }
 
     private function checkTicketIdExists($ticketId)
@@ -44,11 +48,12 @@ class TeamTaskController extends Controller
             'inventory_items' => 'required|json',
             'task_category_id' => 'required|exists:task_categories,id',
             'ticket_id' => 'required|string|max:255|unique:team_tasks,ticket_id',
+            'area_id' => 'required|exists:areas,id',
+            'team_id' => 'required|exists:teams,id', // Add this line
         ]);
 
         Log::info('Validation passed');
 
-        // Check if the ticket ID already exists
         if ($this->checkTicketIdExists($request->ticket_id)) {
             Log::warning('Ticket ID already exists', ['ticket_id' => $request->ticket_id]);
             return redirect()->back()->with('error', 'The ticket ID already exists. Please use a different Ticket ID.');
@@ -61,7 +66,6 @@ class TeamTaskController extends Controller
 
         $inventoryItems = json_decode($request->inventory_items, true);
 
-        // Combine overlapping inventory items
         $combinedInventoryItems = [];
         foreach ($inventoryItems as $item) {
             if (isset($combinedInventoryItems[$item['inventory_id']])) {
@@ -103,6 +107,7 @@ class TeamTaskController extends Controller
             'end_date' => 'nullable|date',
             'proof_of_work' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'task_category_id' => 'required|exists:task_categories,id',
+            'area_id' => 'required|exists:areas,id', // Add this line
         ]);
 
         Log::info('Validation passed');
