@@ -50,4 +50,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Availability::class);
     }
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
 }

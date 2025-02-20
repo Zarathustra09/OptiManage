@@ -70,6 +70,13 @@
                     <span class="align-middle">Employees</span>
                 </a>
             </li>
+
+            <li class="sidebar-item {{ request()->routeIs('admin.area.*') || request()->routeIs('availabilities.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('admin.area.index') }}">
+                    <i class="align-middle" data-feather="map-pin"></i>
+                    <span class="align-middle">Areas</span>
+                </a>
+            </li>
         </ul>
     </div>
 </nav>

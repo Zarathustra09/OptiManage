@@ -37,4 +37,9 @@ class TeamTask extends Model
     {
         return $this->hasMany(TaskImage::class);
     }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
 }

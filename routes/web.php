@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DefectController;
@@ -125,6 +126,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/defect/{id}', [DefectController::class, 'show'])->name('admin.defect.show');
     Route::put('/admin/defect/{id}', [DefectController::class, 'update'])->name('admin.defect.update');
     Route::delete('/admin/defect/{id}', [DefectController::class, 'destroy'])->name('admin.defect.destroy');
+
+
+
+    Route::get('/admin/area', [AreaController::class, 'index'])->name('admin.area.index');
+    Route::post('/admin/area', [AreaController::class, 'store'])->name('admin.area.store');
+    Route::get('/admin/area/{id}', [AreaController::class, 'show'])->name('admin.area.show');
+    Route::put('/admin/area/{id}', [AreaController::class, 'update'])->name('admin.area.update');
+    Route::delete('/admin/area/{id}', [AreaController::class, 'destroy'])->name('admin.area.destroy');
 
 
 
