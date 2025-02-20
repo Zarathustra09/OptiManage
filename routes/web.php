@@ -15,6 +15,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskCategoryController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamAssigneeController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamTaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -134,6 +135,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/area/{id}', [AreaController::class, 'show'])->name('admin.area.show');
     Route::put('/admin/area/{id}', [AreaController::class, 'update'])->name('admin.area.update');
     Route::delete('/admin/area/{id}', [AreaController::class, 'destroy'])->name('admin.area.destroy');
+
+
+    Route::get('/admin/team', [TeamController::class, 'index'])->name('admin.team.index');
+    Route::post('/admin/team', [TeamController::class, 'store'])->name('admin.team.store');
+    Route::get('/admin/team/{id}', [TeamController::class, 'show'])->name('admin.team.show');
+    Route::put('/admin/team/{id}', [TeamController::class, 'update'])->name('admin.team.update');
+    Route::delete('/admin/team/{id}', [TeamController::class, 'destroy'])->name('admin.team.destroy');
 
 
 

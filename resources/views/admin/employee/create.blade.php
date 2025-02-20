@@ -1,3 +1,5 @@
+{{-- resources/views/admin/employee/create.blade.php --}}
+
 @extends('layouts.app')
 
 @section('content')
@@ -25,15 +27,14 @@
                         <label for="phone_number">Phone Number</label>
                         <input type="text" class="form-control" id="phone_number" name="phone_number" required>
                     </div>
-
-{{--                    <div class="form-group">--}}
-{{--                        <label for="shift">Shift</label>--}}
-{{--                        <select class="form-control" id="shift" name="shift" required>--}}
-{{--                            <option value="day">Day Shift</option>--}}
-{{--                            <option value="night">Night Shift</option>--}}
-{{--                        </select>--}}
-{{--                    </div>--}}
-
+                    <div class="form-group">
+                        <label for="area_id">Area</label>
+                        <select class="form-control" id="area_id" name="area_id" required>
+                            @foreach($areas as $area)
+                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" name="password" required>

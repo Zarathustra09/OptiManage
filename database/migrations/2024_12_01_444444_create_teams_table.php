@@ -8,16 +8,16 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('team_assignees', function (Blueprint $table) {
+        Schema::create('teams', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('team_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->foreignId('area_id')->nullable()->constrained('areas')->onDelete('set null');
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('team_assignees');
+        Schema::dropIfExists('teams');
     }
 };

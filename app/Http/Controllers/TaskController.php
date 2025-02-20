@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\TaskAssigned;
+use App\Models\Area;
 use App\Models\Inventory;
 use App\Models\Task;
 use App\Models\TaskCategory;
@@ -27,13 +28,9 @@ class TaskController extends Controller
         $statuses = config('status.statuses');
         $users = User::where('role_id', 0)->get();
         $inventories = Inventory::all();
-        $categories = TaskCategory::all(); // Add this line
-        return view('admin.task.create', compact('users', 'inventories', 'categories','statuses'));
-    }
-
-    private function checkTicketIdExists($ticketId)
-    {
-        return Task::where('ticket_id', $ticketId)->exists();
+        $categories = TaskCategory::all();
+        $areas = Area::all(); // Add this line
+        return view('admin.task.create', compact('users', 'inventories', 'categories', 'statuses', 'areas'));
     }
 
     public function store(Request $request)
@@ -49,17 +46,16 @@ class TaskController extends Controller
             'start_date' => 'required|date_format:Y-m-d\TH:i',
             'end_date' => 'required|date_format:Y-m-d\TH:i|after:start_date',
             'ticket_id' => 'required|string|unique:tasks,ticket_id',
+            'area_id' => 'required|exists:areas,id', // Add this line
         ]);
 
         Log::info('Validation passed');
 
-        // Check if the ticket ID already exists
         if ($this->checkTicketIdExists($request->ticket_id)) {
             Log::warning('Ticket ID already exists', ['ticket_id' => $request->ticket_id]);
             return redirect()->back()->with('error', 'The ticket ID already exists. Please use a different Ticket ID.');
         }
 
-        // Check for overlapping tasks
         $overlappingTasks = Task::where('user_id', $request->user_id)
             ->whereNotIn('status', ['Finished', 'Cancel'])
             ->where(function($query) use ($request) {
@@ -76,16 +72,12 @@ class TaskController extends Controller
             return redirect()->back()->with('error', 'The task overlaps with an existing task.');
         }
 
-        $taskStart = new \DateTime($request->start_date);
-        $taskEnd = new \DateTime($request->end_date);
-
-        $task = Task::create($request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date', 'ticket_id']));
+        $task = Task::create($request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date', 'ticket_id', 'area_id']));
 
         Log::info('Task created', ['task_id' => $task->id]);
 
         $inventoryItems = json_decode($request->inventory_items, true);
 
-        // Combine overlapping inventory items
         $combinedInventoryItems = [];
         foreach ($inventoryItems as $item) {
             if (isset($combinedInventoryItems[$item['inventory_id']])) {
@@ -101,12 +93,10 @@ class TaskController extends Controller
                 return response()->json(['error' => 'Selected inventory is out of stock.'], 400);
             }
 
-            // Deduct inventory quantity
             $inventory->quantity -= $item['quantity'];
             $inventory->save();
             Log::info('Inventory quantity updated', ['inventory_id' => $inventory->id, 'new_quantity' => $inventory->quantity]);
 
-            // Attach inventory to task
             $task->inventories()->syncWithoutDetaching([$inventory->id => ['quantity' => $item['quantity']]]);
             Log::info('Inventory attached to task', ['task_id' => $task->id, 'inventory_id' => $inventory->id, 'quantity' => $item['quantity']]);
         }
@@ -117,6 +107,12 @@ class TaskController extends Controller
         Log::info('Task creation process completed successfully', ['task_id' => $task->id]);
         return redirect()->route('admin.task.index')->with('success', 'Task has been created successfully.');
     }
+
+    private function checkTicketIdExists($ticketId)
+    {
+        return Task::where('ticket_id', $ticketId)->exists();
+    }
+
 
     public function updateAdmin(Request $request, $id)
     {
@@ -149,7 +145,7 @@ class TaskController extends Controller
 
     public function show($id)
     {
-        $task = Task::with(['user', 'inventories', 'images'])->findOrFail($id);
+        $task = Task::with(['user', 'inventories', 'images', 'area'])->findOrFail($id);
         return view('admin.task.show', compact('task'));
     }
 

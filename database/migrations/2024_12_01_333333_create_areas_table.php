@@ -20,29 +20,11 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('area_id')->nullable()->constrained('areas')->onDelete('set null');
         });
-
-        Schema::table('tasks', function (Blueprint $table) {
-            $table->foreignId('area_id')->nullable()->constrained('areas')->onDelete('set null');
-        });
-
-        Schema::table('team_tasks', function (Blueprint $table) {
-            $table->foreignId('area_id')->nullable()->constrained('areas')->onDelete('set null');
-        });
     }
 
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['area_id']);
-            $table->dropColumn('area_id');
-        });
-
-        Schema::table('tasks', function (Blueprint $table) {
-            $table->dropForeign(['area_id']);
-            $table->dropColumn('area_id');
-        });
-
-        Schema::table('team_tasks', function (Blueprint $table) {
             $table->dropForeign(['area_id']);
             $table->dropColumn('area_id');
         });

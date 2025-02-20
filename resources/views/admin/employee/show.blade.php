@@ -26,6 +26,14 @@
                         <label for="phone_number">Phone Number</label>
                         <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ $user->phone_number }}" required>
                     </div>
+                    <div class="form-group">
+                        <label for="area_id">Area</label>
+                        <select class="form-control" id="area_id" name="area_id" required>
+                            @foreach($areas as $area)
+                                <option value="{{ $area->id }}" {{ $user->area_id == $area->id ? 'selected' : '' }}>{{ $area->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-success">Update</button>
                     <a href="{{ route('admin.employee.index') }}" class="btn btn-secondary">Cancel</a>
                 </form>

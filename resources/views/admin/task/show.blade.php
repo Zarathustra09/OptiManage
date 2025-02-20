@@ -38,6 +38,20 @@
                                     </div>
                                 </div>
 
+                                <!-- Add this section to display the area -->
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <div class="card border-secondary mb-3">
+                                            <div class="card-header bg-secondary text-white">Area</div>
+                                            <div class="card-body p-2">
+                                                <p class="card-text text-center">
+                                                    {{ $task->area ? $task->area->name : 'N/A' }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 @if($task->proof_of_work)
                                     <div class="mb-3">
                                         <div class="card">
@@ -75,7 +89,6 @@
                                         @endforeach
                                     </div>
                                 </div>
-
 
                                 <div class="progress-container d-flex justify-content-between align-items-center mb-4">
                                     <div class="progress-step {{ $task->status == 'To be Approved' ? 'active' : '' }}" data-status="To be Approved">

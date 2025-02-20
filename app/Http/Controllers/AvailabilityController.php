@@ -92,6 +92,7 @@ class AvailabilityController extends Controller
 
         $startDate = Carbon::parse($request->query('start_date'));
         $endDate = Carbon::parse($request->query('end_date'));
+        $areaId = $request->query('area_id');
 
         Log::info('Parsed dates', ['startDate' => $startDate, 'endDate' => $endDate]);
 
@@ -108,7 +109,11 @@ class AvailabilityController extends Controller
             $query->where('day', $day)
                 ->where('shift_type', 0) // Day shift
                 ->where('status', 'active');
-        })->get();
+        })
+            ->when($areaId, function ($query, $areaId) {
+                return $query->where('area_id', $areaId);
+            })
+            ->get();
 
         Log::info('Fetched users', ['users' => $users]);
 

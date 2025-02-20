@@ -1,5 +1,7 @@
 <?php
 
+// app/Models/TeamAssignee.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,11 +11,11 @@ class TeamAssignee extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['team_task_id', 'user_id'];
+    protected $fillable = ['team_id', 'user_id'];
 
-    public function teamTask()
+    public function team()
     {
-        return $this->belongsTo(TeamTask::class);
+        return $this->belongsTo(Team::class);
     }
 
     public function user()

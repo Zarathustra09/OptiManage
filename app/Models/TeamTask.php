@@ -1,5 +1,7 @@
 <?php
 
+// app/Models/TeamTask.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +12,7 @@ class TeamTask extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'task_category_id'
+        'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'task_category_id', 'team_id'
     ];
 
     protected $casts = [
@@ -20,7 +22,7 @@ class TeamTask extends Model
 
     public function assignees()
     {
-        return $this->hasMany(TeamAssignee::class);
+        return $this->hasManyThrough(TeamAssignee::class, Team::class, 'id', 'team_id', 'team_id', 'id');
     }
 
     public function inventories()
@@ -41,5 +43,10 @@ class TeamTask extends Model
     public function area()
     {
         return $this->belongsTo(Area::class);
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
     }
 }

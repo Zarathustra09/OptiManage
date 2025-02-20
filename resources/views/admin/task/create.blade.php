@@ -15,6 +15,20 @@
                 @enderror
             </div>
 
+
+            <div class="col-md-6">
+                <label for="area_id" class="form-label">Area</label>
+                <select class="form-select" id="area_id" name="area_id" required>
+                    <option value="" disabled selected>Select an area</option>
+                    @foreach($areas as $area)
+                        <option value="{{ $area->id }}">{{ $area->name }}</option>
+                    @endforeach
+                </select>
+                @error('area_id')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
             <div class="col-md-6">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" class="form-control" id="title" name="title" required>
@@ -81,7 +95,7 @@
             </div>
 
             <div class="col-md-6">
-                <label for="user_id" class="form-label">User</label>
+                <label for="user_id" class="form-label">Employee</label>
                 <select class="form-select" id="user_id" name="user_id" required>
                     <option value="" disabled selected>Select a user</option>
                 </select>
@@ -113,13 +127,15 @@
     <script>
         document.getElementById('start_date').addEventListener('change', checkAndFetchAvailableUsers);
         document.getElementById('end_date').addEventListener('change', checkAndFetchAvailableUsers);
+        document.getElementById('area_id').addEventListener('change', checkAndFetchAvailableUsers);
 
         function checkAndFetchAvailableUsers() {
             const startDate = document.getElementById('start_date').value;
             const endDate = document.getElementById('end_date').value;
+            const areaId = document.getElementById('area_id').value;
             const userSelect = document.getElementById('user_id');
 
-            if (startDate && endDate) {
+            if (startDate && endDate && areaId) {
                 const start = new Date(startDate);
                 const end = new Date(endDate);
 
@@ -136,15 +152,16 @@
                     });
                 }
 
-                fetchAvailableUsers(startDate, endDate);
+                fetchAvailableUsers(startDate, endDate, areaId);
             }
         }
-        async function fetchAvailableUsers(startDate, endDate) {
+
+        async function fetchAvailableUsers(startDate, endDate, areaId) {
             const userSelect = document.getElementById('user_id');
             userSelect.innerHTML = '<option value="" selected disabled>Select User</option>';
 
             try {
-                const response = await fetch(`/api/free/employee?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`);
+                const response = await fetch(`/api/free/employee?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}&area_id=${encodeURIComponent(areaId)}`);
                 const users = await response.json();
 
                 if (Array.isArray(users)) {

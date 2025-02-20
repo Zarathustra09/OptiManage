@@ -64,12 +64,7 @@
             </li>
 
             <li class="sidebar-header"> Employee Management </li>
-            <li class="sidebar-item {{ request()->routeIs('admin.employee.*') || request()->routeIs('availabilities.*') ? 'active' : '' }}">
-                <a class="sidebar-link" href="{{ route('admin.employee.index') }}">
-                    <i class="align-middle" data-feather="user-plus"></i>
-                    <span class="align-middle">Employees</span>
-                </a>
-            </li>
+
 
             <li class="sidebar-item {{ request()->routeIs('admin.area.*') || request()->routeIs('availabilities.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('admin.area.index') }}">
@@ -77,6 +72,23 @@
                     <span class="align-middle">Areas</span>
                 </a>
             </li>
+
+
+            <li class="sidebar-item {{ request()->routeIs('admin.employee.*') || request()->routeIs('availabilities.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('admin.employee.index') }}">
+                    <i class="align-middle" data-feather="user-plus"></i>
+                    <span class="align-middle">Employees</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item {{ request()->routeIs('admin.team.*') || request()->routeIs('availabilities.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('admin.team.index') }}">
+                    <i class="align-middle" data-feather="sliders"></i>
+                    <span class="align-middle">Team</span>
+                </a>
+            </li>
+
+
         </ul>
     </div>
 </nav>
