@@ -80,13 +80,13 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12 col-lg-12 col-xxl-12 d-flex">
-            <div class="card flex-fill">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Latest Tasks</h5>
-                </div>
-                <table class="table table-hover my-0">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Latest Tasks</h5>
+            </div>
+            <div class="card-body">
+                <table id="latest_tasks_table" class="table table-hover table-striped my-0">
                     <thead>
                     <tr>
                         <th>Ticket ID</th>
@@ -99,10 +99,10 @@
                     <tbody>
                     @foreach($latestTasks as $task)
                         <tr>
-                            <td>{{ $task->ticket_id }}</td>
-                            <td>{{ $task->title }}</td>
-                            <td>{{ optional($task->user)->name }}</td>
-                            <td>
+                            <td data-label="Ticket ID">{{ $task->ticket_id }}</td>
+                            <td data-label="Title">{{ $task->title }}</td>
+                            <td data-label="Assigned User">{{ optional($task->user)->name }}</td>
+                            <td data-label="Status">
                                 <span class="badge
                                     @if($task->status == 'Finished') bg-success
                                     @elseif($task->status == 'On Progress') bg-warning
@@ -113,7 +113,7 @@
                                     {{ $task->status }}
                                 </span>
                             </td>
-                            <td>{{ $task->created_at }}</td>
+                            <td data-label="Time Created">{{ $task->created_at }}</td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -122,13 +122,13 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12 col-lg-12 col-xxl-12 d-flex">
-            <div class="card flex-fill">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Low Quantity Inventory Items</h5>
-                </div>
-                <table class="table table-hover my-0">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Low Quantity Inventory Items</h5>
+            </div>
+            <div class="card-body">
+                <table id="low_quantity_items_table" class="table table-striped my-0">
                     <thead>
                     <tr>
                         <th>Item Name</th>
@@ -139,9 +139,9 @@
                     <tbody>
                     @foreach($lowQuantityItems as $item)
                         <tr>
-                            <td>{{ $item->name }}</td>
-                            <td>{{ $item->quantity }}</td>
-                            <td> <span class="badge
+                            <td data-label="Item Name">{{ $item->name }}</td>
+                            <td data-label="Quantity">{{ $item->quantity }}</td>
+                            <td data-label="Status"> <span class="badge
                                 @if($item->quantity == 0) bg-danger
                                 @elseif($item->quantity < 20) bg-warning
                                 @else bg-success
@@ -156,3 +156,12 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#latest_tasks_table').DataTable();
+            $('#low_quantity_items_table').DataTable();
+        });
+    </script>
+@endpush

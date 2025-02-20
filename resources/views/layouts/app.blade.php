@@ -142,6 +142,60 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+
+        /* Bootstrap Table Responsive Overrides */
+        @media (max-width: 767.98px) {
+            .table-striped {
+                width: 100%;
+            }
+
+            .table-striped thead {
+                display: none;
+            }
+
+            .table-striped tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                background-color: #fff;
+                border: 1px solid rgba(0,0,0,0.125);
+                border-radius: 0.25rem;
+            }
+
+            .table-striped tbody tr:nth-of-type(odd) {
+                background-color: rgba(0,0,0,0.02);
+            }
+
+            .table-striped tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.75rem;
+                border-bottom: 1px solid #dee2e6;
+                text-align: right;
+            }
+
+            .table-striped tbody td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                margin-right: auto;
+                text-align: left;
+            }
+
+            .table-striped tbody td:last-child {
+                border-bottom: none;
+            }
+
+            /* Style for action buttons */
+            .table-striped tbody td:last-child {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .table-striped tbody td:last-child button {
+                width: 100%;
+            }
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
