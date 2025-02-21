@@ -4,6 +4,7 @@ use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Employee\EmployeeTaskController;
 use App\Http\Controllers\Employee\ImageController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,3 +35,4 @@ Route::get('/free/employee', [AvailabilityController::class, 'getAvailableUsers'
 
 
 Route::get('/allCategories', [CategoryController::class, 'getAllCategories'])->name('allCategories');
+Route::get('/teams', [TeamController::class, 'getTeamsByArea']);

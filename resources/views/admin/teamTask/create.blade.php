@@ -33,7 +33,7 @@
 
             <div class="col-md-6">
                 <label for="area_id" class="form-label">Area</label>
-                <select class="form-select" id="area_id" name="area_id" required>
+                <select class="form-select" id="area_id" name="area_id" required onchange="fetchTeamsByArea(this.value)">
                     <option value="" disabled {{ old('area_id') ? '' : 'selected' }}>Select an area</option>
                     @foreach($areas as $area)
                         <option value="{{ $area->id }}" {{ old('area_id') == $area->id ? 'selected' : '' }}>{{ $area->name }}</option>
@@ -48,9 +48,7 @@
                 <label for="team_id" class="form-label">Team</label>
                 <select class="form-select" id="team_id" name="team_id" required>
                     <option value="" disabled {{ old('team_id') ? '' : 'selected' }}>Select a team</option>
-                    @foreach($teams as $team)
-                        <option value="{{ $team->id }}" {{ old('team_id') == $team->id ? 'selected' : '' }}>{{ $team->name }}</option>
-                    @endforeach
+                    <!-- Teams will be populated here based on the selected area -->
                 </select>
                 @error('team_id')
                 <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
@@ -120,7 +118,35 @@
         </div>
     </form>
 
+
+@endsection
+
+
+@push('scripts')
     <script>
+
+        async function fetchTeamsByArea(areaId) {
+            const teamSelect = document.getElementById('team_id');
+            teamSelect.innerHTML = '<option value="" disabled selected>Select a team</option>';
+
+            try {
+                const response = await fetch(`/api/teams?area_id=${encodeURIComponent(areaId)}`);
+                const teams = await response.json();
+
+                if (Array.isArray(teams)) {
+                    teams.forEach(team => {
+                        const option = document.createElement('option');
+                        option.value = team.id;
+                        option.textContent = team.name;
+                        teamSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Error: Expected an array but received:', teams);
+                }
+            } catch (error) {
+                console.error('Error fetching teams:', error);
+            }
+        }
         let initialInventories = {};
 
         async function selectInventoryQuantity() {
@@ -221,21 +247,17 @@
                         text: 'Category has been created successfully.',
                         icon: 'success'
                     }).then(() => {
-                        // Fetch the updated list of categories
-                        $.ajax({
-                            url: '{{ route('taskCategory.list') }}',
-                            type: 'GET',
-                            success: function(categories) {
-                                let categorySelect = $('#task_category_id');
-                                categorySelect.empty();
-                                categorySelect.append('<option value="" disabled>Select a category</option>');
-                                categories.forEach(category => {
-                                    categorySelect.append(new Option(category.name, category.id));
-                                });
-                                categorySelect.append('<option value="create_new">Create New Category</option>');
-                                categorySelect.val(response.id).trigger('change');
-                            }
-                        });
+                        // Find the index of the "Create New Category" option
+                        let createNewOptionIndex = $('#task_category_id option[value="create_new"]').index();
+
+                        // Create the new option with the correct text and value
+                        let newOption = new Option(response.name, response.id, false, false);
+
+                        // Insert the new option before the "Create New Category" option
+                        $('#task_category_id option').eq(createNewOptionIndex).before(newOption);
+
+                        // Set the new option as selected
+                        $('#task_category_id').val(response.id).trigger('change');
                     });
                 },
                 error: function(response) {
@@ -300,4 +322,4 @@
             });
         }
     </script>
-@endsection
+@endpush

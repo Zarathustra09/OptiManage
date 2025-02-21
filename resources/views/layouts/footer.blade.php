@@ -3,7 +3,7 @@
         <div class="row text-muted">
             <div class="col-6 text-end">
                 <p class="mb-0">
-                    <a class="text-muted" href="#" target="_blank"><strong>OptiManage</strong></a> &copy;
+                    <a class="text-muted" href="#" target="_blank"><strong>{{env('APP_NAME')}}</strong></a> &copy;
                 </p>
             </div>
 {{--            <div class="col-6 text-end">--}}

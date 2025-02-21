@@ -1,7 +1,7 @@
 <nav id="sidebar" class="sidebar js-sidebar">
     <div class="sidebar-content js-simplebar">
         <a class="sidebar-brand" href="#">
-            <span class="align-middle">OptiManage</span>
+            <span class="align-middle">{{env('APP_NAME')}}</span>
         </a>
         <ul class="sidebar-nav">
             <li class="sidebar-header"> Interface </li>

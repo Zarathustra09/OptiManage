@@ -52,4 +52,11 @@ class TeamController extends Controller
         $team->delete();
         return response()->json(['success' => 'Team deleted successfully.']);
     }
+
+    public function getTeamsByArea(Request $request)
+    {
+        $areaId = $request->query('area_id');
+        $teams = Team::where('area_id', $areaId)->get();
+        return response()->json($teams);
+    }
 }
