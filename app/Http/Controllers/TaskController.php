@@ -47,6 +47,7 @@ class TaskController extends Controller
             'end_date' => 'required|date_format:Y-m-d\TH:i|after:start_date',
             'ticket_id' => 'required|string|unique:tasks,ticket_id',
             'area_id' => 'required|exists:areas,id', // Add this line
+            'inventory_items' => 'required|json',
         ]);
 
         Log::info('Validation passed');
@@ -69,7 +70,7 @@ class TaskController extends Controller
 
         if ($overlappingTasks) {
             Log::warning('Overlapping task detected', ['user_id' => $request->user_id, 'start_date' => $request->start_date, 'end_date' => $request->end_date]);
-            return redirect()->back()->with('error', 'The task overlaps with an existing task.');
+            return redirect()->back()->withInput()->with('error', 'The task overlaps with an existing task.');
         }
 
         $task = Task::create($request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date', 'ticket_id', 'area_id']));

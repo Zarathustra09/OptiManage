@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AvailabilityController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Employee\EmployeeTaskController;
 use App\Http\Controllers\Employee\ImageController;
 use Illuminate\Http\Request;
@@ -30,3 +31,6 @@ Route::delete('/delete/team-task-image/{id}', [ImageController::class, 'destroyT
 
 
 Route::get('/free/employee', [AvailabilityController::class, 'getAvailableUsers'])->name('available.employee.index');
+
+
+Route::get('/allCategories', [CategoryController::class, 'getAllCategories'])->name('allCategories');

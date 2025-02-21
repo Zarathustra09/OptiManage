@@ -29,8 +29,8 @@ class TeamController extends Controller
 
     public function show($id)
     {
-        $users = User::all();
         $team = Team::with('assignees.user', 'area')->findOrFail($id);
+        $users = User::where('area_id', $team->area_id)->get(); // Filter users by team's area
         return view('admin.team.show', compact('team', 'users'));
     }
 

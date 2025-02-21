@@ -119,6 +119,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/taskCategory/{id}', [TaskCategoryController::class, 'show'])->name('admin.taskCategory.show');
     Route::put('/admin/taskCategory/{id}', [TaskCategoryController::class, 'update'])->name('admin.taskCategory.update');
     Route::delete('/admin/taskCategory/{id}', [TaskCategoryController::class, 'destroy'])->name('admin.taskCategory.destroy');
+    Route::get('/taskCategoryList', [TaskCategoryController::class, 'list'])->name('taskCategory.list');
 
     Route::get('/admin/logs', [LogController::class, 'index'])->name('admin.log.index');
 
