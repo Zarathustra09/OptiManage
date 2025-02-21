@@ -277,7 +277,7 @@
 
         <!-- Added brand footer -->
         <div class="brand-footer">
-            <div class="brand-name">OptiManage</div>
+            <div class="brand-name">{{env('APP_NAME')}}</div>
         </div>
     </div>
 
