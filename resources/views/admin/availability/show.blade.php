@@ -13,7 +13,6 @@
             <th>Day</th>
             <th>Available From</th>
             <th>Available To</th>
-            <th>Shift Type</th>
             <th>Status</th>
             <th>Action</th>
         </tr>
@@ -24,19 +23,6 @@
                 <td>{{ \Carbon\Carbon::parse($availability->day)->format('l') }}</td>
                 <td>{{ \Carbon\Carbon::parse($availability->available_from)->format('g:i A') }}</td>
                 <td>{{ \Carbon\Carbon::parse($availability->available_to)->format('g:i A') }}</td>
-                     @if($availability->shift_type == 0)
-                      <td>
-                            Day
-                      </td>
-                     @elseif($availability->shift_type == 1)
-                      <td>
-                            Night
-                      </td>
-                         @endif
-
-
-
-
                 <td>{{ $availability->status }}</td>
                 <td>
                     <button class="btn btn-warning btn-sm" onclick="editAvailability({{ $availability->id }})">Edit</button>
@@ -75,10 +61,6 @@
                     <option value="active" ${availability.status === 'active' ? 'selected' : ''}>Active</option>
                     <option value="inactive" ${availability.status === 'inactive' ? 'selected' : ''}>Inactive</option>
                 </select>
-                <select id="swal-input5" class="swal2-input">
-                    <option value="0" ${availability.shift_type === 0 ? 'selected' : ''}>Day</option>
-                    <option value="1" ${availability.shift_type === 1 ? 'selected' : ''}>Night</option>
-                </select>
             `,
                     showCancelButton: true,
                     confirmButtonText: 'Update',
@@ -99,7 +81,7 @@
                             available_from: availableFrom,
                             available_to: availableTo,
                             status: document.getElementById('swal-input4').value,
-                            shift_type: document.getElementById('swal-input5').value
+                            shift_type: 0 // Always set to day shift
                         };
                     }
                 }).then((result) => {
