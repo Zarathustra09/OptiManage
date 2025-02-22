@@ -1,18 +1,19 @@
 <?php
 
+// Task.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 
 class Task extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'task_category_id', 'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'area_id'
+        'user_id', 'task_category_id', 'title', 'description', 'status', 'ticket_id', 'start_date', 'end_date', 'area_id',
+        'cust_account_number', 'cust_name', 'cust_type', 'cus_telephone', 'cus_email', 'cus_address', 'cus_landmark'
     ];
 
     protected $casts = [
@@ -39,8 +40,6 @@ class Task extends Model
     {
         return $this->hasMany(TaskImage::class);
     }
-
-    // app/Models/User.php
 
     public function area()
     {

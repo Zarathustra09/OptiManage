@@ -2,121 +2,202 @@
 
 @section('content')
     @include('layouts.session')
-    <form action="{{ route('admin.task.store') }}" method="POST" id="createTaskForm" enctype="multipart/form-data" class="container bg-white shadow p-4 rounded">
+    <form action="{{ route('admin.task.store') }}" method="POST" id="createTaskForm" enctype="multipart/form-data" class="container p-4 rounded">
         @csrf
         <h3 class="mb-4">Create New Task</h3>
 
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label for="ticket_id" class="form-label">Ticket ID</label>
-                <input type="text" class="form-control" id="ticket_id" name="ticket_id" value="{{ old('ticket_id') }}" required>
-                @error('ticket_id')
-                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
-                @enderror
+        <div class="card mb-4">
+            <div class="card-header">
+                Task Details
             </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="ticket_id" class="form-label">Ticket ID</label>
+                        <input type="text" class="form-control" id="ticket_id" name="ticket_id" value="{{ old('ticket_id') }}" required>
+                        @error('ticket_id')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-            <div class="col-md-6">
-                <label for="area_id" class="form-label">Area</label>
-                <select class="form-select" id="area_id" name="area_id" required>
-                    <option value="" disabled {{ old('area_id') ? '' : 'selected' }}>Select an area</option>
-                    @foreach($areas as $area)
-                        <option value="{{ $area->id }}" {{ old('area_id') == $area->id ? 'selected' : '' }}>{{ $area->name }}</option>
-                    @endforeach
-                </select>
-                @error('area_id')
-                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
-                @enderror
-            </div>
+                    <div class="col-md-6">
+                        <label for="area_id" class="form-label">Area</label>
+                        <select class="form-select" id="area_id" name="area_id" required>
+                            <option value="" disabled {{ old('area_id') ? '' : 'selected' }}>Select an area</option>
+                            @foreach($areas as $area)
+                                <option value="{{ $area->id }}" {{ old('area_id') == $area->id ? 'selected' : '' }}>{{ $area->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('area_id')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-            <div class="col-md-6">
-                <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control" id="title" name="title" value="{{ old('title') }}" required>
-                @error('title')
-                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
-                @enderror
-            </div>
+                    <div class="col-md-6">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ old('title') }}" required>
+                        @error('title')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-            <div class="col-12">
-                <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="3" required>{{ old('description') }}</textarea>
-                @error('description')
-                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
-                @enderror
-            </div>
+                    <div class="col-12">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required>{{ old('description') }}</textarea>
+                        @error('description')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-            <div class="col-md-6">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-select" id="status" name="status" required>
-                    @foreach($statuses as $status)
-                        <option value="{{ $status }}" {{ old('status') == $status ? 'selected' : '' }}>{{ $status }}</option>
-                    @endforeach
-                </select>
-                @error('status')
-                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
-                @enderror
-            </div>
+                    <div class="col-md-6">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status" required>
+                            @foreach($statuses as $status)
+                                <option value="{{ $status }}" {{ old('status') == $status ? 'selected' : '' }}>{{ $status }}</option>
+                            @endforeach
+                        </select>
+                        @error('status')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-            <div class="col-md-6">
-                <label for="task_category_id" class="form-label">Task Category</label>
-                <div class="input-group">
-                    <select class="form-select" id="task_category_id" name="task_category_id" required onchange="handleCategoryChange(this)">
-                        <option value="" disabled {{ old('task_category_id') ? '' : 'selected' }}>Select a category</option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}" {{ old('task_category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                        @endforeach
-                        <option value="create_new">Create New Category</option>
-                    </select>
-                    <button type="button" class="btn btn-danger" onclick="toggleDeleteCategory()">Delete Category</button>
+                    <div class="col-md-6">
+                        <label for="task_category_id" class="form-label">Task Category</label>
+                        <div class="input-group">
+                            <select class="form-select" id="task_category_id" name="task_category_id" required onchange="handleCategoryChange(this)">
+                                <option value="" disabled {{ old('task_category_id') ? '' : 'selected' }}>Select a category</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ old('task_category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                @endforeach
+                                <option value="create_new">Create New Category</option>
+                            </select>
+                            <button type="button" class="btn btn-danger" onclick="toggleDeleteCategory()">Delete Category</button>
+                        </div>
+                        @error('task_category_id')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="start_date" class="form-label">Start Date and Time</label>
+                        <input type="datetime-local" class="form-control" id="start_date" name="start_date" value="{{ old('start_date') }}" required>
+                        @error('start_date')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="end_date" class="form-label">End Date and Time</label>
+                        <input type="datetime-local" class="form-control" id="end_date" name="end_date" value="{{ old('end_date') }}" required>
+                        @error('end_date')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
-                @error('task_category_id')
-                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
-                @enderror
             </div>
+        </div>
 
-            <div class="col-md-6">
-                <label for="start_date" class="form-label">Start Date and Time</label>
-                <input type="datetime-local" class="form-control" id="start_date" name="start_date" value="{{ old('start_date') }}" required>
-                @error('start_date')
-                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
-                @enderror
+        <div class="card mb-4">
+            <div class="card-header">
+                Employee and Inventory
             </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="user_id" class="form-label">Employee</label>
+                        <select class="form-select" id="user_id" name="user_id" required>
+                            <option value="" disabled {{ old('user_id') ? '' : 'selected' }}>Select a user</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('user_id')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-            <div class="col-md-6">
-                <label for="end_date" class="form-label">End Date and Time</label>
-                <input type="datetime-local" class="form-control" id="end_date" name="end_date" value="{{ old('end_date') }}" required>
-                @error('end_date')
-                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="col-md-6">
-                <label for="user_id" class="form-label">Employee</label>
-                <select class="form-select" id="user_id" name="user_id" required>
-                    <option value="" disabled {{ old('user_id') ? '' : 'selected' }}>Select a user</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
-                    @endforeach
-                </select>
-                @error('user_id')
-                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="col-12">
-                <label for="inventory_items_display" class="form-label">Inventory Items</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="inventory_items_display" value="{{ old('inventory_items_display') }}" readonly required>
-                    <input type="hidden" id="inventory_items" name="inventory_items" value="{{ old('inventory_items') }}" required>
-                    <button type="button" class="btn btn-primary" onclick="selectInventoryQuantity()">Add Inventory Items</button>
+                    <div class="col-12">
+                        <label for="inventory_items_display" class="form-label">Inventory Items</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="inventory_items_display" value="{{ old('inventory_items_display') }}" readonly required>
+                            <input type="hidden" id="inventory_items" name="inventory_items" value="{{ old('inventory_items') }}" required>
+                            <button type="button" class="btn btn-primary" onclick="selectInventoryQuantity()">Add Inventory Items</button>
+                        </div>
+                        @error('inventory_items')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
-                @error('inventory_items')
-                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
-                @enderror
             </div>
+        </div>
 
-            <div class="col-12 mt-4">
-                <button type="submit" class="btn btn-primary">Create Task</button>
+        <div class="card mb-4">
+            <div class="card-header">
+                Customer Information
             </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="cust_account_number" class="form-label">Customer Account Number</label>
+                        <input type="text" class="form-control" id="cust_account_number" name="cust_account_number" value="{{ old('cust_account_number') }}">
+                        @error('cust_account_number')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cust_name" class="form-label">Customer Name</label>
+                        <input type="text" class="form-control" id="cust_name" name="cust_name" value="{{ old('cust_name') }}">
+                        @error('cust_name')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cust_type" class="form-label">Customer Type</label>
+                        <input type="text" class="form-control" id="cust_type" name="cust_type" value="{{ old('cust_type') }}">
+                        @error('cust_type')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cus_telephone" class="form-label">Customer Telephone</label>
+                        <input type="text" class="form-control" id="cus_telephone" name="cus_telephone" value="{{ old('cus_telephone') }}">
+                        @error('cus_telephone')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cus_email" class="form-label">Customer Email</label>
+                        <input type="email" class="form-control" id="cus_email" name="cus_email" value="{{ old('cus_email') }}">
+                        @error('cus_email')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cus_address" class="form-label">Customer Address</label>
+                        <input type="text" class="form-control" id="cus_address" name="cus_address" value="{{ old('cus_address') }}">
+                        @error('cus_address')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cus_landmark" class="form-label">Customer Landmark</label>
+                        <input type="text" class="form-control" id="cus_landmark" name="cus_landmark" value="{{ old('cus_landmark') }}">
+                        @error('cus_landmark')
+                        <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 mt-4">
+            <button type="submit" class="btn btn-primary">Create Task</button>
         </div>
     </form>
 @endsection

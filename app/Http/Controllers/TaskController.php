@@ -25,6 +25,7 @@ class TaskController extends Controller
 
     public function create()
     {
+        Log::info('Create function called');
         $statuses = config('status.statuses');
         $users = User::where('role_id', 0)->get();
         $inventories = Inventory::all();
@@ -46,8 +47,15 @@ class TaskController extends Controller
             'start_date' => 'required|date_format:Y-m-d\TH:i',
             'end_date' => 'required|date_format:Y-m-d\TH:i|after:start_date',
             'ticket_id' => 'required|string|unique:tasks,ticket_id',
-            'area_id' => 'required|exists:areas,id', // Add this line
+            'area_id' => 'required|exists:areas,id',
             'inventory_items' => 'required|json',
+            'cust_account_number' => 'nullable|string|max:255',
+            'cust_name' => 'nullable|string|max:255',
+            'cust_type' => 'nullable|string|max:255',
+            'cus_telephone' => 'nullable|string|max:255',
+            'cus_email' => 'nullable|string|email|max:255',
+            'cus_address' => 'nullable|string',
+            'cus_landmark' => 'nullable|string|max:255',
         ]);
 
         Log::info('Validation passed');
@@ -73,7 +81,10 @@ class TaskController extends Controller
             return redirect()->back()->withInput()->with('error', 'The task overlaps with an existing task.');
         }
 
-        $task = Task::create($request->only(['title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date', 'ticket_id', 'area_id']));
+        $task = Task::create($request->only([
+            'title', 'description', 'status', 'user_id', 'task_category_id', 'start_date', 'end_date', 'ticket_id', 'area_id',
+            'cust_account_number', 'cust_name', 'cust_type', 'cus_telephone', 'cus_email', 'cus_address', 'cus_landmark'
+        ]));
 
         Log::info('Task created', ['task_id' => $task->id]);
 
@@ -143,6 +154,28 @@ class TaskController extends Controller
 
         return response()->json(['success' => 'Task status has been updated successfully.']);
     }
+
+    public function updateCustomer(Request $request, $id)
+    {
+        $request->validate([
+            'cust_account_number' => 'nullable|string|max:255',
+            'cust_name' => 'nullable|string|max:255',
+            'cust_type' => 'nullable|string|max:255',
+            'cus_telephone' => 'nullable|string|max:255',
+            'cus_email' => 'nullable|string|email|max:255',
+            'cus_address' => 'nullable|string',
+            'cus_landmark' => 'nullable|string|max:255',
+        ]);
+
+        $task = Task::findOrFail($id);
+        $task->update($request->only([
+            'cust_account_number', 'cust_name', 'cust_type', 'cus_telephone', 'cus_email', 'cus_address', 'cus_landmark'
+        ]));
+
+        return response()->json(['success' => 'Customer details updated successfully.']);
+    }
+
+
 
     public function show($id)
     {

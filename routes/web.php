@@ -78,6 +78,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/admin/task/{id}', [TaskController::class, 'update'])->name('admin.task.update');
     Route::put('/admin/task/update/{id}', [TaskController::class, 'updateAdmin'])->name('admin.task.updateAdmin');
     Route::delete('/admin/task/{id}', [TaskController::class, 'destroy'])->name('admin.task.destroy');
+    Route::put('/tasks/{id}/updateCustomer', [TaskController::class, 'updateCustomer'])->name('admin.task.updateCustomer');
 
     Route::put('/admin/task/accept/{id}', [TaskController::class, 'acceptTask'])->name('admin.task.accept');
     Route::post('/admin/task/add-inventory-item', [TaskController::class, 'addInventoryItem'])->name('admin.taskInventory.store');
