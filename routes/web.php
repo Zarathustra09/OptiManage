@@ -103,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/team-task/{id}/edit', [TeamTaskController::class, 'edit'])->name('admin.teamTask.edit');
     Route::put('/admin/team-task/{id}', [TeamTaskController::class, 'update'])->name('admin.teamTask.update');
     Route::delete('/admin/team-task/{id}', [TeamTaskController::class, 'destroy'])->name('admin.teamTask.destroy');
+    Route::put('/teamTasks/{id}/updateCustomer', [TeamTaskController::class, 'updateCustomer'])->name('admin.teamTask.updateCustomer');
 
 
     Route::post('/admin/team-task/add-inventory-item', [TeamTaskController::class, 'addInventoryItem'])->name('admin.teamTaskInventory.store');

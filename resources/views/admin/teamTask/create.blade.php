@@ -112,13 +112,72 @@
                 @enderror
             </div>
 
+            <!-- Customer Information Section -->
+            <div class="col-12">
+                <h4 class="mt-4">Customer Information</h4>
+            </div>
+
+            <div class="col-md-6">
+                <label for="cust_account_number" class="form-label">Customer Account Number</label>
+                <input type="text" class="form-control" id="cust_account_number" name="cust_account_number" value="{{ old('cust_account_number') }}">
+                @error('cust_account_number')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="cust_name" class="form-label">Customer Name</label>
+                <input type="text" class="form-control" id="cust_name" name="cust_name" value="{{ old('cust_name') }}">
+                @error('cust_name')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="cust_type" class="form-label">Customer Type</label>
+                <input type="text" class="form-control" id="cust_type" name="cust_type" value="{{ old('cust_type') }}">
+                @error('cust_type')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="cus_telephone" class="form-label">Customer Telephone</label>
+                <input type="text" class="form-control" id="cus_telephone" name="cus_telephone" value="{{ old('cus_telephone') }}">
+                @error('cus_telephone')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="cus_email" class="form-label">Customer Email</label>
+                <input type="email" class="form-control" id="cus_email" name="cus_email" value="{{ old('cus_email') }}">
+                @error('cus_email')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="cus_address" class="form-label">Customer Address</label>
+                <input type="text" class="form-control" id="cus_address" name="cus_address" value="{{ old('cus_address') }}">
+                @error('cus_address')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="cus_landmark" class="form-label">Customer Landmark</label>
+                <input type="text" class="form-control" id="cus_landmark" name="cus_landmark" value="{{ old('cus_landmark') }}">
+                @error('cus_landmark')
+                <div class="alert alert-danger mt-2 p-2">{{ $message }}</div>
+                @enderror
+            </div>
+
             <div class="col-12 mt-4">
                 <button type="submit" class="btn btn-primary">Create Team Task</button>
             </div>
         </div>
     </form>
-
-
 @endsection
 
 
@@ -247,17 +306,21 @@
                         text: 'Category has been created successfully.',
                         icon: 'success'
                     }).then(() => {
-                        // Find the index of the "Create New Category" option
-                        let createNewOptionIndex = $('#task_category_id option[value="create_new"]').index();
-
-                        // Create the new option with the correct text and value
-                        let newOption = new Option(response.name, response.id, false, false);
-
-                        // Insert the new option before the "Create New Category" option
-                        $('#task_category_id option').eq(createNewOptionIndex).before(newOption);
-
-                        // Set the new option as selected
-                        $('#task_category_id').val(response.id).trigger('change');
+                        // Fetch the updated list of categories
+                        $.ajax({
+                            url: '{{ route('taskCategory.list') }}',
+                            type: 'GET',
+                            success: function(categories) {
+                                let categorySelect = $('#task_category_id');
+                                categorySelect.empty();
+                                categorySelect.append('<option value="" disabled>Select a category</option>');
+                                categories.forEach(category => {
+                                    categorySelect.append(new Option(category.name, category.id));
+                                });
+                                categorySelect.append('<option value="create_new">Create New Category</option>');
+                                categorySelect.val(response.id).trigger('change');
+                            }
+                        });
                     });
                 },
                 error: function(response) {

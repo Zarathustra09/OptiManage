@@ -49,7 +49,14 @@ class TeamTaskController extends Controller
             'task_category_id' => 'required|exists:task_categories,id',
             'ticket_id' => 'required|string|max:255|unique:team_tasks,ticket_id',
             'area_id' => 'required|exists:areas,id',
-            'team_id' => 'required|exists:teams,id', // Add this line
+            'team_id' => 'required|exists:teams,id',
+            'cust_account_number' => 'nullable|string|max:255',
+            'cust_name' => 'nullable|string|max:255',
+            'cust_type' => 'nullable|string|max:255',
+            'cus_telephone' => 'nullable|string|max:255',
+            'cus_email' => 'nullable|string|email|max:255',
+            'cus_address' => 'nullable|string',
+            'cus_landmark' => 'nullable|string|max:255',
         ]);
 
         Log::info('Validation passed');
@@ -92,6 +99,26 @@ class TeamTaskController extends Controller
 
         Log::info('Team task creation process completed successfully', ['team_task_id' => $teamTask->id]);
         return redirect()->route('admin.teamTask.index')->with('success', 'Team Task created successfully.');
+    }
+
+    public function updateCustomer(Request $request, $id)
+    {
+        $request->validate([
+            'cust_account_number' => 'nullable|string|max:255',
+            'cust_name' => 'nullable|string|max:255',
+            'cust_type' => 'nullable|string|max:255',
+            'cus_telephone' => 'nullable|string|max:255',
+            'cus_email' => 'nullable|string|email|max:255',
+            'cus_address' => 'nullable|string',
+            'cus_landmark' => 'nullable|string|max:255',
+        ]);
+
+        $task = TeamTask::findOrFail($id);
+        $task->update($request->only([
+            'cust_account_number', 'cust_name', 'cust_type', 'cus_telephone', 'cus_email', 'cus_address', 'cus_landmark'
+        ]));
+
+        return response()->json(['success' => 'Customer details updated successfully.']);
     }
 
 
