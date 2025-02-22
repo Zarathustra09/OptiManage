@@ -30,21 +30,11 @@
             <input type="time" class="form-control" id="available_to" name="available_to" required>
         </div>
 
-
-
         <div class="mb-3">
-            <label for="status" class="form-label">Shift Type</label>
+            <label for="status" class="form-label">Status</label>
             <select class="form-control" id="status" name="status" required>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label for="shift_type" class="form-label">Shift Type</label>
-            <select class="form-control" id="shift_type" name="shift_type" required>
-                <option value="0">Day</option>
-                <option value="1">Night</option>
             </select>
         </div>
 

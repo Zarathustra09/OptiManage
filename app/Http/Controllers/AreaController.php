@@ -48,4 +48,12 @@ class AreaController extends Controller
         $area->delete();
         return response()->json(['success' => 'Area deleted successfully.']);
     }
+
+    public function allUser($id)
+    {
+        $area = Area::findOrFail($id);
+        $users = $area->users;
+        return response()->json($users);
+    }
+
 }

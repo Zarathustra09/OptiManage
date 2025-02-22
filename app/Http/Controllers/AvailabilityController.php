@@ -29,28 +29,27 @@ class AvailabilityController extends Controller
         return response()->json($availability);
     }
 
-   public function store(Request $request)
-{
-    $request->validate([
-        'user_id' => 'required|exists:users,id',
-        'day' => 'required|string',
-        'available_from' => 'required|date_format:H:i',
-        'available_to' => 'required|date_format:H:i|after:available_from',
-        'status' => 'required|string',
-        'shift_type' => 'required|integer|in:0,1',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'day' => 'required|string',
+            'available_from' => 'required|date_format:H:i',
+            'available_to' => 'required|date_format:H:i|after:available_from',
+            'status' => 'required|string',
+        ]);
 
-    $availability = Availability::create([
-        'user_id' => $request->user_id,
-        'day' => $request->day,
-        'available_from' => $request->available_from,
-        'available_to' => $request->available_to,
-        'status' => $request->status,
-        'shift_type' => $request->shift_type,
-    ]);
+        $availability = Availability::create([
+            'user_id' => $request->user_id,
+            'day' => $request->day,
+            'available_from' => $request->available_from,
+            'available_to' => $request->available_to,
+            'status' => $request->status,
+            'shift_type' => 0, // Always set to day type
+        ]);
 
-    return redirect()->route('availabilities.show', $availability->user_id)->with('success', 'Availability created successfully.');
-}
+        return redirect()->route('availabilities.show', $availability->user_id)->with('success', 'Availability created successfully.');
+    }
 
     public function update(Request $request, $id)
     {
@@ -58,9 +57,8 @@ class AvailabilityController extends Controller
             'user_id' => 'required|exists:users,id',
             'day' => 'required|string',
             'available_from' => 'required|date_format:H:i',
-            'available_to' => 'required|date_format:H:i|',
+            'available_to' => 'required|date_format:H:i|after:available_from',
             'status' => 'required|string',
-            'shift_type' => 'required|integer|in:0,1',
         ]);
 
         $availability = Availability::findOrFail($id);
@@ -70,7 +68,7 @@ class AvailabilityController extends Controller
             'available_from' => $request->available_from,
             'available_to' => $request->available_to,
             'status' => $request->status,
-            'shift_type' => $request->shift_type,
+            'shift_type' => 0, // Always set to day type
         ]);
 
         return response()->json(['success' => true, 'message' => 'Availability updated successfully.']);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Employee\EmployeeTaskController;
@@ -36,3 +37,4 @@ Route::get('/free/employee', [AvailabilityController::class, 'getAvailableUsers'
 
 Route::get('/allCategories', [CategoryController::class, 'getAllCategories'])->name('allCategories');
 Route::get('/teams', [TeamController::class, 'getTeamsByArea']);
+Route::get('/users/{id}', [AreaController::class, 'allUser']);

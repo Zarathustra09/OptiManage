@@ -151,6 +151,8 @@
                 }
 
                 fetchAvailableUsers(startDate, endDate, areaId);
+            } else {
+                userSelect.innerHTML = '<option value="" selected disabled>Select User</option>';
             }
         }
 
