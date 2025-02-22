@@ -66,7 +66,7 @@
                             </div>
                         @endif
 
-                        <form id="updateProofOfWorkForm" enctype="multipart/form-data" method="POST" action="{{ route('image.store', ['taskId' => $teamTask->id]) }}" class="mb-4">
+                        <form id="uploadTeamTaskImageForm" enctype="multipart/form-data" method="POST" action="{{ route('image.store', ['taskId' => $teamTask->id]) }}" class="mb-4">
                             @csrf
                             <div class="mb-3">
                                 <label for="task_image" class="form-label">Upload Task Image</label>
@@ -83,7 +83,7 @@
                                         <div class="card h-100">
                                             <img src="/storage/{{ $image->image_path }}" class="card-img-top" alt="Task Image">
                                             <div class="card-body text-center">
-                                                <button class="btn btn-danger btn-sm" onclick="deleteImage({{ $image->id }})">
+                                                <button class="btn btn-danger btn-sm" onclick="deleteTeamTaskImage({{ $image->id }})">
                                                     <i class="fas fa-trash-alt"></i> Delete
                                                 </button>
                                             </div>

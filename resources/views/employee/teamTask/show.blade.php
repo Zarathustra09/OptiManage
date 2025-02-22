@@ -3,167 +3,263 @@
 @section('content')
     <div class="container-fluid p-4">
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 col-lg-8">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h1 class="h3 mb-0">Team Task Details</h1>
                         <span class="badge bg-light text-primary">{{ $teamTask->status }}</span>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h2 class="h4 text-primary mb-3">{{ $teamTask->title }}</h2>
-                                <p class="text-muted mb-3">{{ $teamTask->description }}</p>
+                        <h2 class="h4 text-primary mb-3">{{ $teamTask->title }}</h2>
+                        <p class="text-muted mb-3">{{ $teamTask->description }}</p>
 
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="card border-info mb-3">
-                                            <div class="card-header bg-info text-white">Start Date</div>
-                                            <div class="card-body p-2">
-                                                <p class="card-text text-center">
-                                                    {{ \Carbon\Carbon::parse($teamTask->start_date)->format('F d, Y h:i A') }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="card border-warning mb-3">
-                                            <div class="card-header bg-warning text-white">End Date</div>
-                                            <div class="card-body p-2">
-                                                <p class="card-text text-center">
-                                                    {{ \Carbon\Carbon::parse($teamTask->end_date)->format('F d, Y h:i A') }}
-                                                </p>
-                                            </div>
-                                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="card border-info h-100">
+                                    <div class="card-header bg-info text-white">Start Date</div>
+                                    <div class="card-body">
+                                        <p class="card-text text-center mb-0">
+                                            {{ \Carbon\Carbon::parse($teamTask->start_date)->format('F d, Y h:i A') }}
+                                        </p>
                                     </div>
                                 </div>
-
-                                <!-- Form to upload team task image -->
-                                <form id="uploadTeamTaskImageForm" enctype="multipart/form-data" @if($teamTask->status == 'To be Approved') disabled @endif>
-                                    @csrf
-                                    <div class="mb-3">
-                                        <label for="team_task_image" class="form-label">Upload Task Image</label>
-                                        <input type="file" class="form-control" id="team_task_image" name="image" accept="image/*" required @if($teamTask->status == 'To be Approved') disabled @endif>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-warning h-100">
+                                    <div class="card-header bg-warning text-white">End Date</div>
+                                    <div class="card-body">
+                                        <p class="card-text text-center mb-0">
+                                            {{ \Carbon\Carbon::parse($teamTask->end_date)->format('F d, Y h:i A') }}
+                                        </p>
                                     </div>
-                                    <button type="submit" class="btn btn-primary" @if($teamTask->status == 'To be Approved') disabled @endif>Upload</button>
-                                </form>
-
-                                <div class="mt-4">
-                                    <h5>Team Task Images</h5>
-                                    <div class="row">
-                                        @foreach($teamTask->images as $image)
-                                            <div class="col-md-4 mb-3">
-                                                <div class="card">
-                                                    <img src="/storage/{{ $image->image_path }}" class="card-img-top" alt="Team Task Image">
-                                                    <div class="card-body text-center">
-                                                        <button class="btn btn-danger btn-sm" onclick="deleteTeamTaskImage({{ $image->id }})">
-                                                            <i class="fas fa-trash-alt"></i> Delete
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card border-secondary">
+                                    <div class="card-header bg-secondary text-white">Area</div>
+                                    <div class="card-body">
+                                        <p class="card-text text-center mb-0">
+                                            {{ $teamTask->area ? $teamTask->area->name : 'N/A' }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <div class="card h-100">
-                                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                                        Inventory Items
-                                        <span class="badge bg-light text-success">{{ $teamTask->inventories->count() }} Items</span>
+                            <div class="col-6">
+                                <div class="card border-secondary">
+                                    <div class="card-header bg-primary text-white">Area</div>
+                                    <div class="card-body">
+                                        <p class="card-text text-center mb-0">
+                                            {{ $teamTask->area ? $teamTask->team->name : 'N/A' }}
+                                        </p>
                                     </div>
-                                    <div class="card-body p-0">
-                                        <div class="list-group list-group-flush">
-                                            @forelse($teamTask->inventories as $inventory)
-                                                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <h6 class="mb-1">{{ $inventory->name }}</h6>
-                                                        <small class="text-muted">Inventory Code: {{ $inventory->code ?? 'N/A' }}</small>
-                                                    </div>
-                                                    <span class="badge bg-primary rounded-pill">
-                                                        Qty: {{ $inventory->pivot->quantity }}
-                                                    </span>
-                                                    <button class="btn btn-danger btn-sm" onclick="returnSingleItem({{ $teamTask->id }}, {{ $inventory->id }})" @if($teamTask->status == 'To be Approved') disabled @endif>Return</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if($teamTask->status !== 'To be Approved')
+                            @if($teamTask->proof_of_work)
+                                <div class="card mb-4">
+                                    <div class="card-header bg-secondary text-white">Proof of Work</div>
+                                    <div class="card-body">
+                                        <img src="/storage/{{ $teamTask->proof_of_work }}" alt="Proof of Work" class="img-fluid rounded">
+                                    </div>
+                                </div>
+                            @endif
+
+                            <form id="uploadTeamTaskImageForm" enctype="multipart/form-data" method="POST" action="{{ route('image.store', ['taskId' => $teamTask->id]) }}" class="mb-4">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="task_image" class="form-label">Upload Task Image</label>
+                                    <input type="file" class="form-control" id="task_image" name="image" accept="image/*">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Upload</button>
+                            </form>
+
+                            <div class="mb-4">
+                                <h5>Task Images</h5>
+                                <div class="row g-3">
+                                    @foreach($teamTask->images as $image)
+                                        <div class="col-md-4">
+                                            <div class="card h-100">
+                                                <img src="/storage/{{ $image->image_path }}" class="card-img-top" alt="Task Image">
+                                                <div class="card-body text-center">
+                                                    <button class="btn btn-danger btn-sm" onclick="deleteTeamTaskImage({{ $image->id }})">
+                                                        <i class="fas fa-trash-alt"></i> Delete
+                                                    </button>
                                                 </div>
-                                            @empty
-                                                <div class="list-group-item text-center text-muted">
-                                                    No inventory items assigned
-                                                </div>
-                                            @endforelse
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="progress-container d-flex justify-content-between align-items-center mb-4">
+                            <div class="progress-step {{ $teamTask->status == 'To be Approved' ? 'active' : '' }}" data-status="To be Approved">
+                                <span>To be Approved</span>
+                            </div>
+                            <div class="progress-step {{ $teamTask->status == 'Checked' ? 'active' : '' }}" data-status="Checked">
+                                <span>Checked</span>
+                            </div>
+                            <div class="progress-step {{ $teamTask->status == 'On Progress' ? 'active' : '' }}" data-status="On Progress">
+                                <span>On Progress</span>
+                            </div>
+                            <div class="progress-step {{ $teamTask->status == 'Finished' ? 'active' : '' }}" data-status="Finished">
+                                <span>Finished</span>
+                            </div>
+                            <div class="progress-step {{ $teamTask->status == 'Cancel' ? 'active' : '' }}" data-status="Cancel">
+                                <span>Cancel</span>
+                            </div>
+                        </div>
+
+                        <form id="updateStatusForm" method="POST" action="{{ route('admin.teamTask.update', ['id' => $teamTask->id]) }}">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" id="task_status" name="status" value="{{ $teamTask->status }}">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Update Status</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Customer Details</h5>
+                                @if($teamTask->status !== 'To be Approved')
+                                    <button class="btn btn-sm btn-light" onclick="editCustomerDetails()">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </button>
+                                @endif
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Account Number:</span>
+                                            <span>{{ $teamTask->cust_account_number }}</span>
                                         </div>
                                     </div>
-                                    <div class="card-footer">
-                                        <button class="btn btn-sm btn-success" onclick="addInventoryItem()" @if($teamTask->status == 'To be Approved') disabled @endif>
-                                            <i class="fas fa-plus me-1"></i>Add Inventory Item
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Name:</span>
+                                            <span>{{ $teamTask->cust_name }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Type:</span>
+                                            <span>{{ $teamTask->cust_type }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Telephone:</span>
+                                            <span>{{ $teamTask->cus_telephone }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Email:</span>
+                                            <span>{{ $teamTask->cus_email }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Address:</span>
+                                            <span>{{ $teamTask->cus_address }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Landmark:</span>
+                                            <span>{{ $teamTask->cus_landmark }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Inventory Items</h5>
+                                <span class="badge bg-light text-success">{{ $teamTask->inventories->count() }} Items</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
+                                    @forelse($teamTask->inventories as $inventory)
+                                        <div class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1">{{ $inventory->name }}</h6>
+                                                    <small class="text-muted">Code: {{ $inventory->sku ?? 'N/A' }}</small>
+                                                </div>
+                                                @if($teamTask->status !== 'To be Approved')
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <span class="badge bg-primary">Qty: {{ $inventory->pivot->quantity }}</span>
+                                                        <button class="btn btn-danger btn-sm" onclick="returnSingleTaskItem({{ $teamTask->id }}, {{ $inventory->id }})">Return</button>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="list-group-item text-center text-muted">
+                                            No inventory items assigned
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                            @if($teamTask->status !== 'To be Approved')
+                                <div class="card-footer">
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-success" onclick="addInventoryItem()">
+                                            <i class="fas fa-plus me-1"></i>Add Item
                                         </button>
-                                        <button class="btn btn-sm btn-danger" onclick="returnAllItems({{ $teamTask->id }})" @if($teamTask->status == 'To be Approved') disabled @endif>Return All Items</button>
+                                        <button class="btn btn-sm btn-danger" onclick="returnAllTaskItems({{ $teamTask->id }})">
+                                            Return All
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="p-4 shadow rounded bg-white">
-                                <h3 class="mb-4 text-center text-primary">Update Task Status</h3>
-
-                                <!-- Progress Bar -->
-                                <div class="progress-container d-flex justify-content-between align-items-center mb-4">
-                                    <div class="progress-step {{ $teamTask->status == 'To be Approved' ? 'active' : '' }}" data-status="To be Approved">
-                                        <span>To be Approved</span>
-                                    </div>
-                                    <div class="progress-step {{ $teamTask->status == 'Checked' ? 'active' : '' }}" data-status="Checked">
-                                        <span>Checked</span>
-                                    </div>
-                                    <div class="progress-step {{ $teamTask->status == 'On Progress' ? 'active' : '' }}" data-status="On Progress">
-                                        <span>On Progress</span>
-                                    </div>
-                                    <div class="progress-step {{ $teamTask->status == 'Finished' ? 'active' : '' }}" data-status="Finished">
-                                        <span>Finished</span>
-                                    </div>
-                                    <div class="progress-step {{ $teamTask->status == 'Cancel' ? 'active' : '' }}" data-status="Cancel">
-                                        <span>Cancel</span>
-                                    </div>
-                                </div>
-
-                                <!-- Form Submission -->
-                                <form id="updateStatusForm" method="POST" action="{{ route('admin.teamTask.update', ['id' => $teamTask->id]) }}">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="hidden" id="task_status" name="status" value="{{ $teamTask->status }}">
-
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary btn-lg">Update Status</button>
-                                    </div>
-                                </form>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
+        <!-- Assignee Table -->
+        <div class="row mt-4">
+            <div class="col-12">
                 <div class="card shadow-sm">
-                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-                        <h3 class="h4 mb-0">Assignees</h3>
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0 text-white">Assignees</h5>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="assigneesTable" class="table table-hover">
-                                <thead class="table-light">
+                        <table class="table" id="assigneesTable">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($teamTask->assignees as $assignee)
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Employee ID</th>
+                                    <td>{{ $assignee->user->name }}</td>
+                                    <td>{{ $assignee->user->email }}</td>
+                                    <td>{{ $assignee->user->employee_id }}</td>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($teamTask->assignees as $assignee)
-                                    <tr>
-                                        <td>{{ $assignee->user->name }}</td>
-                                        <td>{{ $assignee->user->email }}</td>
-                                        <td>{{ $assignee->user->employee_id }}</td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                            @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -173,6 +269,52 @@
 
 @push('scripts')
     <script>
+        function editCustomerDetails() {
+            Swal.fire({
+                title: 'Edit Customer Details',
+                html: `
+                    <input id="cust_account_number" class="swal2-input" placeholder="Account Number" value="{{ $teamTask->cust_account_number }}">
+                    <input id="cust_name" class="swal2-input" placeholder="Name" value="{{ $teamTask->cust_name }}">
+                    <input id="cust_type" class="swal2-input" placeholder="Type" value="{{ $teamTask->cust_type }}">
+                    <input id="cus_telephone" class="swal2-input" placeholder="Telephone" value="{{ $teamTask->cus_telephone }}">
+                    <input id="cus_email" class="swal2-input" placeholder="Email" value="{{ $teamTask->cus_email }}">
+                    <input id="cus_address" class="swal2-input" placeholder="Address" value="{{ $teamTask->cus_address }}">
+                    <input id="cus_landmark" class="swal2-input" placeholder="Landmark" value="{{ $teamTask->cus_landmark }}">
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Update',
+                preConfirm: () => {
+                    return {
+                        cust_account_number: document.getElementById('cust_account_number').value,
+                        cust_name: document.getElementById('cust_name').value,
+                        cust_type: document.getElementById('cust_type').value,
+                        cus_telephone: document.getElementById('cus_telephone').value,
+                        cus_email: document.getElementById('cus_email').value,
+                        cus_address: document.getElementById('cus_address').value,
+                        cus_landmark: document.getElementById('cus_landmark').value,
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ route('admin.teamTask.updateCustomer', ['id' => $teamTask->id]) }}',
+                        type: 'PUT',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            ...result.value
+                        },
+                        success: function(response) {
+                            Swal.fire('Updated!', 'Customer details have been updated successfully.', 'success').then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(response) {
+                            Swal.fire('Error!', 'There was an error updating the customer details.', 'error');
+                        }
+                    });
+                }
+            });
+        }
 
         document.querySelectorAll('.progress-step').forEach(step => {
             step.addEventListener('click', function() {
