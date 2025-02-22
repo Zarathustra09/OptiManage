@@ -127,6 +127,8 @@
         document.getElementById('end_date').addEventListener('change', checkAndFetchAvailableUsers);
         document.getElementById('area_id').addEventListener('change', checkAndFetchAvailableUsers);
 
+        document.addEventListener('DOMContentLoaded', checkAndFetchAvailableUsers);
+
         function checkAndFetchAvailableUsers() {
             const startDate = document.getElementById('start_date').value;
             const endDate = document.getElementById('end_date').value;
