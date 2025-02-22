@@ -19,13 +19,6 @@ return new class extends Migration
             $table->foreignId('task_category_id')->constrained('task_categories');
             $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->foreignId('area_id')->nullable()->constrained('areas')->onDelete('set null');
-            $table->string('cust_account_number')->nullable();
-            $table->string('cust_name')->nullable();
-            $table->string('cust_type')->nullable();
-            $table->string('cus_telephone')->nullable();
-            $table->string('cus_email')->nullable();
-            $table->text('cus_address')->nullable();
-            $table->string('cus_landmark')->nullable();
             $table->timestamps();
         });
     }

@@ -22,13 +22,6 @@ return new class extends Migration
             $table->string('ticket_id')->unique();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
-            $table->string('cust_account_number')->nullable();
-            $table->string('cust_name')->nullable();
-            $table->string('cust_type')->nullable();
-            $table->string('cus_telephone')->nullable();
-            $table->string('cus_email')->nullable();
-            $table->text('cus_address')->nullable();
-            $table->string('cus_landmark')->nullable();
             $table->timestamps();
         });
     }
