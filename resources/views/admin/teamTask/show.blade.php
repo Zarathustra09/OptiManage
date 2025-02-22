@@ -230,8 +230,8 @@
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Assignees</h5>
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0 text-white">Assignees</h5>
                     </div>
                     <div class="card-body">
                         <table class="table" id="assigneesTable">
