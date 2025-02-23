@@ -62,10 +62,9 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12 col-lg-12 col-xxl-12 d-flex">
-            <div class="card flex-fill">
-                <div class="card-header">
+    <div class="container-fluid">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Latest Tasks</h5>
                 </div>
                 <table class="table table-hover my-0">
