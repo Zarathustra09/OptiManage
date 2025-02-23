@@ -82,7 +82,7 @@
                         <tr>
                             <td data-label="Ticket ID">{{ $task->ticket_id }}</td>
                             <td data-label="Title">{{ $task->title }}</td>
-                            <td data-label="Assigned User">
+                            <td data-label="Assigned">
                                 @if(isset($task->assigned_user))
                                     {{ $task->assigned_user }}
                                 @else
