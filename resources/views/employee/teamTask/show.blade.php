@@ -204,7 +204,7 @@
                                                 @if($teamTask->status !== 'To be Approved')
                                                     <div class="d-flex align-items-center gap-2">
                                                         <span class="badge bg-primary">Qty: {{ $inventory->pivot->quantity }}</span>
-                                                        <button class="btn btn-danger btn-sm" onclick="returnSingleTaskItem({{ $teamTask->id }}, {{ $inventory->id }})">Return</button>
+                                                        <button class="btn btn-danger btn-sm" onclick="returnSingleItem({{ $teamTask->id }}, {{ $inventory->id }})">Return</button>
                                                     </div>
                                                 @endif
                                             </div>
@@ -222,7 +222,7 @@
                                         <button class="btn btn-sm btn-success" onclick="addInventoryItem()">
                                             <i class="fas fa-plus me-1"></i>Add Item
                                         </button>
-                                        <button class="btn btn-sm btn-danger" onclick="returnAllTaskItems({{ $teamTask->id }})">
+                                        <button class="btn btn-sm btn-danger" onclick="returnAllItems({{ $teamTask->id }})">
                                             Return All
                                         </button>
                                     </div>
