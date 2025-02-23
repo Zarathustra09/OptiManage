@@ -56,12 +56,14 @@ class HomeController extends Controller
 
     private function getLatestTasks()
     {
-        $latestTasks = $this->getAllTasks()->latest()->take(4)->get();
+        $latestTasks = $this->getAllTasks()->latest()->take(5)->get();
         Log::info('Latest Tasks: '.$latestTasks);
-        $latestTeamTasks = $this->getAllTeamTasks()->latest()->take(4)->get();
+        $latestTeamTasks = $this->getAllTeamTasks()->latest()->take(5)->get()->each(function ($task) {
+            $task->assigned_user = $task->team->name;
+        });
         Log::info('Latest Team Tasks: '. $latestTeamTasks);
 
-        $combinedTasks = $latestTasks->concat($latestTeamTasks)->sortByDesc('created_at')->take(4);
+        $combinedTasks = $latestTasks->concat($latestTeamTasks)->sortByDesc('created_at')->take(5);
         Log::info('Combined Tasks: '. $combinedTasks);
 
         return $combinedTasks;

@@ -79,20 +79,27 @@
                     <tbody>
                     @foreach($latestTasks as $task)
                         <tr>
-                            <td>{{ $task->ticket_id }}</td>
-                            <td>{{ $task->title }}</td>
-                            <td>
-                                <span class="badge
-                                    @if($task->status == 'Finished') bg-success
-                                    @elseif($task->status == 'On Progress') bg-warning
-                                    @elseif($task->status == 'To be Approved') bg-primary
-                                     @elseif($task->status == 'Checked') bg-info
-                                    @elseif($task->status == 'Cancel') bg-danger
-                                    @endif">
-                                    {{ $task->status }}
-                                </span>
+                            <td data-label="Ticket ID">{{ $task->ticket_id }}</td>
+                            <td data-label="Title">{{ $task->title }}</td>
+                            <td data-label="Assigned">
+                                @if(isset($task->assigned_user))
+                                    {{ $task->assigned_user }}
+                                @else
+                                    {{ optional($task->user)->name }}
+                                @endif
                             </td>
-                            <td>{{ $task->created_at }}</td>
+                            <td data-label="Status">
+            <span class="badge
+                @if($task->status == 'Finished') bg-success
+                @elseif($task->status == 'On Progress') bg-warning
+                @elseif($task->status == 'To be Approved') bg-primary
+                @elseif($task->status == 'Checked') bg-info
+                @elseif($task->status == 'Cancel') bg-danger
+                @endif">
+                {{ $task->status }}
+            </span>
+                            </td>
+                            <td data-label="Time Created">{{ $task->created_at }}</td>
                         </tr>
                     @endforeach
                     </tbody>
