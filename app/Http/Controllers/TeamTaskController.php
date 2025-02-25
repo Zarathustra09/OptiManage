@@ -97,6 +97,13 @@ class TeamTaskController extends Controller
             Log::info('Inventory attached to team task', ['team_task_id' => $teamTask->id, 'inventory_id' => $inventory->id, 'quantity' => $item['quantity']]);
         }
 
+        // Send email to all team assignees
+        $teamAssignees = $teamTask->team->assignees;
+        foreach ($teamAssignees as $assignee) {
+            \Mail::to($assignee->user->email)->send(new \App\Mail\TeamTaskAssigned($teamTask, $assignee->user));
+            Log::info('Email sent to team assignee', ['team_task_id' => $teamTask->id, 'user_id' => $assignee->user->id]);
+        }
+
         Log::info('Team task creation process completed successfully', ['team_task_id' => $teamTask->id]);
         return redirect()->route('admin.teamTask.index')->with('success', 'Team Task created successfully.');
     }
