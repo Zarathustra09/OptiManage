@@ -64,7 +64,9 @@
     <script>
 
         $(document).ready(function() {
-            $('#activityLogsTable').DataTable();
+            $('#activityLogsTable').DataTable({
+                "order": [[0, "desc"]]
+            });
         });
 
 

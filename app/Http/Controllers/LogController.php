@@ -8,7 +8,7 @@ class LogController extends Controller
 {
     public function index()
     {
-        $logs = \Spatie\Activitylog\Models\Activity::all()->map(function ($log) {
+        $logs = \Spatie\Activitylog\Models\Activity::orderBy('id', 'desc')->get()->map(function ($log) {
             if (class_exists($log->subject_type)) {
                 $log->subject = $log->subject_type::find($log->subject_id);
             }
